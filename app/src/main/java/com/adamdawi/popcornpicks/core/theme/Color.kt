@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.ui.theme
+package com.adamdawi.popcornpicks.core.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.ui.theme
+package com.adamdawi.popcornpicks.core.theme
 
 import android.app.Activity
 import android.os.Build
