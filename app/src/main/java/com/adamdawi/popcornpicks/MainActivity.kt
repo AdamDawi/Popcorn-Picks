@@ -11,7 +11,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PopcornPicksTheme {
-                GenresScreen()
+                GenresScreen(
+                    onContinueClick = {}
+                )
             }
         }
     }

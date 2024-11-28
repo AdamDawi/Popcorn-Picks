@@ -36,21 +36,25 @@ import com.adamdawi.popcornpicks.core.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.theme.Red
 import com.adamdawi.popcornpicks.core.theme.fontFamily
 import com.adamdawi.popcornpicks.feature.genres_choose.domain.Genre
+import org.koin.androidx.compose.koinViewModel
 import kotlin.random.Random
 
 @Composable
-fun GenresScreen() {
+fun GenresScreen(
+    onContinueClick: () -> Unit,
+    viewModel: GenresViewModel = koinViewModel<GenresViewModel>()
+) {
     GenresContent(
         onAction = { action ->
             when (action) {
-                is GenresAction.SelectGenre -> {
-                    /*TODO*/
-                }
+                is GenresAction.OnContinueClick -> onContinueClick
+                else -> viewModel.onAction(action)
             }
         },
         genres = dummyGenres,
         selectedGenres = selectedGenres,
-        isSelectedGenresNumberValid = false
+        isSelectedGenresNumberValid = false,
+        onContinueClick = onContinueClick
     )
 }
 
@@ -61,7 +65,8 @@ private fun GenresContent(
     onAction: (GenresAction) -> Unit,
     genres: List<Genre>,
     selectedGenres: List<Boolean>,
-    isSelectedGenresNumberValid: Boolean
+    isSelectedGenresNumberValid: Boolean,
+    onContinueClick: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -72,94 +77,126 @@ private fun GenresContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(32.dp))
+
+        GenresTitle()
+
+        Spacer(modifier = Modifier.height(64.dp))
+
+        GenresFlowRow(genres, selectedGenres, onAction)
+
+        Spacer(modifier = Modifier.height(64.dp))
+
+        GenresValidationMessage(isSelectedGenresNumberValid)
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        ContinueButton(onContinueClick)
+
+        Spacer(modifier = Modifier.height(8.dp))
+    }
+}
+
+@Composable
+private fun GenresTitle() {
+    Text(
+        text = "Choose 2 or more of your favourite genres",
+        fontFamily = fontFamily,
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold,
+        color = Color.White,
+        textAlign = TextAlign.Center
+    )
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun GenresFlowRow(
+    genres: List<Genre>,
+    selectedGenres: List<Boolean>,
+    onAction: (GenresAction) -> Unit
+) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        genres.forEachIndexed { index, genre ->
+            GenreChip(
+                genre = genre,
+                isSelected = selectedGenres[index],
+                onClick = { onAction(GenresAction.SelectGenre(genre)) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun GenreChip(
+    genre: Genre,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    val randomGradient = remember {
+        Brush.linearGradient(getHarmoniousColors())
+    }
+    Box(
+        modifier = Modifier
+            .clip(CircleShape)
+            .clickable { onClick() }
+            .then(
+                if (isSelected) Modifier.background(randomGradient)
+                else Modifier.background(DarkGrey)
+            )
+            .padding(8.dp)
+            .padding(horizontal = 8.dp),
+        contentAlignment = Alignment.Center
+    ) {
         Text(
-            text = "Choose 2 or more of your favourite genres",
+            text = genre.name,
             fontFamily = fontFamily,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold,
             color = Color.White,
             textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.height(64.dp))
-
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            for (i in genres.indices) {
-                val randomGradient = remember {
-                    Brush.linearGradient(
-                        getHarmoniousColors()
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .clip(
-                            shape = CircleShape
-                        )
-                        .clickable {
-                            onAction(GenresAction.SelectGenre(genres[i]))
-                        }
-                        .then(
-                            if (selectedGenres[i]) Modifier.background(randomGradient)
-                            else Modifier.background(DarkGrey)
-                        )
-                        .padding(8.dp)
-                        .padding(horizontal = 8.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = genres[i].name,
-                        fontFamily = fontFamily,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.White,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(64.dp))
-
-        Text(
-            text = if (isSelectedGenresNumberValid) "All good Press \"continue\""
-            else "Please select at least 2 genres",
-            fontFamily = fontFamily,
-            fontSize = 10.sp,
-            fontWeight = FontWeight.Normal,
-            color = LightGrey
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(
-            onClick = {
-                /*TODO*/
-            },
-            shape = CircleShape,
-            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                containerColor = Red
-            )
-        ) {
-            Text(
-                text = "Continue",
-                fontFamily = fontFamily,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.White
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
     }
+}
 
+@Composable
+private fun GenresValidationMessage(isValid: Boolean) {
+    Text(
+        text = if (isValid) "All good Press \"continue\"" else "Please select at least 2 genres",
+        fontFamily = fontFamily,
+        fontSize = 10.sp,
+        fontWeight = FontWeight.Normal,
+        color = LightGrey
+    )
+}
 
+@Composable
+private fun ContinueButton(onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        shape = CircleShape,
+        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+            containerColor = Red
+        )
+    ) {
+        Text(
+            text = "Continue",
+            fontFamily = fontFamily,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = Color.White
+        )
+    }
 }
 
 private fun getHarmoniousColors(): List<Color> {
     val baseHue = Random.nextFloat() * 360f
     return listOf(
-        Color.hsl(baseHue, 0.8f, 0.5f), // Light color
-        Color.hsl((baseHue + 30f) % 360f, 0.6f, 0.4f), // The second color with a shifted hue
-        Color.hsl((baseHue + 60f) % 360f, 0.7f, 0.6f)  // Third color
+        Color.hsl(baseHue, 0.8f, 0.5f),
+        Color.hsl((baseHue + 30f) % 360f, 0.6f, 0.4f),
+        Color.hsl((baseHue + 60f) % 360f, 0.7f, 0.6f)
     )
 }
 
@@ -171,7 +208,8 @@ private fun GenresScreenPreview() {
             genres = dummyGenres,
             selectedGenres = selectedGenres,
             isSelectedGenresNumberValid = false,
-            onAction = {}
+            onAction = {},
+            onContinueClick = {}
         )
     }
 }
