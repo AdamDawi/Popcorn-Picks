@@ -8,6 +8,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -27,8 +28,12 @@ fun PopcornPicksTheme(
     content: @Composable () -> Unit
 ) {
     val view = LocalView.current
-    val window = ((view.context) as Activity).window
-    window.statusBarColor = Color.Black.toArgb()
+    if(!view.isInEditMode) {
+        SideEffect {
+            val window = ((view.context) as Activity).window
+            window.statusBarColor = Color.Black.toArgb()
+        }
+    }
 
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
