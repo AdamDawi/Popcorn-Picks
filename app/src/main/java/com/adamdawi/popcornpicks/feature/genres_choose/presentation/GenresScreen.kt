@@ -23,12 +23,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adamdawi.popcornpicks.core.dummy.dummyGenres
 import com.adamdawi.popcornpicks.core.dummy.selectedGenres
 import com.adamdawi.popcornpicks.core.theme.LightGrey
 import com.adamdawi.popcornpicks.core.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.theme.Red
 import com.adamdawi.popcornpicks.core.theme.fontFamily
+import com.adamdawi.popcornpicks.core.ui.ErrorScreen
+import com.adamdawi.popcornpicks.core.ui.LoadingScreen
 import com.adamdawi.popcornpicks.feature.genres_choose.domain.Genre
 import com.adamdawi.popcornpicks.feature.genres_choose.presentation.components.GenreChip
 import org.koin.androidx.compose.koinViewModel
@@ -38,18 +41,24 @@ fun GenresScreen(
     onContinueClick: () -> Unit,
     viewModel: GenresViewModel = koinViewModel<GenresViewModel>()
 ) {
-    GenresContent(
-        onAction = { action ->
-            when (action) {
-                is GenresAction.OnContinueClick -> onContinueClick
-                else -> viewModel.onAction(action)
-            }
-        },
-        genres = dummyGenres,
-        selectedGenres = selectedGenres,
-        isSelectedGenresNumberValid = false,
-        onContinueClick = onContinueClick
-    )
+    val state = viewModel.state.collectAsStateWithLifecycle()
+    when {
+        state.value.isLoading -> LoadingScreen()
+        state.value.error != null -> ErrorScreen(message = state.value.error)
+//        state.value.genres.isEmpty() -> Unit
+        else -> GenresContent(
+            onAction = { action ->
+                when (action) {
+                    is GenresAction.OnContinueClick -> onContinueClick
+                    else -> viewModel.onAction(action)
+                }
+            },
+            genres = dummyGenres,
+            selectedGenres = selectedGenres,
+            isSelectedGenresNumberValid = false,
+            onContinueClick = onContinueClick
+        )
+    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -122,8 +131,6 @@ private fun GenresFlowRow(
         }
     }
 }
-
-
 
 @Composable
 private fun GenresValidationMessage(isValid: Boolean) {
