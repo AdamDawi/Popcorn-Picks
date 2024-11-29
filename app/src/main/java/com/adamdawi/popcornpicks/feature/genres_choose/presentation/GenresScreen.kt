@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -24,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.adamdawi.popcornpicks.core.dummy.dummyGenres
+import com.adamdawi.popcornpicks.core.dummy.dummyGenresList
 import com.adamdawi.popcornpicks.core.dummy.selectedGenres
 import com.adamdawi.popcornpicks.core.theme.LightGrey
 import com.adamdawi.popcornpicks.core.theme.PopcornPicksTheme
@@ -53,7 +54,7 @@ fun GenresScreen(
                     else -> viewModel.onAction(action)
                 }
             },
-            genres = dummyGenres,
+            genres = dummyGenresList,
             selectedGenres = selectedGenres,
             isSelectedGenresNumberValid = false,
             onContinueClick = onContinueClick
@@ -137,7 +138,7 @@ private fun GenresValidationMessage(isValid: Boolean) {
     Text(
         text = if (isValid) "All good Press \"continue\"" else "Please select at least 2 genres",
         fontFamily = fontFamily,
-        fontSize = 10.sp,
+        fontSize = 12.sp,
         fontWeight = FontWeight.Normal,
         color = LightGrey
     )
@@ -146,6 +147,9 @@ private fun GenresValidationMessage(isValid: Boolean) {
 @Composable
 private fun ContinueButton(onClick: () -> Unit) {
     Button(
+        modifier = Modifier
+            .height(50.dp)
+            .fillMaxWidth(0.7f),
         onClick = onClick,
         shape = CircleShape,
         colors = androidx.compose.material3.ButtonDefaults.buttonColors(
@@ -155,7 +159,7 @@ private fun ContinueButton(onClick: () -> Unit) {
         Text(
             text = "Continue",
             fontFamily = fontFamily,
-            fontSize = 16.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             color = Color.White
         )
@@ -167,7 +171,7 @@ private fun ContinueButton(onClick: () -> Unit) {
 private fun GenresScreenPreview() {
     PopcornPicksTheme {
         GenresContent(
-            genres = dummyGenres,
+            genres = dummyGenresList,
             selectedGenres = selectedGenres,
             isSelectedGenresNumberValid = false,
             onAction = {},

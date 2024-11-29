@@ -1,8 +1,9 @@
 package com.adamdawi.popcornpicks.core.dummy
 
 import com.adamdawi.popcornpicks.feature.genres_choose.domain.Genre
+import com.adamdawi.popcornpicks.feature.movie_choose.domain.Movie
 
-val dummyGenres = listOf(
+val dummyGenresList = listOf(
     Genre(id = 28, name = "Action"),
     Genre(id = 12, name = "Adventure"),
     Genre(id = 16, name = "Animation"),
@@ -24,4 +25,14 @@ val dummyGenres = listOf(
     Genre(id = 37, name = "Western")
 )
 
-val selectedGenres: List<Boolean> = List(dummyGenres.size) { it == 1 || it == 3 || it == 8 }
+val selectedGenres: List<Boolean> = List(dummyGenresList.size) { it == 1 || it == 3 || it == 8 }
+
+val dummyMovie = Movie(
+    title = "Spiderman",
+    poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+    releaseDate = "2020-04-02"
+)
+
+val dummyMovieList = List(20) { dummyMovie }
+
+val selectedMovies: List<Boolean> = List(dummyMovieList.size) { it == 1 || it == 3 || it == 6 }
