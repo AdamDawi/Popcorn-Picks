@@ -46,18 +46,17 @@ fun GenresScreen(
     when {
         state.value.isLoading -> LoadingScreen()
         state.value.error != null -> ErrorScreen(message = state.value.error)
-//        state.value.genres.isEmpty() -> Unit
+//        state.value.genres.isEmpty() -> ErrorScreen(message = state.value.error)
         else -> GenresContent(
             onAction = { action ->
                 when (action) {
-                    is GenresAction.OnContinueClick -> onContinueClick
+                    is GenresAction.OnContinueClick -> onContinueClick()
                     else -> viewModel.onAction(action)
                 }
             },
             genres = dummyGenresList,
             selectedGenres = selectedGenres,
-            isSelectedGenresNumberValid = false,
-            onContinueClick = onContinueClick
+            isSelectedGenresNumberValid = false
         )
     }
 }
@@ -65,15 +64,13 @@ fun GenresScreen(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun GenresContent(
-    modifier: Modifier = Modifier,
     onAction: (GenresAction) -> Unit,
     genres: List<Genre>,
     selectedGenres: List<Boolean>,
-    isSelectedGenresNumberValid: Boolean,
-    onContinueClick: () -> Unit
+    isSelectedGenresNumberValid: Boolean
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
             .padding(horizontal = 32.dp)
@@ -94,7 +91,9 @@ private fun GenresContent(
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        ContinueButton(onContinueClick)
+        ContinueButton {
+            onAction(GenresAction.OnContinueClick)
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
     }
@@ -145,7 +144,9 @@ private fun GenresValidationMessage(isValid: Boolean) {
 }
 
 @Composable
-private fun ContinueButton(onClick: () -> Unit) {
+private fun ContinueButton(
+    onClick: () -> Unit
+) {
     Button(
         modifier = Modifier
             .height(50.dp)
@@ -174,8 +175,7 @@ private fun GenresScreenPreview() {
             genres = dummyGenresList,
             selectedGenres = selectedGenres,
             isSelectedGenresNumberValid = false,
-            onAction = {},
-            onContinueClick = {}
+            onAction = {}
         )
     }
 }

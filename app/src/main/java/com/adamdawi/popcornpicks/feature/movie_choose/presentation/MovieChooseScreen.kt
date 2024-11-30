@@ -8,13 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells.Fixed
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,25 +28,46 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adamdawi.popcornpicks.core.dummy.dummyMovieList
 import com.adamdawi.popcornpicks.core.dummy.selectedMovies
 import com.adamdawi.popcornpicks.core.theme.PopcornPicksTheme
-import com.adamdawi.popcornpicks.core.theme.Red
 import com.adamdawi.popcornpicks.core.theme.fontFamily
+import com.adamdawi.popcornpicks.core.ui.ErrorScreen
+import com.adamdawi.popcornpicks.core.ui.LoadingScreen
 import com.adamdawi.popcornpicks.feature.movie_choose.domain.Movie
+import com.adamdawi.popcornpicks.feature.movie_choose.presentation.components.FinishFAB
 import com.adamdawi.popcornpicks.feature.movie_choose.presentation.components.MovieItem
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MovieChooseScreen() {
-    MovieChooseContent(
-        moviesList = dummyMovieList,
-        //TODO think about how to handle this selected state
-        selectedMovies = selectedMovies
-    )
+fun MovieChooseScreen(
+    onFinishClick: () -> Unit,
+    viewModel: MovieChooseViewModel = koinViewModel<MovieChooseViewModel>()
+) {
+    val state = viewModel.state.collectAsStateWithLifecycle()
+    when {
+        state.value.isLoading -> LoadingScreen()
+        state.value.error != null -> ErrorScreen(message = state.value.error)
+//        state.value.movies.isEmpty() -> ErrorScreen(message = state.value.error)
+        else ->
+            MovieChooseContent(
+                onAction = { action ->
+                    when (action) {
+                        is MovieChooseAction.OnFinishClick -> onFinishClick()
+                        else -> viewModel.onAction(action)
+                    }
+                },
+                moviesList = dummyMovieList,
+                selectedMovies = selectedMovies
+            )
+    }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieChooseContent(
+    onAction: (MovieChooseAction) -> Unit,
     moviesList: List<Movie>,
     selectedMovies: List<Boolean>
 ) {
@@ -58,6 +77,7 @@ fun MovieChooseContent(
     // Detect if the user is scrolling up or down
     val lastFirstVisibleItemIndex = remember { mutableIntStateOf(0) }
     val firstVisibleItemIndex = remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }
+
     LaunchedEffect(firstVisibleItemIndex.value) {
         val currentFirstVisibleItemIndex = lazyListState.firstVisibleItemIndex
         if (currentFirstVisibleItemIndex < lastFirstVisibleItemIndex.intValue) {
@@ -70,27 +90,10 @@ fun MovieChooseContent(
 
     Scaffold(
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                expanded = showContinueText.value,
-                onClick = {
-
-                },
-                containerColor = Red,
-                text = {
-                    Text(
-                        text = "Finish",
-                        color = Color.White,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                },
-                icon = {
-                    Icon(
-                        Icons.AutoMirrored.Default.ArrowForward,
-                        contentDescription = "Finish",
-                        tint = Color.White
-                    )
+            FinishFAB(
+                showText = showContinueText.value,
+                onFinishClick = {
+                    onAction(MovieChooseAction.OnFinishClick)
                 }
             )
         },
@@ -108,20 +111,14 @@ fun MovieChooseContent(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                LazyVerticalGrid(
-                    state = lazyListState,
-                    columns = Fixed(2),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    itemsIndexed(moviesList){ index, movie ->
-                        MovieItem(
-                            movie = movie,
-                            isSelected = selectedMovies[index],
-                            onClick = {}
-                        )
-                    }
-                }
+                MovieGrid(
+                    moviesList = moviesList,
+                    selectedMovies = selectedMovies,
+                    onMovieClick = { movie ->
+                        onAction(MovieChooseAction.SelectMovie(movie))
+                    },
+                    lazyListState = lazyListState
+                )
             }
         }
     )
@@ -139,13 +136,38 @@ private fun MovieChooseTitle() {
     )
 }
 
+@Composable
+private fun MovieGrid(
+    moviesList: List<Movie>,
+    selectedMovies: List<Boolean>,
+    onMovieClick: (Movie) -> Unit,
+    lazyListState: LazyGridState
+) {
+    LazyVerticalGrid(
+        state = lazyListState,
+        columns = Fixed(2),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        itemsIndexed(moviesList) { index, movie ->
+            val isSelected = if (index < selectedMovies.size) selectedMovies[index] else false
+            MovieItem(
+                movie = movie,
+                isSelected = isSelected,
+                onClick = { onMovieClick(movie) }
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun MovieChooseScreenPreview() {
     PopcornPicksTheme {
         MovieChooseContent(
             moviesList = dummyMovieList,
-            selectedMovies = selectedMovies
+            selectedMovies = selectedMovies,
+            onAction = {}
         )
     }
 }

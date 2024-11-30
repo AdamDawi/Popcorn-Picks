@@ -27,8 +27,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.adamdawi.popcornpicks.core.theme.Blue
+import com.adamdawi.popcornpicks.core.theme.DarkGrey
 import com.adamdawi.popcornpicks.core.theme.LightGrey
-import com.adamdawi.popcornpicks.core.theme.Red
 import com.adamdawi.popcornpicks.core.theme.fontFamily
 import com.adamdawi.popcornpicks.core.utils.Constants.Network.BASE_URL_IMAGE
 import com.adamdawi.popcornpicks.feature.movie_choose.domain.Movie
@@ -47,11 +48,11 @@ fun MovieItem(
                 model = BASE_URL_IMAGE + movie.poster,
                 contentDescription = movie.title,
                 modifier = modifier
-                    .background(shimmerBrush(showShimmer = true), shape = RoundedCornerShape(12.dp))
+                    .background(shimmerBrush(showShimmer = showShimmer.value), shape = RoundedCornerShape(12.dp))
                     .height(220.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .then(
-                        if (!showShimmer.value) Modifier.border(1.dp, Gray, RoundedCornerShape(12.dp))
+                        if (!showShimmer.value) Modifier.border(1.dp, DarkGrey, RoundedCornerShape(12.dp))
                         else Modifier
                     )
                     .clickable {
@@ -63,7 +64,6 @@ fun MovieItem(
         } else {
             CardWithAnimatedBorder(
                 modifier = modifier
-                    .background(shimmerBrush(showShimmer = true), shape = RoundedCornerShape(12.dp))
                     .clip(RoundedCornerShape(12.dp)),
                 onCardClick = onClick
             ) {
@@ -92,7 +92,7 @@ fun MovieItem(
             fontFamily = fontFamily,
             fontSize = 10.sp,
             fontWeight = FontWeight.SemiBold,
-            color = Red,
+            color = Blue,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -100,7 +100,7 @@ fun MovieItem(
 }
 
 @Composable
-fun shimmerBrush(showShimmer: Boolean = true, targetValue: Float = 1300f): Brush {
+private fun shimmerBrush(showShimmer: Boolean = true, targetValue: Float = 1300f): Brush {
     return if (showShimmer) {
         val shimmerColors = listOf(
             Gray.copy(alpha = 0.3f),

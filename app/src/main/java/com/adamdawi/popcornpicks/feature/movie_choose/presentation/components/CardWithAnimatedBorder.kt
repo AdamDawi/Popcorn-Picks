@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithContent
@@ -21,17 +20,23 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.unit.dp
-import kotlin.random.Random
+import com.adamdawi.popcornpicks.core.theme.DarkRed
+import com.adamdawi.popcornpicks.core.theme.Red
 
 @Composable
 fun CardWithAnimatedBorder(
     modifier: Modifier = Modifier,
     onCardClick: () -> Unit = {},
+    borderColors: List<Color> = listOf(
+        Color.Black,
+        DarkRed,
+        Red,
+        DarkRed,
+        Color.Black
+    ),
+    animationDurationMillis: Int = 7000,
     content: @Composable () -> Unit
 ) {
-    val borderColors = remember {
-        getHarmoniousColors()
-    }
     val infiniteTransition = rememberInfiniteTransition()
     val angle =
         infiniteTransition.animateFloat(
@@ -39,7 +44,7 @@ fun CardWithAnimatedBorder(
             targetValue = 360f,
             animationSpec =
             infiniteRepeatable(
-                animation = tween(3000, easing = LinearEasing),
+                animation = tween(animationDurationMillis, easing = LinearEasing),
                 repeatMode = RepeatMode.Restart
             )
         )
@@ -71,16 +76,4 @@ fun CardWithAnimatedBorder(
             content()
         }
     }
-}
-
-
-private fun getHarmoniousColors(): List<Color> {
-    val baseHue = Random.nextFloat() * 360f
-    return listOf(
-        Color.hsl(baseHue, 0.8f, 0.5f),
-        Color.hsl((baseHue + 30f) % 360f, 0.6f, 0.4f),
-        Color.hsl((baseHue + 60f) % 360f, 0.7f, 0.6f),
-        Color.hsl((baseHue + 30f) % 360f, 0.6f, 0.4f),
-        Color.hsl(baseHue, 0.8f, 0.5f),
-    )
 }

@@ -5,6 +5,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.adamdawi.popcornpicks.feature.genres_choose.presentation.GenresScreen
 import com.adamdawi.popcornpicks.feature.movie_choose.presentation.MovieChooseScreen
+import com.adamdawi.popcornpicks.feature.recommendations.presentation.RecommendationsScreen
 
 @Composable
 fun Navigation() {
@@ -21,7 +22,14 @@ fun Navigation() {
             )
         }
         composable(Screen.MovieChoose.route) {
-            MovieChooseScreen()
+            MovieChooseScreen(
+                onFinishClick = {
+                    navController.navigate(Screen.Recommendations.route)
+                }
+            )
+        }
+        composable(Screen.Recommendations.route) {
+            RecommendationsScreen()
         }
     }
 }
