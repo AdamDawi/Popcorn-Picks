@@ -1,117 +1,132 @@
 package com.adamdawi.popcornpicks.feature.recommendations.presentation.components
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.ClipOp
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.adamdawi.popcornpicks.R
+import kotlin.math.pow
+import kotlin.math.sqrt
+
 
 @Composable
 fun ImageScratch(
     modifier: Modifier = Modifier,
     overlayImage: ImageBitmap,
-    baseImage: ImageBitmap,
-    isIntersect: Boolean = true,
-    startPadding: Dp = 16.dp,
-    endPadding: Dp = 16.dp,
+    baseImage: Painter,
+    scratchingThreshold : Float = 0.8f
 ) {
-    val currentPathState = remember { mutableStateOf(Path()) }
-    val movedOffsetState = remember { mutableStateOf<Offset?>(null) }
-    val revealedPercentage = remember { mutableStateOf(0f) }
-    val isFullyRevealed = remember { mutableStateOf(false) }
-
+    val lines = remember {
+        mutableStateListOf<Line>()
+    }
+    val density = LocalDensity.current
+    val totalScratchedArea = remember {
+        mutableFloatStateOf(0f)
+    }
     Box(
-        modifier = modifier
-            .padding(start = startPadding, end = endPadding),
-    ) {
-        var clipOp = ClipOp.Intersect
-        Canvas(
+        modifier
+            .fillMaxSize()
+    ){
+        Image(
+            painter = baseImage,
+            contentDescription = "Overlay",
             modifier = Modifier
-                .align(alignment = Alignment.Center)
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .clip(RoundedCornerShape(size = 6.dp))
-                .pointerInput(Unit) {
-                    detectDragGestures { change, _ ->
-                        movedOffsetState.value = change.position
-                    }
+                .fillMaxSize()
+        )
+        Box(
+            modifier = Modifier
+                .graphicsLayer {
+                    compositingStrategy = CompositingStrategy.Offscreen
                 },
         ) {
-            val imageSize = IntSize(width = size.width.toInt(), height = size.height.toInt())
+            Canvas(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(true) {
+                        detectDragGestures { change, dragAmount ->
+                            change.consume()
 
-            // Draw the overlay image
-            drawImage(overlayImage, dstSize = imageSize)
+                            val line = Line(
+                                start = change.position - dragAmount,
+                                end = change.position
+                            )
 
-            // Update the path when user drags
-            movedOffsetState.value?.let {
-                currentPathState.value.addOval(Rect(it, 50f))
-            }
+                            lines.add(line)
+                            totalScratchedArea.floatValue = calculateTotalArea(lines.toList(), density)
+                        }
+                    }
+            ) {
+                val imageSize = IntSize(width = size.width.toInt(), height = size.height.toInt())
+                val maxCanvasArea = this.size.width.toFloat() * this.size.height.toFloat()
 
-            // Check if clipping mode should be switched
-            if (!isIntersect) {
-                clipOp = ClipOp.Difference
-            }
-
-            // Calculate revealed percentage
-            val revealedArea = currentPathState.value.getBounds().area()
-            val totalArea = imageSize.width * imageSize.height.toFloat()
-            revealedPercentage.value = (revealedArea / totalArea) * 100
-
-            if (revealedPercentage.value >= 80f) {
-                isFullyRevealed.value = true
-            }
-
-            // Reveal the base image
-            if (isFullyRevealed.value) {
-                drawImage(
-                    image = baseImage,
-                    dstSize = imageSize
-                )
-            } else {
-                clipPath(path = currentPathState.value, clipOp = clipOp) {
-                    drawImage(baseImage, dstSize = imageSize)
+                //if total scratched area is less than scratching threshold then show overlay image
+                if(totalScratchedArea.floatValue/maxCanvasArea < scratchingThreshold) {
+                    drawImage(overlayImage, dstSize = imageSize)
+                }
+                lines.forEach { line ->
+                    drawLine(
+                        color = line.color,
+                        start = line.start,
+                        end = line.end,
+                        strokeWidth = line.strokeWidth.toPx(),
+                        cap = StrokeCap.Round,
+                        blendMode = BlendMode.Clear
+                    )
                 }
             }
         }
     }
 }
 
-private fun Rect.area(): Float {
-    return width * height
-}
-
-
-private data class DraggedPath(
-    val path: Path,
-    val width: Float = 18f
+data class Line(
+    val start: Offset,
+    val end: Offset,
+    val color: Color = Color.Transparent,
+    val strokeWidth: Dp = 40.dp
 )
 
+fun calculateTotalArea(lines: List<Line>, density: Density): Float {
+    var sum = 0f
+    lines.forEach { line ->
+        val length = distance(line.start, line.end)
+        val lineWidth = with(density) { line.strokeWidth.toPx() }
+        sum += length * lineWidth
+    }
+    return sum
+}
+
+fun distance(start: Offset, end: Offset): Float {
+    return sqrt((end.x - start.x).pow(2) + (end.y - start.y).pow(2))
+}
+
 @Composable
-@Preview()
+@Preview
 fun ImageScratchPreview() {
     ImageScratch(
         overlayImage = ImageBitmap.imageResource(R.drawable.overlay),
-        baseImage = ImageBitmap.imageResource(R.drawable.poster)
+        baseImage = painterResource(R.drawable.poster)
     )
 }

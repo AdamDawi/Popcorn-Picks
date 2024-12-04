@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.adamdawi.popcornpicks.R
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.components.ImageScratch
@@ -32,7 +33,7 @@ fun RecommendationsScreen() {
                 .fillMaxWidth(0.9f)
                 .height(500.dp),
             overlayImage = ImageBitmap.imageResource(R.drawable.popcorn_overlay3),
-            baseImage = ImageBitmap.imageResource(R.drawable.poster)
+            baseImage = painterResource(R.drawable.poster)
         )
     }
 }
