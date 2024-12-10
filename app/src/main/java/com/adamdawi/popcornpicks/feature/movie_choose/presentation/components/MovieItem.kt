@@ -1,10 +1,5 @@
 package com.adamdawi.popcornpicks.feature.movie_choose.presentation.components
 
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,10 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,7 +22,8 @@ import com.adamdawi.popcornpicks.core.theme.Blue
 import com.adamdawi.popcornpicks.core.theme.DarkGrey
 import com.adamdawi.popcornpicks.core.theme.LightGrey
 import com.adamdawi.popcornpicks.core.theme.fontFamily
-import com.adamdawi.popcornpicks.core.utils.Constants.Network.BASE_URL_IMAGE
+import com.adamdawi.popcornpicks.core.ui.shimmerBrush
+import com.adamdawi.popcornpicks.core.utils.Constants.Network.BASE_IMAGE_URL
 import com.adamdawi.popcornpicks.feature.movie_choose.domain.Movie
 
 @Composable
@@ -45,7 +37,7 @@ fun MovieItem(
     Column {
         if (!isSelected || showShimmer.value) {
             AsyncImage(
-                model = BASE_URL_IMAGE + movie.poster,
+                model = BASE_IMAGE_URL + movie.poster,
                 contentDescription = movie.title,
                 modifier = modifier
                     .background(shimmerBrush(showShimmer = showShimmer.value), shape = RoundedCornerShape(12.dp))
@@ -68,7 +60,7 @@ fun MovieItem(
                 onCardClick = onClick
             ) {
                 AsyncImage(
-                    model = BASE_URL_IMAGE + movie.poster,
+                    model = BASE_IMAGE_URL + movie.poster,
                     contentDescription = movie.title,
                     modifier = modifier
                         .height(220.dp)
@@ -95,39 +87,6 @@ fun MovieItem(
             color = Blue,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
-        )
-    }
-}
-
-@Composable
-private fun shimmerBrush(showShimmer: Boolean = true, targetValue: Float = 1300f): Brush {
-    return if (showShimmer) {
-        val shimmerColors = listOf(
-            Gray.copy(alpha = 0.3f),
-            Gray.copy(alpha = 0.1f),
-            Gray.copy(alpha = 0.3f)
-        )
-
-        val transition = rememberInfiniteTransition()
-        val translateAnimation = transition.animateFloat(
-            initialValue = 0f,
-            targetValue = targetValue,
-            animationSpec = infiniteRepeatable(
-                animation = tween(800),
-                repeatMode = RepeatMode.Reverse
-            )
-        )
-
-        Brush.linearGradient(
-            colors = shimmerColors,
-            start = Offset.Zero,
-            end = Offset(x = translateAnimation.value, y = translateAnimation.value)
-        )
-    } else {
-        Brush.linearGradient(
-            colors = listOf(Color.Transparent, Color.Transparent),
-            start = Offset.Zero,
-            end = Offset.Zero
         )
     }
 }
