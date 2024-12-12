@@ -2,6 +2,7 @@ package com.adamdawi.popcornpicks.core.dummy
 
 import com.adamdawi.popcornpicks.feature.genres_choose.domain.Genre
 import com.adamdawi.popcornpicks.feature.movie_choose.domain.Movie
+import com.adamdawi.popcornpicks.feature.recommendations.domain.RecommendedMovie
 
 val dummyGenresList = listOf(
     Genre(id = 28, name = "Action"),
@@ -28,9 +29,19 @@ val dummyGenresList = listOf(
 val selectedGenres: List<Boolean> = List(dummyGenresList.size) { it == 1 || it == 3 || it == 8 }
 
 val dummyMovie = Movie(
+    id = 1,
     title = "Spiderman",
     poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
     releaseDate = "2020-04-02"
+)
+val dummyRecommendedMovie = RecommendedMovie(
+    id = 1,
+    title = "Spiderman",
+    poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+    releaseDate = "2020-04-02",
+    voteAverage = 7.6,
+    popularity = 16.7777,
+    genres = dummyGenresList
 )
 
 val dummyMovieList = List(20) { dummyMovie }

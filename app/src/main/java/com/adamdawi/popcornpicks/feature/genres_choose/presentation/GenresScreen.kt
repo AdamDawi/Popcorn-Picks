@@ -54,8 +54,7 @@ fun GenresScreen(
                     else -> viewModel.onAction(action)
                 }
             },
-            genres = dummyGenresList,
-            selectedGenres = selectedGenres,
+            state = state.value,
             isSelectedGenresNumberValid = false
         )
     }
@@ -64,9 +63,8 @@ fun GenresScreen(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun GenresContent(
+    state: GenresState,
     onAction: (GenresAction) -> Unit,
-    genres: List<Genre>,
-    selectedGenres: List<Boolean>,
     isSelectedGenresNumberValid: Boolean
 ) {
     Column(
@@ -83,7 +81,7 @@ private fun GenresContent(
 
         Spacer(modifier = Modifier.height(64.dp))
 
-        GenresFlowRow(genres, selectedGenres, onAction)
+        GenresFlowRow(state.genres, selectedGenres, onAction)
 
         Spacer(modifier = Modifier.height(64.dp))
 
@@ -172,8 +170,10 @@ private fun ContinueButton(
 private fun GenresScreenPreview() {
     PopcornPicksTheme {
         GenresContent(
-            genres = dummyGenresList,
-            selectedGenres = selectedGenres,
+            state = GenresState(
+                genres = dummyGenresList,
+                selectedGenres = selectedGenres
+            ),
             isSelectedGenresNumberValid = false,
             onAction = {}
         )

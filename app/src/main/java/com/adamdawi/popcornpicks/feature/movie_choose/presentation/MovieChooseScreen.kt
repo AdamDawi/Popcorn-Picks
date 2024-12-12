@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.adamdawi.popcornpicks.core.dummy.dummyMovieList
+import com.adamdawi.popcornpicks.core.dummy.dummyMovie
 import com.adamdawi.popcornpicks.core.dummy.selectedMovies
 import com.adamdawi.popcornpicks.core.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.theme.fontFamily
@@ -58,8 +58,7 @@ fun MovieChooseScreen(
                         else -> viewModel.onAction(action)
                     }
                 },
-                moviesList = dummyMovieList,
-                selectedMovies = selectedMovies
+                state = state.value
             )
     }
 }
@@ -68,8 +67,7 @@ fun MovieChooseScreen(
 @Composable
 fun MovieChooseContent(
     onAction: (MovieChooseAction) -> Unit,
-    moviesList: List<Movie>,
-    selectedMovies: List<Boolean>
+    state: MovieChooseState
 ) {
     val lazyListState = rememberLazyGridState()
     var showContinueText = remember { mutableStateOf(true) }
@@ -112,7 +110,7 @@ fun MovieChooseContent(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 MovieGrid(
-                    moviesList = moviesList,
+                    moviesList = state.movies,
                     selectedMovies = selectedMovies,
                     onMovieClick = { movie ->
                         onAction(MovieChooseAction.SelectMovie(movie))
@@ -165,8 +163,10 @@ private fun MovieGrid(
 private fun MovieChooseScreenPreview() {
     PopcornPicksTheme {
         MovieChooseContent(
-            moviesList = dummyMovieList,
-            selectedMovies = selectedMovies,
+            state = MovieChooseState(
+                movies = buildList { repeat(10) { add(dummyMovie) } },
+                selectedMovies = selectedMovies
+            ),
             onAction = {}
         )
     }
