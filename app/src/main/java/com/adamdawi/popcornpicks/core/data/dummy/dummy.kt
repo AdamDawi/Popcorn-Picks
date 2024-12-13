@@ -26,7 +26,11 @@ val dummyGenresList = listOf(
     Genre(id = 37, name = "Western")
 )
 
-val selectedGenres: List<Boolean> = List(dummyGenresList.size) { it == 1 || it == 3 || it == 8 }
+val selectedGenres: List<Genre> = listOf(
+    Genre(id = 36, name = "History"),
+    Genre(id = 27, name = "Horror"),
+    Genre(id = 10402, name = "Music")
+)
 
 val dummyMovie = Movie(
     id = 1,

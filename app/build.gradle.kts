@@ -89,6 +89,9 @@ dependencies {
     testImplementation(libs.androidx.core)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.hamcrest)
     //ui tests
     androidTestImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.ui.test.junit4)
+    debugImplementation(libs.ui.test.manifest)
 }

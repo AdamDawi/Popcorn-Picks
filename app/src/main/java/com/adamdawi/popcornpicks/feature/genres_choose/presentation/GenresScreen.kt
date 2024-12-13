@@ -77,11 +77,11 @@ private fun GenresContent(
 
         Spacer(modifier = Modifier.height(64.dp))
 
-        GenresFlowRow(state.genres, selectedGenres, onAction)
+        GenresFlowRow(state.genres, state.selectedGenres, onAction)
 
         Spacer(modifier = Modifier.height(64.dp))
 
-        GenresValidationMessage(state.selectedGenres.count { it } >= 2)
+        GenresValidationMessage(state.continueButtonEnabled)
 
         Spacer(modifier = Modifier.height(4.dp))
 
@@ -89,7 +89,7 @@ private fun GenresContent(
             modifier = Modifier
                 .height(50.dp)
                 .fillMaxWidth(0.7f),
-            enabled = state.selectedGenres.size >= 2,
+            enabled = state.continueButtonEnabled,
             onClick = { onAction(GenresAction.OnContinueClick) }
         )
 
@@ -113,7 +113,7 @@ private fun GenresTitle() {
 @Composable
 private fun GenresFlowRow(
     genres: List<Genre>,
-    selectedGenres: List<Boolean>,
+    selectedGenres: List<Genre>,
     onAction: (GenresAction) -> Unit
 ) {
     FlowRow(
@@ -123,8 +123,8 @@ private fun GenresFlowRow(
         genres.forEachIndexed { index, genre ->
             GenreChip(
                 genre = genre,
-                isSelected = selectedGenres[index],
-                onClick = { onAction(GenresAction.SelectGenre(genre)) }
+                isSelected = selectedGenres.contains(genre),
+                onClick = { onAction(GenresAction.ToggleGenreSelection(genre)) }
             )
         }
     }
