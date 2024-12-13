@@ -8,5 +8,5 @@ data class GenresState(
     val genres: List<Genre> = dummyGenresList,
     val isLoading: Boolean = false,
     val error: String? = null,
-    val selectedGenres: List<Boolean> = emptyList()
+    val selectedGenres: List<Boolean> = com.adamdawi.popcornpicks.core.dummy.selectedGenres
 )

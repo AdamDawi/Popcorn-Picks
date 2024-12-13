@@ -28,7 +28,8 @@ fun CircleIconButton(
     icon: Painter,
     onClick: () -> Unit,
     color: Color,
-    enabled: Boolean
+    enabled: Boolean,
+    contentDescription: String
 ) {
     Box(
         modifier = modifier
@@ -46,7 +47,7 @@ fun CircleIconButton(
             modifier = Modifier
                 .fillMaxSize(0.45f),
             painter = icon,
-            contentDescription = "Circle Icon Button",
+            contentDescription = contentDescription,
             tint = if (enabled) color else Grey
         )
     }
@@ -60,7 +61,8 @@ private fun CircleIconButtonEnabledPreview() {
             icon = painterResource(R.drawable.heart_ic),
             onClick = {},
             color = Color.Red,
-            enabled = true
+            enabled = true,
+            contentDescription = "Heart"
         )
     }
 }
@@ -73,7 +75,8 @@ private fun CircleIconButtonDisabledPreview() {
             icon = painterResource(R.drawable.heart_ic),
             onClick = {},
             color = Color.Red,
-            enabled = false
+            enabled = false,
+            contentDescription = "Heart"
         )
     }
 }

@@ -11,9 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,11 +27,11 @@ import com.adamdawi.popcornpicks.core.dummy.dummyGenresList
 import com.adamdawi.popcornpicks.core.dummy.selectedGenres
 import com.adamdawi.popcornpicks.core.theme.LightGrey
 import com.adamdawi.popcornpicks.core.theme.PopcornPicksTheme
-import com.adamdawi.popcornpicks.core.theme.Red
 import com.adamdawi.popcornpicks.core.theme.fontFamily
 import com.adamdawi.popcornpicks.core.ui.ErrorScreen
 import com.adamdawi.popcornpicks.core.ui.LoadingScreen
 import com.adamdawi.popcornpicks.feature.genres_choose.domain.Genre
+import com.adamdawi.popcornpicks.feature.genres_choose.presentation.components.ContinueButton
 import com.adamdawi.popcornpicks.feature.genres_choose.presentation.components.GenreChip
 import org.koin.androidx.compose.koinViewModel
 
@@ -54,8 +52,7 @@ fun GenresScreen(
                     else -> viewModel.onAction(action)
                 }
             },
-            state = state.value,
-            isSelectedGenresNumberValid = false
+            state = state.value
         )
     }
 }
@@ -64,8 +61,7 @@ fun GenresScreen(
 @Composable
 private fun GenresContent(
     state: GenresState,
-    onAction: (GenresAction) -> Unit,
-    isSelectedGenresNumberValid: Boolean
+    onAction: (GenresAction) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -85,13 +81,17 @@ private fun GenresContent(
 
         Spacer(modifier = Modifier.height(64.dp))
 
-        GenresValidationMessage(isSelectedGenresNumberValid)
+        GenresValidationMessage(state.selectedGenres.count { it } >= 2)
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        ContinueButton {
-            onAction(GenresAction.OnContinueClick)
-        }
+        ContinueButton(
+            modifier = Modifier
+                .height(50.dp)
+                .fillMaxWidth(0.7f),
+            enabled = state.selectedGenres.size >= 2,
+            onClick = { onAction(GenresAction.OnContinueClick) }
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
     }
@@ -133,36 +133,12 @@ private fun GenresFlowRow(
 @Composable
 private fun GenresValidationMessage(isValid: Boolean) {
     Text(
-        text = if (isValid) "All good Press \"continue\"" else "Please select at least 2 genres",
+        text = if (isValid) "All good Press \"Continue\"" else "Please select at least 2 genres",
         fontFamily = fontFamily,
         fontSize = 12.sp,
         fontWeight = FontWeight.Normal,
         color = LightGrey
     )
-}
-
-@Composable
-private fun ContinueButton(
-    onClick: () -> Unit
-) {
-    Button(
-        modifier = Modifier
-            .height(50.dp)
-            .fillMaxWidth(0.7f),
-        onClick = onClick,
-        shape = CircleShape,
-        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-            containerColor = Red
-        )
-    ) {
-        Text(
-            text = "Continue",
-            fontFamily = fontFamily,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color.White
-        )
-    }
 }
 
 @Preview
@@ -174,7 +150,6 @@ private fun GenresScreenPreview() {
                 genres = dummyGenresList,
                 selectedGenres = selectedGenres
             ),
-            isSelectedGenresNumberValid = false,
             onAction = {}
         )
     }

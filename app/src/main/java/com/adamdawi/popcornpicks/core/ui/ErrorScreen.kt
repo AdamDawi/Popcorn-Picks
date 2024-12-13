@@ -37,7 +37,7 @@ fun ErrorScreen(
         Icon(
             modifier = Modifier
                 .size(140.dp),
-            painter = painterResource(R.drawable.baseline_warning_24),
+            painter = painterResource(R.drawable.warning_triangle_ic),
             contentDescription = null,
             tint = Color.White
         )

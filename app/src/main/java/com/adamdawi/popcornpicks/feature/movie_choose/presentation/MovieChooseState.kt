@@ -8,5 +8,5 @@ data class MovieChooseState(
     val movies: List<Movie> = dummyMovieList,
     val isLoading: Boolean = false,
     val error: String? = null,
-    val selectedMovies: List<Boolean> = emptyList()
+    val selectedMovies: List<Boolean> = com.adamdawi.popcornpicks.core.dummy.selectedMovies
 )

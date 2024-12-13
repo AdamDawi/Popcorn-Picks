@@ -11,22 +11,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.imageResource
@@ -44,13 +35,17 @@ import com.adamdawi.popcornpicks.core.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.theme.Red
 import com.adamdawi.popcornpicks.core.utils.Constants.Network.BASE_IMAGE_URL
 import com.adamdawi.popcornpicks.feature.recommendations.domain.RecommendedMovie
+import com.adamdawi.popcornpicks.feature.recommendations.domain.formatMovieDetails
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.components.CircleIconButton
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.components.ImageScratch
+import com.adamdawi.popcornpicks.feature.recommendations.presentation.components.RecommendationsScreenTopAppBar
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun RecommendationsScreen(
-    viewModel: RecommendationsViewModel = koinViewModel<RecommendationsViewModel>()
+    viewModel: RecommendationsViewModel = koinViewModel<RecommendationsViewModel>(),
+    onNavigateToProfile: () -> Unit,
+    onNavigateToMovieDetails: () -> Unit
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
@@ -58,6 +53,8 @@ fun RecommendationsScreen(
         state = state.value,
         onAction = { action ->
             when (action) {
+                RecommendationsAction.OnMoreInfoClicked -> onNavigateToMovieDetails()
+                RecommendationsAction.OnProfileClicked -> onNavigateToProfile()
                 else -> viewModel.onAction(action)
             }
         }
@@ -73,30 +70,8 @@ fun RecommendationsContent(
     val animatedAlpha = animateFloatAsState(targetValue = if (state.isMovieScratched) 1f else 0f)
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-
-                },
-                actions = {
-                    IconButton(
-                        modifier = Modifier
-                            .size(54.dp)
-                            .clip(CircleShape),
-                        onClick = {
-
-                        }
-                    ){
-                        Icon(
-                            modifier = Modifier.size(28.dp),
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Profile Icon",
-                            tint = Color.White
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black
-                )
+            RecommendationsScreenTopAppBar(
+                onProfileClicked = { onAction(RecommendationsAction.OnProfileClicked) }
             )
         }
     ) { scaffoldPadding ->
@@ -126,17 +101,18 @@ fun RecommendationsContent(
             )
             Spacer(modifier = Modifier.height(16.dp))
             ButtonsRow(
-                areButtonsEnabled = state.isMovieScratched
+                areButtonsEnabled = state.isMovieScratched,
+                onAction = onAction
             )
         }
-
     }
 }
 
 @Composable
 fun ButtonsRow(
     modifier: Modifier = Modifier,
-    areButtonsEnabled: Boolean
+    areButtonsEnabled: Boolean,
+    onAction: (RecommendationsAction) -> Unit
 ) {
     Row(
         modifier = modifier
@@ -148,20 +124,29 @@ fun ButtonsRow(
         CircleIconButton(
             icon = painterResource(R.drawable.more_info_ic),
             color = Blue,
-            onClick = {},
-            enabled = areButtonsEnabled
+            onClick = {
+                onAction(RecommendationsAction.OnProfileClicked)
+            },
+            enabled = areButtonsEnabled,
+            contentDescription = "More info"
         )
         CircleIconButton(
-            icon = painterResource(R.drawable.heart_ic),
+            icon = painterResource(R.drawable.heart_outlined_ic),
             color = Red,
-            onClick = {},
-            enabled = areButtonsEnabled
+            onClick = {
+                onAction(RecommendationsAction.OnHeartClicked)
+            },
+            enabled = areButtonsEnabled,
+            contentDescription = "Heart"
         )
         CircleIconButton(
             icon = painterResource(R.drawable.retry_ic),
             color = Blue,
-            onClick = {},
-            enabled = areButtonsEnabled
+            onClick = {
+                onAction(RecommendationsAction.OnRetryClicked)
+            },
+            enabled = areButtonsEnabled,
+            contentDescription = "Retry"
         )
     }
 }
@@ -188,10 +173,7 @@ fun MovieDetails(
             overflow = TextOverflow.Ellipsis
         )
         Text(
-            text = movie.releaseDate.take(4) + " · " +
-                    movie.genres.getOrNull(0)?.name + "/" +
-                    movie.genres.getOrNull(1)?.name + " · " +
-                    movie.voteAverage + "/10",
+            text = movie.formatMovieDetails(),
             color = Grey,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis

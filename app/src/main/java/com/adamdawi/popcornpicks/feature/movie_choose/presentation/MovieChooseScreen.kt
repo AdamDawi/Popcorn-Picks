@@ -91,8 +91,10 @@ fun MovieChooseContent(
             FinishFAB(
                 showText = showContinueText.value,
                 onFinishClick = {
+                    if(state.selectedMovies.count { it } >= 2)
                     onAction(MovieChooseAction.OnFinishClick)
-                }
+                },
+                enabled = state.selectedMovies.count { it } >= 2
             )
         },
         content = { paddingValues ->
@@ -111,7 +113,7 @@ fun MovieChooseContent(
 
                 MovieGrid(
                     moviesList = state.movies,
-                    selectedMovies = selectedMovies,
+                    selectedMovies = state.selectedMovies,
                     onMovieClick = { movie ->
                         onAction(MovieChooseAction.SelectMovie(movie))
                     },
