@@ -20,8 +20,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.unit.dp
-import com.adamdawi.popcornpicks.core.theme.DarkRed
-import com.adamdawi.popcornpicks.core.theme.Red
+import com.adamdawi.popcornpicks.core.presentation.theme.DarkRed
+import com.adamdawi.popcornpicks.core.presentation.theme.Red
 
 @Composable
 fun CardWithAnimatedBorder(

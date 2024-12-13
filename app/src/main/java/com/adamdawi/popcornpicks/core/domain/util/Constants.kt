@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.core.utils
+package com.adamdawi.popcornpicks.core.domain.util
 
 object Constants {
     object Network{

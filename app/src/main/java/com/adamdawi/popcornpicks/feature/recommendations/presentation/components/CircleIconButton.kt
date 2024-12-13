@@ -18,9 +18,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.adamdawi.popcornpicks.R
-import com.adamdawi.popcornpicks.core.theme.DarkGrey
-import com.adamdawi.popcornpicks.core.theme.Grey
-import com.adamdawi.popcornpicks.core.theme.PopcornPicksTheme
+import com.adamdawi.popcornpicks.core.presentation.theme.DarkGrey
+import com.adamdawi.popcornpicks.core.presentation.theme.Grey
+import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 
 @Composable
 fun CircleIconButton(

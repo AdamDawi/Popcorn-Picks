@@ -9,9 +9,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import com.adamdawi.popcornpicks.core.theme.PopcornPicksTheme
-import com.adamdawi.popcornpicks.core.theme.Red
-import com.adamdawi.popcornpicks.core.theme.fontFamily
+import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
+import com.adamdawi.popcornpicks.core.presentation.theme.Red
+import com.adamdawi.popcornpicks.core.presentation.theme.fontFamily
 
 @Composable
 fun ContinueButton(

@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.core.ui
+package com.adamdawi.popcornpicks.core.presentation.ui
 
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat

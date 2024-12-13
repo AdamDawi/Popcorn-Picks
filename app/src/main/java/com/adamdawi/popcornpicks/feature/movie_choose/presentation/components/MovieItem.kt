@@ -18,12 +18,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.adamdawi.popcornpicks.core.theme.Blue
-import com.adamdawi.popcornpicks.core.theme.DarkGrey
-import com.adamdawi.popcornpicks.core.theme.LightGrey
-import com.adamdawi.popcornpicks.core.theme.fontFamily
-import com.adamdawi.popcornpicks.core.ui.shimmerBrush
-import com.adamdawi.popcornpicks.core.utils.Constants.Network.BASE_IMAGE_URL
+import com.adamdawi.popcornpicks.core.presentation.theme.Blue
+import com.adamdawi.popcornpicks.core.presentation.theme.DarkGrey
+import com.adamdawi.popcornpicks.core.presentation.theme.LightGrey
+import com.adamdawi.popcornpicks.core.presentation.theme.fontFamily
+import com.adamdawi.popcornpicks.core.presentation.ui.shimmerBrush
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Network.BASE_IMAGE_URL
 import com.adamdawi.popcornpicks.feature.movie_choose.domain.Movie
 
 @Composable

@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.core.dummy
+package com.adamdawi.popcornpicks.core.data.dummy
 
 import com.adamdawi.popcornpicks.feature.genres_choose.domain.Genre
 import com.adamdawi.popcornpicks.feature.movie_choose.domain.Movie

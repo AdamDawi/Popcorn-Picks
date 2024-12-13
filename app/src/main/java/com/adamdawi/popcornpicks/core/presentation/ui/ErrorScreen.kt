@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.core.ui
+package com.adamdawi.popcornpicks.core.presentation.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,8 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.adamdawi.popcornpicks.R
-import com.adamdawi.popcornpicks.core.theme.PopcornPicksTheme
-import com.adamdawi.popcornpicks.core.theme.fontFamily
+import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
+import com.adamdawi.popcornpicks.core.presentation.theme.fontFamily
 
 @Composable
 fun ErrorScreen(

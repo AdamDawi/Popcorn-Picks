@@ -30,9 +30,9 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.adamdawi.popcornpicks.R
-import com.adamdawi.popcornpicks.core.dummy.dummyMovie
-import com.adamdawi.popcornpicks.core.theme.PopcornPicksTheme
-import com.adamdawi.popcornpicks.core.ui.shimmerBrush
+import com.adamdawi.popcornpicks.core.data.dummy.dummyMovie
+import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
+import com.adamdawi.popcornpicks.core.presentation.ui.shimmerBrush
 import kotlin.math.pow
 import kotlin.math.sqrt
 
