@@ -44,7 +44,7 @@ fun GenresScreen(
     when {
         state.value.isLoading -> LoadingScreen()
         state.value.error != null -> ErrorScreen(message = state.value.error)
-//        state.value.genres.isEmpty() -> ErrorScreen(message = state.value.error)
+        state.value.genres.isEmpty() -> ErrorScreen(message = state.value.error)
         else -> GenresContent(
             onAction = { action ->
                 when (action) {

@@ -1,7 +1,10 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.devtools.ksp")
+    id("kotlinx-serialization")
     alias(libs.plugins.kotlin.compose)
 }
 
@@ -21,11 +24,20 @@ android {
 
     buildTypes {
         release {
+            val apiKey = gradleLocalProperties(rootDir, rootProject.providers).getProperty("API_KEY")
+            buildConfigField("String", "API_KEY", "\"$apiKey\"")
+            buildConfigField("String", "BASE_URL", "\"https://api.themoviedb.org/3\"")
+
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            val apiKey = gradleLocalProperties(rootDir, rootProject.providers).getProperty("API_KEY")
+            buildConfigField("String", "API_KEY", "\"$apiKey\"")
+            buildConfigField("String", "BASE_URL", "\"https://api.themoviedb.org/3\"")
         }
     }
     compileOptions {
