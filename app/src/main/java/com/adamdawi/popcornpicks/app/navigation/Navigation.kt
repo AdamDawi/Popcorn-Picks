@@ -1,5 +1,7 @@
 package com.adamdawi.popcornpicks.app.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -7,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.adamdawi.popcornpicks.core.domain.OnBoardingManager
+import com.adamdawi.popcornpicks.core.presentation.ui.LoadingScreen
 import com.adamdawi.popcornpicks.feature.genres_choose.presentation.GenresScreen
 import com.adamdawi.popcornpicks.feature.movie_choose.presentation.MovieChooseScreen
 import com.adamdawi.popcornpicks.feature.movie_details.presentation.MovieDetailsScreen
@@ -49,7 +52,57 @@ fun Navigation(
                     }
                 )
             }
-            composable(Screen.Recommendations.route) {
+            composable(
+                route = Screen.Recommendations.route,
+                enterTransition = {
+                    when (initialState.destination.route) {
+                        Screen.MovieDetails.route -> slideIntoContainer(
+                            AnimatedContentTransitionScope.SlideDirection.End,
+                            tween(400)
+                        )
+                        else -> slideIntoContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Companion.Start,
+                            tween(400)
+                        )
+                    }
+                },
+                exitTransition = {
+                    when (targetState.destination.route) {
+                        Screen.MovieDetails.route -> slideOutOfContainer(
+                            AnimatedContentTransitionScope.SlideDirection.End,
+                            tween(400)
+                        )
+                        else -> slideOutOfContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Companion.Start,
+                            tween(400)
+                        )
+                    }
+                },
+                popEnterTransition = {
+                    when (initialState.destination.route) {
+                        Screen.MovieDetails.route -> slideIntoContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Start,
+                            tween(400)
+                        )
+                        else -> slideIntoContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Companion.End,
+                            tween(400)
+                        )
+                    }
+                },
+                popExitTransition = {
+                    when (targetState.destination.route) {
+                        Screen.MovieDetails.route -> slideOutOfContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Start,
+                            tween(400)
+                        )
+                        else -> slideOutOfContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Companion.End,
+                            tween(400)
+                        )
+                    }
+                }
+            ) {
                 RecommendationsScreen(
                     onNavigateToProfile = {
                         navController.navigate(Screen.Profile.route)
@@ -59,13 +112,17 @@ fun Navigation(
                     }
                 )
             }
+
             composable(Screen.Profile.route) {
                 ProfileScreen()
             }
-            composable(Screen.MovieDetails.route) {
+            composableWithSlideToLeftTransitions(
+                route = Screen.MovieDetails.route
+            ) {
                 MovieDetailsScreen()
             }
-
         }
+    }else{
+        LoadingScreen()
     }
 }

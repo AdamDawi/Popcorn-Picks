@@ -2,6 +2,7 @@ package com.adamdawi.popcornpicks.core.data.dummy
 
 import com.adamdawi.popcornpicks.feature.genres_choose.domain.Genre
 import com.adamdawi.popcornpicks.feature.movie_choose.domain.Movie
+import com.adamdawi.popcornpicks.feature.movie_details.domain.DetailedMovie
 import com.adamdawi.popcornpicks.feature.recommendations.domain.RecommendedMovie
 
 val dummyGenresList = listOf(
@@ -37,6 +38,23 @@ val dummyMovie = Movie(
     title = "Spiderman",
     poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
     releaseDate = "2020-04-02"
+)
+
+val dummyMovieDetails = DetailedMovie(
+    id = 1,
+    title = "Spider-Man: No Way Home",
+    poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+    genres = listOf(
+        Genre(id = 28, name = "Action"),
+        Genre(id = 12, name = "Adventure"),
+        Genre(id = 878, name = "Science Fiction")
+    ),
+    overview = "Peter Parker is unmasked and no longer able to separate his normal life from the high-stakes of being a super-hero. When he asks for help from Doctor Strange the stakes become even more dangerous, forcing him to discover what it truly means to be Spider-Man.",
+    backdrop = "/zD5v1E4joAzFvmAEytt7fM3ivyT.jpg",
+    releaseDate = "2021-12-15",
+    voteAverage = 7.6,
+    runtime = 148,
+    popularity = 181.095
 )
 val dummyRecommendedMovie = RecommendedMovie(
     id = 1,

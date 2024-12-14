@@ -125,7 +125,7 @@ fun ButtonsRow(
             icon = painterResource(R.drawable.more_info_ic),
             color = Blue,
             onClick = {
-                onAction(RecommendationsAction.OnProfileClicked)
+                onAction(RecommendationsAction.OnMoreInfoClicked)
             },
             enabled = areButtonsEnabled,
             contentDescription = "More info"

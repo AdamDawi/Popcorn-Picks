@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import com.adamdawi.popcornpicks.core.data.local.OnBoardingManagerImpl
 import com.adamdawi.popcornpicks.core.data.networking.HttpClientFactory
 import com.adamdawi.popcornpicks.core.domain.OnBoardingManager
+import com.adamdawi.popcornpicks.core.domain.util.Constants
 import io.ktor.client.HttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.bind
@@ -15,7 +16,7 @@ val coreDataModule = module {
 
     single<SharedPreferences> {
         androidContext().getSharedPreferences(
-            "popcorn_picks_preferences",
+            Constants.Local.SHARED_PREFERENCES_NAME,
             android.content.Context.MODE_PRIVATE
         )
     }
