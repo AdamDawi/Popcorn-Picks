@@ -3,6 +3,7 @@ package com.adamdawi.popcornpicks.feature.genres_choose.presentation
 import com.adamdawi.popcornpicks.core.data.dummy.dummyGenresList
 import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.Result
+import com.adamdawi.popcornpicks.core.presentation.ui.asUiText
 import com.adamdawi.popcornpicks.feature.genres_choose.domain.Genre
 import com.adamdawi.popcornpicks.feature.genres_choose.domain.repository.GenresRepository
 import com.adamdawi.popcornpicks.utils.ReplaceMainDispatcherRule
@@ -10,8 +11,6 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
@@ -30,12 +29,11 @@ class GenresViewModelTest {
     @Before
     fun setUp(){
         genresRepository = mockk<GenresRepository>()
-
     }
 
-    //INIT
+    //GET GENRES
     @Test
-    fun getGenres_success_genresStateUpdatedWithCorrectData(){
+    fun getGenres_success_genresListUpdatedWithCorrectData(){
         //Arrange
         coEvery { genresRepository.getGenres() } answers { Result<List<Genre>, DataError.Network>.Success(dummyGenresList) }
 
@@ -44,28 +42,22 @@ class GenresViewModelTest {
 
         //Assert
         assertThat(sut.state.value.genres, `is`(dummyGenresList))
-        assertThat(sut.state.value.error.isNullOrEmpty(), `is`(true))
-        assertThat(sut.state.value.isLoading, `is`(false))
     }
 
     @Test
-    fun getGenres_error_errorStateUpdated(){
+    fun getGenres_success_errorStateIsNotUpdated(){
         //Arrange
-        coEvery { genresRepository.getGenres() } answers { Result<List<Genre>, DataError.Network>.Error(
-            DataError.Network.SERVER_ERROR) }
+        coEvery { genresRepository.getGenres() } answers { Result<List<Genre>, DataError.Network>.Success(dummyGenresList) }
 
         //Act
         sut = GenresViewModel(genresRepository)
 
         //Assert
-        assertThat(sut.state.value.genres, `is`(emptyList()))
-        assertThat(sut.state.value.error?.isNotEmpty(), `is`(true))
-        assertThat(sut.state.value.isLoading, `is`(false))
+        assertThat(sut.state.value.error.isNullOrEmpty(), `is`(true))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getGenres_success_loadingStateUpdated() = runTest{
+    fun getGenres_success_loadingStateIsSetToTrueWhileFetching(){
         // Arrange
         coEvery { genresRepository.getGenres() } coAnswers {
             delay(1000)
@@ -77,13 +69,76 @@ class GenresViewModelTest {
 
         //Assert
         assertThat(sut.state.value.isLoading, `is`(true))
-
-        advanceUntilIdle()
-
-        assertThat(sut.state.value.isLoading, `is`(false))
-        assertThat(sut.state.value.genres, `is`(dummyGenresList))
     }
 
+    @Test
+    fun getGenres_success_loadingStateIsSetToFalseAfterFetching(){
+        //Arrange
+        coEvery { genresRepository.getGenres() } answers { Result<List<Genre>, DataError.Network>.Success(dummyGenresList) }
+
+        //Act
+        sut = GenresViewModel(genresRepository)
+
+        //Assert
+        assertThat(sut.state.value.isLoading, `is`(false))
+    }
+
+    @Test
+    fun getGenres_error_errorStateUpdatedWithCorrectError(){
+        //Arrange
+        coEvery { genresRepository.getGenres() } answers { Result<List<Genre>, DataError.Network>.Error(
+            DataError.Network.SERVER_ERROR) }
+
+        //Act
+        sut = GenresViewModel(genresRepository)
+
+        //Assert
+        assertThat(sut.state.value.error, `is`(DataError.Network.SERVER_ERROR.asUiText()))
+    }
+
+    @Test
+    fun getGenres_error_genresListIsNotUpdated(){
+        //Arrange
+        coEvery { genresRepository.getGenres() } answers { Result<List<Genre>, DataError.Network>.Error(
+            DataError.Network.SERVER_ERROR) }
+
+        //Act
+        sut = GenresViewModel(genresRepository)
+
+        //Assert
+        assertThat(sut.state.value.genres, `is`(emptyList()))
+    }
+
+    @Test
+    fun getGenres_error_loadingStateIsSetToTrueWhileFetching(){
+        //Arrange
+        coEvery { genresRepository.getGenres() } coAnswers {
+            delay(1000)
+            Result<List<Genre>, DataError.Network>.Error(DataError.Network.SERVER_ERROR)
+        }
+
+        //Act
+        sut = GenresViewModel(genresRepository)
+
+        //Assert
+        assertThat(sut.state.value.isLoading, `is`(true))
+    }
+
+    @Test
+    fun getGenres_error_loadingStateIsSetToFalseAfterFetching(){
+        //Arrange
+        coEvery { genresRepository.getGenres() } answers {
+            Result<List<Genre>, DataError.Network>.Error(DataError.Network.SERVER_ERROR)
+        }
+
+        //Act
+        sut = GenresViewModel(genresRepository)
+
+        //Assert
+        assertThat(sut.state.value.isLoading, `is`(false))
+    }
+
+    //INIT
     @Test
     fun init_selectedGenres_empty(){
         //Arrange
