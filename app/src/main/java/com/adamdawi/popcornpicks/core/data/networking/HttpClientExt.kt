@@ -33,7 +33,6 @@ suspend inline fun <reified Response : Any> HttpClient.get(
     }
 }
 
-
 suspend inline fun <reified Request, reified Response: Any> HttpClient.post(
     route: String,
     body: Request
