@@ -42,7 +42,7 @@ fun ImageScratch(
     modifier: Modifier = Modifier,
     overlayImage: ImageBitmap,
     baseImageUrl: String,
-    scratchingThreshold : Float = 0.8f,
+    scratchingThresholdPercentage : Float = 0.8f,
     scratchLineWidth : Dp = 32.dp,
     scratchLineCap : StrokeCap = StrokeCap.Round,
     isImageScratched: () -> Boolean,
@@ -113,7 +113,7 @@ fun ImageScratch(
                 val maxCanvasArea = this.size.width.toFloat() * this.size.height.toFloat()
 
                 //if total scratched area is below the threshold, show the overlay image
-                if(!isImageScratched() && totalScratchedArea.floatValue/maxCanvasArea < scratchingThreshold) {
+                if(!isImageScratched() && totalScratchedArea.floatValue/maxCanvasArea < scratchingThresholdPercentage) {
                     drawImage(image = overlayImage, dstSize = imageSize)
                 }else{
                     onImageScratched()

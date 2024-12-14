@@ -3,7 +3,7 @@ package com.adamdawi.popcornpicks.feature.genres_choose.presentation
 import com.adamdawi.popcornpicks.core.data.dummy.dummyGenresList
 import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.Result
-import com.adamdawi.popcornpicks.core.presentation.ui.asUiText
+import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.feature.genres_choose.domain.Genre
 import com.adamdawi.popcornpicks.feature.genres_choose.domain.repository.GenresRepository
 import com.adamdawi.popcornpicks.utils.ReplaceMainDispatcherRule

@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.navigation
+package com.adamdawi.popcornpicks.app.navigation
 
 sealed class Screen(val route: String) {
     data object Genres: Screen("genres_screen")

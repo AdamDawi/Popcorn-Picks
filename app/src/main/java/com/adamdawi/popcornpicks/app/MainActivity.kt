@@ -1,10 +1,10 @@
-package com.adamdawi.popcornpicks
+package com.adamdawi.popcornpicks.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
-import com.adamdawi.popcornpicks.navigation.Navigation
+import com.adamdawi.popcornpicks.app.navigation.Navigation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

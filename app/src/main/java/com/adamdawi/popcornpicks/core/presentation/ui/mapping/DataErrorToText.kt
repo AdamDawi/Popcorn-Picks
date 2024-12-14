@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.core.presentation.ui
+package com.adamdawi.popcornpicks.core.presentation.ui.mapping
 
 import com.adamdawi.popcornpicks.core.domain.util.DataError
 

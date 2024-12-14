@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.navigation
+package com.adamdawi.popcornpicks.app.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
