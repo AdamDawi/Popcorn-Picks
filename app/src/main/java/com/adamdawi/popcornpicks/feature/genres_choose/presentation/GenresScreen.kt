@@ -37,8 +37,8 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun GenresScreen(
-    onContinueClick: () -> Unit,
-    viewModel: GenresViewModel = koinViewModel<GenresViewModel>()
+    viewModel: GenresViewModel = koinViewModel(),
+    onContinueClick: () -> Unit
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     when {
@@ -60,8 +60,8 @@ fun GenresScreen(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun GenresContent(
-    state: GenresState,
-    onAction: (GenresAction) -> Unit
+    onAction: (GenresAction) -> Unit,
+    state: GenresState
 ) {
     Column(
         modifier = Modifier

@@ -1,6 +1,7 @@
 package com.adamdawi.popcornpicks.feature.movie_details.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -29,19 +31,34 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.adamdawi.popcornpicks.R
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MovieDetailsScreen() {
-    MovieDetailsContent()
+fun MovieDetailsScreen(
+    viewModel: MovieDetailsViewModel = koinViewModel(),
+    onNavigateBack: () -> Unit
+) {
+    val state = viewModel.state.collectAsStateWithLifecycle()
+    MovieDetailsContent(
+        action = { action ->
+            when (action) {
+                is MovieDetailsAction.OnBackClick -> onNavigateBack()
+                else -> viewModel.onAction(action)
+            }
+        },
+        state = state.value
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MovieDetailsContent(
-
+    action: (MovieDetailsAction) -> Unit,
+    state: MovieDetailsState
 ) {
     Box(
         modifier = Modifier
@@ -85,7 +102,11 @@ private fun MovieDetailsContent(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(16.dp)
-                .size(32.dp),
+                .size(32.dp)
+                .clip(CircleShape)
+                .clickable{
+                    action(MovieDetailsAction.OnBackClick)
+                },
             imageVector = Icons.AutoMirrored.Default.ArrowForward,
             contentDescription = "Back",
             tint = Color.White
@@ -93,7 +114,7 @@ private fun MovieDetailsContent(
     }
 }
 
-fun Modifier.fadingEdge(): Modifier{
+private fun Modifier.fadingEdge(): Modifier{
     val bottomFade = Brush.verticalGradient(0.7f to Color.Red, 1f to Color.Transparent)
     return this.graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
     .drawWithContent {
@@ -106,6 +127,9 @@ fun Modifier.fadingEdge(): Modifier{
 @Composable
 private fun MovieDetailsScreenPreview() {
     PopcornPicksTheme {
-        MovieDetailsContent()
+        MovieDetailsContent(
+            action = {},
+            state = MovieDetailsState()
+        )
     }
 }

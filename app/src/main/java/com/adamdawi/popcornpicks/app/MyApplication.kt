@@ -9,6 +9,7 @@ import com.adamdawi.popcornpicks.BuildConfig
 import com.adamdawi.popcornpicks.core.data.di.coreDataModule
 import com.adamdawi.popcornpicks.feature.genres_choose.data.di.genresModule
 import com.adamdawi.popcornpicks.feature.movie_choose.data.di.movieChooseModule
+import com.adamdawi.popcornpicks.feature.movie_details.data.di.movieDetailsModule
 import com.adamdawi.popcornpicks.feature.recommendations.data.di.recommendationsModule
 
 class MyApplication: Application() {
@@ -25,7 +26,8 @@ class MyApplication: Application() {
                 coreDataModule,
                 genresModule,
                 movieChooseModule,
-                recommendationsModule
+                recommendationsModule,
+                movieDetailsModule
             )
         }
 

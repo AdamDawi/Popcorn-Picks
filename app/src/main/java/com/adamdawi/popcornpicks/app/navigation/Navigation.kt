@@ -119,7 +119,11 @@ fun Navigation(
             composableWithSlideToLeftTransitions(
                 route = Screen.MovieDetails.route
             ) {
-                MovieDetailsScreen()
+                MovieDetailsScreen(
+                    onNavigateBack = {
+                        navController.navigateUp()
+                    }
+                )
             }
         }
     }else{
