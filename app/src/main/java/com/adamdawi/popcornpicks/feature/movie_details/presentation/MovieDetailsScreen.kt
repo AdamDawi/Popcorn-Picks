@@ -2,8 +2,11 @@ package com.adamdawi.popcornpicks.feature.movie_details.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.adamdawi.popcornpicks.R
+import com.adamdawi.popcornpicks.core.domain.util.Constants
+import com.adamdawi.popcornpicks.core.presentation.theme.LightGrey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -64,39 +70,99 @@ private fun MovieDetailsContent(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
-    ){
+    ) {
+        BackgroundImage(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.4f)
+                .fadingEdge(),
+            url = Constants.Network.BASE_IMAGE_URL + state.movie.backdrop
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(top = 220.dp)
+                .padding(horizontal = 24.dp),
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.5f)
-                    .background(Color.Black)
-            ){
+            Row(
+                horizontalArrangement = Arrangement.Center
+            ) {
                 AsyncImage(
-                    model = "https://image.tmdb.org/t/p/original/zD5v1E4joAzFvmAEytt7fM3ivyT.jpg",
+                    model = Constants.Network.BASE_IMAGE_URL + state.movie.poster,
                     contentDescription = "Movie poster",
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.8f)
-                        .fadingEdge(),
-                    placeholder = painterResource(R.drawable.backdrop),
-                    contentScale = ContentScale.Crop
-                )
-                AsyncImage(
-                    model = "https://image.tmdb.org/t/p/original/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-                    contentDescription = "Movie poster",
-                    modifier = Modifier
-                        .padding(top = 120.dp, start = 60.dp)
-                        .width(150.dp)
-                        .height(250.dp)
+                        .width(140.dp)
+                        .height(220.dp)
                         .clip(RoundedCornerShape(6.dp)),
-                    placeholder = painterResource(R.drawable.poster),
+                    placeholder = painterResource(R.drawable.example_poster),
                     contentScale = ContentScale.Crop
                 )
+                Spacer(
+                    modifier = Modifier
+                        .width(20.dp)
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(top = 80.dp)
+                ) {
+                    Row {
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            text = "Rating",
+                            color = LightGrey
+                        )
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            text = state.movie.voteAverage.toString() + "/10",
+                            color = LightGrey,
+                        )
+                    }
+
+                    Row {
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            text = "Released",
+                            color = LightGrey
+                        )
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            text = state.movie.releaseDate.take(7),
+                            color = LightGrey,
+                        )
+                    }
+
+                    Row {
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            text = "Genre",
+                            color = LightGrey
+                        )
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            text = state.movie.genres[0].name,
+                            color = LightGrey,
+                        )
+                    }
+
+                    Row {
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            text = "Runtime",
+                            color = LightGrey
+                        )
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            text = (state.movie.runtime / 60).toString() + "h " + (state.movie.runtime % 60).toString() + "m",
+                            color = LightGrey,
+                        )
+                    }
+                }
             }
+            Text(
+                modifier = Modifier.padding(top = 20.dp),
+                text = state.movie.overview,
+                color = Color.White
+            )
         }
         Icon(
             modifier = Modifier
@@ -104,7 +170,7 @@ private fun MovieDetailsContent(
                 .padding(16.dp)
                 .size(32.dp)
                 .clip(CircleShape)
-                .clickable{
+                .clickable {
                     action(MovieDetailsAction.OnBackClick)
                 },
             imageVector = Icons.AutoMirrored.Default.ArrowForward,
@@ -114,13 +180,29 @@ private fun MovieDetailsContent(
     }
 }
 
-private fun Modifier.fadingEdge(): Modifier{
+@Composable
+private fun BackgroundImage(
+    modifier: Modifier = Modifier,
+    url: String
+) {
+    AsyncImage(
+        model = url,
+        contentDescription = "Movie background image",
+        modifier = modifier,
+        placeholder = painterResource(R.drawable.example_backdrop), //TODO change placeholder
+        contentScale = ContentScale.Crop,
+        alpha = 0.6f
+    )
+}
+
+private fun Modifier.fadingEdge(): Modifier {
     val bottomFade = Brush.verticalGradient(0.7f to Color.Red, 1f to Color.Transparent)
-    return this.graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
-    .drawWithContent {
-        drawContent()
-        drawRect(brush = bottomFade, blendMode = BlendMode.DstIn)
-    }
+    return this
+        .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
+        .drawWithContent {
+            drawContent()
+            drawRect(brush = bottomFade, blendMode = BlendMode.DstIn)
+        }
 }
 
 @Preview

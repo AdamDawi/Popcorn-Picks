@@ -40,7 +40,7 @@ val dummyMovie = Movie(
     releaseDate = "2020-04-02"
 )
 
-val dummyMovieDetails = DetailedMovie(
+val dummyDetailedMovie = DetailedMovie(
     id = 1,
     title = "Spider-Man: No Way Home",
     poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
