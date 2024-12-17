@@ -9,7 +9,7 @@ class GenresPreferencesImpl(
 ): GenresPreferences{
     override fun saveGenres(genres: List<Genre>) {
         if(genres.isNotEmpty()){
-            val genresStringList = genres.map { it.name }
+            val genresStringList = genres.map { it.id.toString() }
             sharedPreferences.edit()
                 .putStringSet(GENRES_KEY, genresStringList.toSet())
                 .apply()

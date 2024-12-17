@@ -1,12 +1,11 @@
 package com.adamdawi.popcornpicks.feature.movie_choose.presentation
 
-import com.adamdawi.popcornpicks.core.data.dummy.dummyMovieList
 import com.adamdawi.popcornpicks.feature.movie_choose.domain.Movie
 
 data class MovieChooseState(
-    //TODO change this state values
-    val movies: List<Movie> = dummyMovieList,
+    val movies: List<Movie> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
-    val selectedMovies: List<Boolean> = com.adamdawi.popcornpicks.core.data.dummy.selectedMovies
+    val selectedMovies: List<Movie> = emptyList(),
+    val finishButtonEnabled: Boolean = false
 )

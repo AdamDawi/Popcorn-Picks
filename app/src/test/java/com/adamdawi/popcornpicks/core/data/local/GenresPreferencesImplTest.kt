@@ -40,9 +40,9 @@ class GenresPreferencesImplTest {
             Genre(id = 878, name = "Science Fiction")
         )
         val genresStringList = listOf(
-            "Action",
-            "Adventure",
-            "Science Fiction"
+            "28",
+            "12",
+            "878"
         )
 
         // Act
@@ -77,23 +77,23 @@ class GenresPreferencesImplTest {
     }
 
     @Test
-    fun getGenres_whenGenresSaved_correctGenresListReturned() {
+    fun getGenres_genresIDsSavedInSharedPreferences_correctGenresIDsListReturned() {
         // Arrange
-        val savedGenres = setOf("Action", "Comedy", "Drama")
-        every { sharedPreferences.getStringSet(genresKey, emptySet()) } returns savedGenres
+        val savedGenresIDs = setOf("28", "12", "878")
+        every { sharedPreferences.getStringSet(genresKey, emptySet()) } returns savedGenresIDs
 
         // Act
         val result = sut.getGenres()
 
         // Assert
-        assertEquals(listOf("Action", "Comedy", "Drama"), result)
+        assertEquals(listOf("28", "12", "878"), result)
     }
 
     @Test
-    fun getGenres_whenGenresSaved_getStringSetInvokedOnce() {
+    fun getGenres_genresIDsSavedInSharedPreferences_getStringSetInvokedOnce() {
         // Arrange
-        val savedGenres = setOf("Action", "Comedy", "Drama")
-        every { sharedPreferences.getStringSet(genresKey, emptySet()) } returns savedGenres
+        val savedGenresIDs = setOf("28", "12", "878")
+        every { sharedPreferences.getStringSet(genresKey, emptySet()) } returns savedGenresIDs
 
         // Act
         sut.getGenres()
@@ -103,7 +103,7 @@ class GenresPreferencesImplTest {
     }
 
     @Test
-    fun getGenres_whenGenresNotSaved_emptyListReturned() {
+    fun getGenres_genresIDsNotSavedInSharedPreferences_emptyListReturned() {
         // Arrange
         every { sharedPreferences.getStringSet(genresKey, emptySet()) } returns null
 
@@ -115,7 +115,7 @@ class GenresPreferencesImplTest {
     }
 
     @Test
-    fun getGenres_whenGenresNotSaved_getStringSetInvokedOnce() {
+    fun getGenres_genresIDsNotSavedInSharedPreferences_getStringSetInvokedOnce() {
         // Arrange
         every { sharedPreferences.getStringSet(genresKey, emptySet()) } returns null
 

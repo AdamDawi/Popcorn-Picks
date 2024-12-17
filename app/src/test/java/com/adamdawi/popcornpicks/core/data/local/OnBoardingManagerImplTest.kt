@@ -63,7 +63,7 @@ class OnBoardingManagerImplTest {
     }
 
     @Test
-    fun isOnboardingCompleted_whenBooleanSaved_correctBooleanReturned() {
+    fun isOnboardingCompleted_booleanSavedInSharedPreferences_correctBooleanReturned() {
         // Arrange
         val expectedValue = true
         every { sharedPreferences.getBoolean(onboardingKey, false) } returns expectedValue
@@ -76,7 +76,7 @@ class OnBoardingManagerImplTest {
     }
 
     @Test
-    fun isOnboardingCompleted_whenBooleanSaved_getBooleanInvokedOnce() {
+    fun isOnboardingCompleted_booleanSavedInSharedPreferences_getBooleanInvokedOnce() {
         // Arrange
         val expectedValue = true
         every { sharedPreferences.getBoolean(onboardingKey, false) } returns expectedValue
@@ -89,7 +89,7 @@ class OnBoardingManagerImplTest {
     }
 
     @Test
-    fun isOnboardingCompleted_whenBooleanNotSaved_defaultValueReturned() {
+    fun isOnboardingCompleted_booleanNotSavedInSharedPreferences_defaultValueReturned() {
         // Arrange
         every { sharedPreferences.getBoolean(onboardingKey, false) } returns false
 
@@ -101,7 +101,7 @@ class OnBoardingManagerImplTest {
     }
 
     @Test
-    fun isOnboardingCompleted_whenBooleanNotSaved_getBooleanInvokedOnce() {
+    fun isOnboardingCompleted_booleanNotSavedInSharedPreferences_getBooleanInvokedOnce() {
         // Arrange
         every { sharedPreferences.getBoolean(onboardingKey, false) } returns false
 

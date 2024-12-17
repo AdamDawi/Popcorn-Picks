@@ -37,7 +37,7 @@ class GenresViewModelTest {
 
     //GET GENRES
     @Test
-    fun getGenres_success_genresListUpdatedWithCorrectData(){
+    fun getGenres_success_genresListStateUpdatedWithCorrectData(){
         //Arrange
         coEvery { genresRepository.getGenres() } answers { Result<List<Genre>, DataError.Network>.Success(dummyGenresList) }
 
@@ -188,6 +188,39 @@ class GenresViewModelTest {
     }
 
     @Test
+    fun onAction_toggleGenreSelectionOnSameGenreTwice_continueButtonDisabled(){
+        //Arrange
+        coEvery { genresRepository.getGenres() } answers { Result<List<Genre>, DataError.Network>.Success(dummyGenresList) }
+        val genre = Genre(id = 36, name = "History")
+
+        //Act
+        sut = GenresViewModel(genresRepository, genresPreferences)
+        sut.onAction(GenresAction.ToggleGenreSelection(genre))
+        sut.onAction(GenresAction.ToggleGenreSelection(genre))
+
+        //Assert
+        assertThat(sut.state.value.continueButtonEnabled, `is`(false))
+    }
+
+    @Test
+    fun onAction_toggleGenreSelectionOnDifferentGenresTwice_bothGenresSelected(){
+        //Arrange
+        coEvery { genresRepository.getGenres() } answers { Result<List<Genre>, DataError.Network>.Success(dummyGenresList) }
+        val genre = Genre(id = 36, name = "History")
+        val genre2 = Genre(id = 80, name = "Crime")
+
+        //Act
+        sut = GenresViewModel(genresRepository, genresPreferences)
+        sut.onAction(GenresAction.ToggleGenreSelection(genre))
+        sut.onAction(GenresAction.ToggleGenreSelection(genre2))
+
+        //Assert
+        assertThat(sut.state.value.selectedGenres.size, `is`(2))
+        assertThat(sut.state.value.selectedGenres.contains(genre), `is`(true))
+        assertThat(sut.state.value.selectedGenres.contains(genre2), `is`(true))
+    }
+
+    @Test
     fun onAction_toggleGenreSelectionOnDifferentGenresTwice_continueButtonEnabled(){
         //Arrange
         coEvery { genresRepository.getGenres() } answers { Result<List<Genre>, DataError.Network>.Success(dummyGenresList) }
@@ -201,21 +234,6 @@ class GenresViewModelTest {
 
         //Assert
         assertThat(sut.state.value.continueButtonEnabled, `is`(true))
-    }
-
-    @Test
-    fun onAction_toggleGenreSelectionOnSameGenreTwice_continueButtonDisabled(){
-        //Arrange
-        coEvery { genresRepository.getGenres() } answers { Result<List<Genre>, DataError.Network>.Success(dummyGenresList) }
-        val genre = Genre(id = 36, name = "History")
-
-        //Act
-        sut = GenresViewModel(genresRepository, genresPreferences)
-        sut.onAction(GenresAction.ToggleGenreSelection(genre))
-        sut.onAction(GenresAction.ToggleGenreSelection(genre))
-
-        //Assert
-        assertThat(sut.state.value.continueButtonEnabled, `is`(false))
     }
 
     // ON CONTINUE CLICK

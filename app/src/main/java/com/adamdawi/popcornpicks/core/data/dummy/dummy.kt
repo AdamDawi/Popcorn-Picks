@@ -66,6 +66,10 @@ val dummyRecommendedMovie = RecommendedMovie(
     genres = dummyGenresList
 )
 
-val dummyMovieList = List(20) { dummyMovie }
+val dummyMovieList = List(20) { dummyMovie.copy(id = it) }
 
-val selectedMovies: List<Boolean> = List(dummyMovieList.size) { it == 1 || it == 3 || it == 6 }
+val selectedMovies: List<Movie> = listOf(
+    dummyMovie.copy(id = 2),
+    dummyMovie.copy(id = 6),
+    dummyMovie.copy(id = 9)
+)

@@ -49,7 +49,7 @@ fun MovieChooseScreen(
     when {
         state.value.isLoading -> LoadingScreen()
         state.value.error != null -> ErrorScreen(message = state.value.error)
-//        state.value.movies.isEmpty() -> ErrorScreen(message = state.value.error)
+        state.value.movies.isEmpty() -> ErrorScreen(message = state.value.error)
         else ->
             MovieChooseContent(
                 onAction = { action ->
@@ -91,10 +91,10 @@ fun MovieChooseContent(
             FinishFAB(
                 showText = showContinueText.value,
                 onFinishClick = {
-                    if(state.selectedMovies.count { it } >= 2)
+                    if(state.finishButtonEnabled)
                     onAction(MovieChooseAction.OnFinishClick)
                 },
-                enabled = state.selectedMovies.count { it } >= 2
+                enabled = state.finishButtonEnabled
             )
         },
         content = { paddingValues ->
@@ -115,7 +115,7 @@ fun MovieChooseContent(
                     moviesList = state.movies,
                     selectedMovies = state.selectedMovies,
                     onMovieClick = { movie ->
-                        onAction(MovieChooseAction.SelectMovie(movie))
+                        onAction(MovieChooseAction.ToggleMovieSelection(movie))
                     },
                     lazyListState = lazyListState
                 )
@@ -139,7 +139,7 @@ private fun MovieChooseTitle() {
 @Composable
 private fun MovieGrid(
     moviesList: List<Movie>,
-    selectedMovies: List<Boolean>,
+    selectedMovies: List<Movie>,
     onMovieClick: (Movie) -> Unit,
     lazyListState: LazyGridState
 ) {
@@ -150,10 +150,9 @@ private fun MovieGrid(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         itemsIndexed(moviesList) { index, movie ->
-            val isSelected = if (index < selectedMovies.size) selectedMovies[index] else false
             MovieItem(
                 movie = movie,
-                isSelected = isSelected,
+                isSelected = selectedMovies.contains(movie),
                 onClick = { onMovieClick(movie) }
             )
         }
