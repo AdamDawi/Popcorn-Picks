@@ -1,7 +1,7 @@
 package com.adamdawi.popcornpicks.core.domain
 
 interface OnBoardingManager {
-    suspend fun isOnboardingCompleted(): Boolean
+    fun isOnboardingCompleted(): Boolean
 
-    suspend fun setOnboardingCompleted(completed: Boolean)
+    fun setOnboardingCompleted(completed: Boolean)
 }

@@ -1,0 +1,128 @@
+package com.adamdawi.popcornpicks.core.data.local
+
+import android.content.SharedPreferences
+import com.adamdawi.popcornpicks.core.domain.GenresPreferences
+import com.adamdawi.popcornpicks.feature.genres_choose.domain.Genre
+import io.mockk.Runs
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.verify
+import junit.framework.TestCase.assertEquals
+import org.junit.Before
+import org.junit.Test
+
+class GenresPreferencesImplTest {
+
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var editor: SharedPreferences.Editor
+    private lateinit var genresPreferences: GenresPreferences
+    private val genresKey = "genres_key"
+
+    @Before
+    fun setUp() {
+        sharedPreferences = mockk()
+        editor = mockk()
+        genresPreferences = GenresPreferencesImpl(sharedPreferences)
+
+        // Default mock behavior for editing SharedPreferences
+        every { sharedPreferences.edit() } returns editor
+        every { editor.putStringSet(any(), any()) } returns editor
+        every { editor.apply() } just Runs
+    }
+
+    @Test
+    fun saveGenres_genresListPassed_genresSavedInStringList() {
+        // Arrange
+        val genres = listOf(
+            Genre(id = 28, name = "Action"),
+            Genre(id = 12, name = "Adventure"),
+            Genre(id = 878, name = "Science Fiction")
+        )
+        val genresStringList = listOf(
+            "Action",
+            "Adventure",
+            "Science Fiction"
+        )
+
+        // Act
+        genresPreferences.saveGenres(genres)
+
+        // Assert
+        verify(exactly = 1) {
+            sharedPreferences.edit()
+            editor.putStringSet(genresKey, genresStringList.toSet())
+            editor.apply()
+        }
+    }
+
+    @Test
+    fun saveGenres_emptyListPassed_emptyListNotSaved() {
+        // Arrange
+        val genres = emptyList<Genre>()
+
+        // Act
+        genresPreferences.saveGenres(genres)
+
+        // Assert
+        verify(exactly = 0) {
+            sharedPreferences.edit()
+        }
+        verify(exactly = 0) {
+            editor.putStringSet(any(), any())
+        }
+        verify(exactly = 0) {
+            editor.apply()
+        }
+    }
+
+    @Test
+    fun getGenres_whenGenresSaved_correctGenresListReturned() {
+        // Arrange
+        val savedGenres = setOf("Action", "Comedy", "Drama")
+        every { sharedPreferences.getStringSet(genresKey, emptySet()) } returns savedGenres
+
+        // Act
+        val result = genresPreferences.getGenres()
+
+        // Assert
+        assertEquals(listOf("Action", "Comedy", "Drama"), result)
+    }
+
+    @Test
+    fun getGenres_whenGenresSaved_getStringSetInvokedOnce() {
+        // Arrange
+        val savedGenres = setOf("Action", "Comedy", "Drama")
+        every { sharedPreferences.getStringSet(genresKey, emptySet()) } returns savedGenres
+
+        // Act
+        genresPreferences.getGenres()
+
+        // Assert
+        verify(exactly = 1) { sharedPreferences.getStringSet(genresKey, emptySet()) }
+    }
+
+    @Test
+    fun getGenres_whenGenresNotSaved_emptyListReturned() {
+        // Arrange
+        every { sharedPreferences.getStringSet(genresKey, emptySet()) } returns null
+
+        // Act
+        val result = genresPreferences.getGenres()
+
+        // Assert
+        assertEquals(emptyList<String>(), result)
+    }
+
+    @Test
+    fun getGenres_whenGenresNotSaved_getStringSetInvokedOnce() {
+        // Arrange
+        every { sharedPreferences.getStringSet(genresKey, emptySet()) } returns null
+
+        // Act
+        genresPreferences.getGenres()
+
+        // Assert
+        verify(exactly = 1) { sharedPreferences.getStringSet(genresKey, emptySet()) }
+    }
+}
