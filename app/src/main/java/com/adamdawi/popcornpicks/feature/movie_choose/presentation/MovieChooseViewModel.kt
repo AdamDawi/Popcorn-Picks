@@ -74,7 +74,7 @@ class MovieChooseViewModel(
             )
         }
         _state.value = _state.value.copy(
-            finishButtonEnabled = _state.value.selectedMovies.size >= 2
+            finishButtonEnabled = _state.value.selectedMovies.size >= 3
         )
     }
 }

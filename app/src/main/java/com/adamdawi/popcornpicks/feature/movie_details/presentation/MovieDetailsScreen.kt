@@ -94,7 +94,7 @@ private fun MovieDetailsContent(
                         .width(140.dp)
                         .height(220.dp)
                         .clip(RoundedCornerShape(6.dp)),
-                    placeholder = painterResource(R.drawable.example_poster),
+                    placeholder = painterResource(R.drawable.example_poster), //TODO change placeholder when no image is available
                     contentScale = ContentScale.Crop
                 )
                 Spacer(
@@ -189,7 +189,7 @@ private fun BackgroundImage(
         model = url,
         contentDescription = "Movie background image",
         modifier = modifier,
-        placeholder = painterResource(R.drawable.example_backdrop), //TODO change placeholder
+        placeholder = painterResource(R.drawable.example_backdrop), //TODO change placeholder when no image is available
         contentScale = ContentScale.Crop,
         alpha = 0.6f
     )

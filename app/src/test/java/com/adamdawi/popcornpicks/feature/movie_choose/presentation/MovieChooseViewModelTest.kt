@@ -264,7 +264,7 @@ class MovieChooseViewModelTest {
     }
 
     @Test
-    fun onAction_toggleMovieSelectionOnSameMovieTwice_finishButtonDisabled(){
+    fun onAction_toggleMovieSelectionOnSameMovieThreeTimes_finishButtonDisabled(){
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -278,6 +278,7 @@ class MovieChooseViewModelTest {
 
         //Act
         sut = MovieChooseViewModel(movieChooseRepository, genresPreferences)
+        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
         sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
         sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
 
@@ -286,7 +287,7 @@ class MovieChooseViewModelTest {
     }
 
     @Test
-    fun onAction_toggleMovieSelectionOnDifferentMoviesTwice_bothMoviesSelected(){
+    fun onAction_toggleMovieSelectionOnThreeDifferentMovies_threeDifferentMoviesSelected(){
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -303,20 +304,28 @@ class MovieChooseViewModelTest {
             poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
             releaseDate = "2022-11-06"
         )
+        val movie3 = Movie(
+            id = 33,
+            title = "Iron Man",
+            poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+            releaseDate = "2023-12-01"
+        )
 
         //Act
         sut = MovieChooseViewModel(movieChooseRepository, genresPreferences)
         sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
         sut.onAction(MovieChooseAction.ToggleMovieSelection(movie2))
+        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie3))
 
         //Assert
-        assertThat(sut.state.value.selectedMovies.size, `is`(2))
+        assertThat(sut.state.value.selectedMovies.size, `is`(3))
         assertThat(sut.state.value.selectedMovies.contains(movie), `is`(true))
         assertThat(sut.state.value.selectedMovies.contains(movie2), `is`(true))
+        assertThat(sut.state.value.selectedMovies.contains(movie3), `is`(true))
     }
 
     @Test
-    fun onAction_toggleMovieSelectionOnDifferentMoviesTwice_finishButtonEnabled(){
+    fun onAction_toggleMovieSelectionOnThreeDifferentMovies_finishButtonEnabled(){
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -333,11 +342,18 @@ class MovieChooseViewModelTest {
             poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
             releaseDate = "2022-11-06"
         )
+        val movie3 = Movie(
+            id = 33,
+            title = "Iron Man",
+            poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+            releaseDate = "2023-12-01"
+        )
 
         //Act
         sut = MovieChooseViewModel(movieChooseRepository, genresPreferences)
         sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
         sut.onAction(MovieChooseAction.ToggleMovieSelection(movie2))
+        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie3))
 
         //Assert
         assertThat(sut.state.value.finishButtonEnabled, `is`(true))

@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -13,17 +14,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.adamdawi.popcornpicks.R
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Network.BASE_IMAGE_URL
 import com.adamdawi.popcornpicks.core.presentation.theme.Blue
 import com.adamdawi.popcornpicks.core.presentation.theme.DarkGrey
 import com.adamdawi.popcornpicks.core.presentation.theme.LightGrey
 import com.adamdawi.popcornpicks.core.presentation.theme.fontFamily
 import com.adamdawi.popcornpicks.core.presentation.ui.shimmerBrush
-import com.adamdawi.popcornpicks.core.domain.util.Constants.Network.BASE_IMAGE_URL
 import com.adamdawi.popcornpicks.feature.movie_choose.domain.Movie
 
 @Composable
@@ -51,7 +54,9 @@ fun MovieItem(
                         onClick()
                     },
                 contentScale = ContentScale.Crop,
-                onSuccess = { showShimmer.value = false }
+                onSuccess = { showShimmer.value = false },
+                onError = { showShimmer.value = false },
+                error = painterResource(R.drawable.no_poster)
             )
         } else {
             CardWithAnimatedBorder(
@@ -66,10 +71,13 @@ fun MovieItem(
                         .height(220.dp)
                         .clip(RoundedCornerShape(12.dp)),
                     contentScale = ContentScale.Crop,
-                    onSuccess = { showShimmer.value = false }
+                    onSuccess = { showShimmer.value = false },
+                    onError = { showShimmer.value = false },
+                    error = painterResource(R.drawable.no_poster)
                 )
             }
         }
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = movie.title,
             fontFamily = fontFamily,
@@ -77,10 +85,11 @@ fun MovieItem(
             fontWeight = FontWeight.SemiBold,
             color = LightGrey,
             maxLines = 2,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            lineHeight = 14.sp
         )
         Text(
-            text = movie.releaseDate.take(4),
+            text = if(movie.releaseDate.isEmpty()) "???" else movie.releaseDate.take(4),
             fontFamily = fontFamily,
             fontSize = 10.sp,
             fontWeight = FontWeight.SemiBold,

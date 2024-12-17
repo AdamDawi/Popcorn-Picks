@@ -155,7 +155,7 @@ fun ImageScratchPreview() {
     PopcornPicksTheme {
         ImageScratch(
             overlayImage = ImageBitmap.imageResource(R.drawable.popcorn_overlay3),
-            baseImageUrl = dummyMovie.poster,
+            baseImageUrl = dummyMovie.poster.toString(),
             isImageScratched = {false},
             onImageScratched = {}
         )
