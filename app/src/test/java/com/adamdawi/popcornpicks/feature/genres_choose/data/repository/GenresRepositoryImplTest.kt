@@ -22,6 +22,7 @@ class GenresRepositoryImplTest {
         httpClient = mockk<HttpClient>()
         sut = GenresRepositoryImpl(httpClient)
     }
+    //TODO make testing for http client
 
 //    @Test
 //    fun getGenres_success_genresResponseMapedToGenres() = runTest {

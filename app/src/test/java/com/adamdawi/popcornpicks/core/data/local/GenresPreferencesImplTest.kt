@@ -16,14 +16,14 @@ class GenresPreferencesImplTest {
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
-    private lateinit var genresPreferences: GenresPreferences
+    private lateinit var sut: GenresPreferences
     private val genresKey = "genres_key"
 
     @Before
     fun setUp() {
         sharedPreferences = mockk()
         editor = mockk()
-        genresPreferences = GenresPreferencesImpl(sharedPreferences)
+        sut = GenresPreferencesImpl(sharedPreferences)
 
         // Default mock behavior for editing SharedPreferences
         every { sharedPreferences.edit() } returns editor
@@ -46,7 +46,7 @@ class GenresPreferencesImplTest {
         )
 
         // Act
-        genresPreferences.saveGenres(genres)
+        sut.saveGenres(genres)
 
         // Assert
         verify(exactly = 1) {
@@ -62,7 +62,7 @@ class GenresPreferencesImplTest {
         val genres = emptyList<Genre>()
 
         // Act
-        genresPreferences.saveGenres(genres)
+        sut.saveGenres(genres)
 
         // Assert
         verify(exactly = 0) {
@@ -83,7 +83,7 @@ class GenresPreferencesImplTest {
         every { sharedPreferences.getStringSet(genresKey, emptySet()) } returns savedGenres
 
         // Act
-        val result = genresPreferences.getGenres()
+        val result = sut.getGenres()
 
         // Assert
         assertEquals(listOf("Action", "Comedy", "Drama"), result)
@@ -96,7 +96,7 @@ class GenresPreferencesImplTest {
         every { sharedPreferences.getStringSet(genresKey, emptySet()) } returns savedGenres
 
         // Act
-        genresPreferences.getGenres()
+        sut.getGenres()
 
         // Assert
         verify(exactly = 1) { sharedPreferences.getStringSet(genresKey, emptySet()) }
@@ -108,7 +108,7 @@ class GenresPreferencesImplTest {
         every { sharedPreferences.getStringSet(genresKey, emptySet()) } returns null
 
         // Act
-        val result = genresPreferences.getGenres()
+        val result = sut.getGenres()
 
         // Assert
         assertEquals(emptyList<String>(), result)
@@ -120,7 +120,7 @@ class GenresPreferencesImplTest {
         every { sharedPreferences.getStringSet(genresKey, emptySet()) } returns null
 
         // Act
-        genresPreferences.getGenres()
+        sut.getGenres()
 
         // Assert
         verify(exactly = 1) { sharedPreferences.getStringSet(genresKey, emptySet()) }

@@ -48,7 +48,10 @@ fun GenresScreen(
         else -> GenresContent(
             onAction = { action ->
                 when (action) {
-                    is GenresAction.OnContinueClick -> onContinueClick()
+                    is GenresAction.OnContinueClick -> {
+                        viewModel.onAction(action)
+                        onContinueClick()
+                    }
                     else -> viewModel.onAction(action)
                 }
             },

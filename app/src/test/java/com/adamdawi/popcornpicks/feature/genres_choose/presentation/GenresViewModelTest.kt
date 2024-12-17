@@ -1,6 +1,7 @@
 package com.adamdawi.popcornpicks.feature.genres_choose.presentation
 
 import com.adamdawi.popcornpicks.core.data.dummy.dummyGenresList
+import com.adamdawi.popcornpicks.core.domain.GenresPreferences
 import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
@@ -9,6 +10,7 @@ import com.adamdawi.popcornpicks.feature.genres_choose.domain.repository.GenresR
 import com.adamdawi.popcornpicks.utils.ReplaceMainDispatcherRule
 import io.mockk.coEvery
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import org.hamcrest.CoreMatchers.`is`
@@ -21,6 +23,7 @@ class GenresViewModelTest {
 
     private lateinit var sut: GenresViewModel
     private lateinit var genresRepository: GenresRepository
+    private lateinit var genresPreferences: GenresPreferences
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @get: Rule
@@ -28,6 +31,7 @@ class GenresViewModelTest {
 
     @Before
     fun setUp(){
+        genresPreferences = mockk<GenresPreferences>(relaxed = true)
         genresRepository = mockk<GenresRepository>()
     }
 
@@ -38,7 +42,7 @@ class GenresViewModelTest {
         coEvery { genresRepository.getGenres() } answers { Result<List<Genre>, DataError.Network>.Success(dummyGenresList) }
 
         //Act
-        sut = GenresViewModel(genresRepository)
+        sut = GenresViewModel(genresRepository, genresPreferences)
 
         //Assert
         assertThat(sut.state.value.genres, `is`(dummyGenresList))
@@ -50,7 +54,7 @@ class GenresViewModelTest {
         coEvery { genresRepository.getGenres() } answers { Result<List<Genre>, DataError.Network>.Success(dummyGenresList) }
 
         //Act
-        sut = GenresViewModel(genresRepository)
+        sut = GenresViewModel(genresRepository, genresPreferences)
 
         //Assert
         assertThat(sut.state.value.error.isNullOrEmpty(), `is`(true))
@@ -65,7 +69,7 @@ class GenresViewModelTest {
         }
 
         // Act
-        sut = GenresViewModel(genresRepository)
+        sut = GenresViewModel(genresRepository, genresPreferences)
 
         //Assert
         assertThat(sut.state.value.isLoading, `is`(true))
@@ -77,7 +81,7 @@ class GenresViewModelTest {
         coEvery { genresRepository.getGenres() } answers { Result<List<Genre>, DataError.Network>.Success(dummyGenresList) }
 
         //Act
-        sut = GenresViewModel(genresRepository)
+        sut = GenresViewModel(genresRepository, genresPreferences)
 
         //Assert
         assertThat(sut.state.value.isLoading, `is`(false))
@@ -90,7 +94,7 @@ class GenresViewModelTest {
             DataError.Network.SERVER_ERROR) }
 
         //Act
-        sut = GenresViewModel(genresRepository)
+        sut = GenresViewModel(genresRepository, genresPreferences)
 
         //Assert
         assertThat(sut.state.value.error, `is`(DataError.Network.SERVER_ERROR.asUiText()))
@@ -103,7 +107,7 @@ class GenresViewModelTest {
             DataError.Network.SERVER_ERROR) }
 
         //Act
-        sut = GenresViewModel(genresRepository)
+        sut = GenresViewModel(genresRepository, genresPreferences)
 
         //Assert
         assertThat(sut.state.value.genres, `is`(emptyList()))
@@ -118,7 +122,7 @@ class GenresViewModelTest {
         }
 
         //Act
-        sut = GenresViewModel(genresRepository)
+        sut = GenresViewModel(genresRepository, genresPreferences)
 
         //Assert
         assertThat(sut.state.value.isLoading, `is`(true))
@@ -132,7 +136,7 @@ class GenresViewModelTest {
         }
 
         //Act
-        sut = GenresViewModel(genresRepository)
+        sut = GenresViewModel(genresRepository, genresPreferences)
 
         //Assert
         assertThat(sut.state.value.isLoading, `is`(false))
@@ -145,13 +149,13 @@ class GenresViewModelTest {
         coEvery { genresRepository.getGenres() } answers { Result<List<Genre>, DataError.Network>.Success(dummyGenresList) }
 
         //Act
-        sut = GenresViewModel(genresRepository)
+        sut = GenresViewModel(genresRepository, genresPreferences)
 
         //Assert
         assertThat(sut.state.value.selectedGenres.size, `is`(0))
     }
 
-    //ON GENRE CLICK
+    //TOGGLE GENRE SELECTION
     @Test
     fun onAction_toggleGenreSelectionOnce_genreSelected(){
         //Arrange
@@ -159,7 +163,7 @@ class GenresViewModelTest {
         val genre = Genre(id = 36, name = "History")
 
         //Act
-        sut = GenresViewModel(genresRepository)
+        sut = GenresViewModel(genresRepository, genresPreferences)
         sut.onAction(GenresAction.ToggleGenreSelection(genre))
 
         //Assert
@@ -174,7 +178,7 @@ class GenresViewModelTest {
         val genre = Genre(id = 36, name = "History")
 
         //Act
-        sut = GenresViewModel(genresRepository)
+        sut = GenresViewModel(genresRepository, genresPreferences)
         sut.onAction(GenresAction.ToggleGenreSelection(genre))
         sut.onAction(GenresAction.ToggleGenreSelection(genre))
 
@@ -191,7 +195,7 @@ class GenresViewModelTest {
         val genre2 = Genre(id = 80, name = "Crime")
 
         //Act
-        sut = GenresViewModel(genresRepository)
+        sut = GenresViewModel(genresRepository, genresPreferences)
         sut.onAction(GenresAction.ToggleGenreSelection(genre))
         sut.onAction(GenresAction.ToggleGenreSelection(genre2))
 
@@ -206,11 +210,31 @@ class GenresViewModelTest {
         val genre = Genre(id = 36, name = "History")
 
         //Act
-        sut = GenresViewModel(genresRepository)
+        sut = GenresViewModel(genresRepository, genresPreferences)
         sut.onAction(GenresAction.ToggleGenreSelection(genre))
         sut.onAction(GenresAction.ToggleGenreSelection(genre))
 
         //Assert
         assertThat(sut.state.value.continueButtonEnabled, `is`(false))
+    }
+
+    // ON CONTINUE CLICK
+    @Test
+    fun onAction_onContinueClick_genresSavedInPreferences() {
+        // Arrange
+        coEvery { genresRepository.getGenres() } answers { Result.Success(dummyGenresList) }
+        sut = GenresViewModel(genresRepository, genresPreferences)
+        val selectedGenres = listOf(
+            Genre(id = 36, name = "History"),
+            Genre(id = 80, name = "Crime")
+        )
+        sut.onAction(GenresAction.ToggleGenreSelection(selectedGenres[0]))
+        sut.onAction(GenresAction.ToggleGenreSelection(selectedGenres[1]))
+
+        // Act
+        sut.onAction(GenresAction.OnContinueClick)
+
+        // Assert
+        verify(exactly = 1) { genresPreferences.saveGenres(selectedGenres) }
     }
 }

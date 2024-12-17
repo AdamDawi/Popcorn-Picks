@@ -2,6 +2,7 @@ package com.adamdawi.popcornpicks.feature.genres_choose.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.adamdawi.popcornpicks.core.domain.GenresPreferences
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.feature.genres_choose.domain.Genre
@@ -11,7 +12,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class GenresViewModel(
-    private val genresRepository: GenresRepository
+    private val genresRepository: GenresRepository,
+    private val genresPreferences: GenresPreferences
 ): ViewModel() {
 
     private val _state = MutableStateFlow(GenresState())
@@ -23,6 +25,7 @@ class GenresViewModel(
 
     fun onAction(action: GenresAction) {
         when(action) {
+            is GenresAction.OnContinueClick -> saveGenresToPreferences()
             is GenresAction.ToggleGenreSelection -> onGenreClick(action.genre)
             else -> Unit
         }
@@ -49,6 +52,10 @@ class GenresViewModel(
                 }
             }
         }
+    }
+
+    private fun saveGenresToPreferences() {
+        genresPreferences.saveGenres(_state.value.selectedGenres)
     }
 
     private fun onGenreClick(genre: Genre){
