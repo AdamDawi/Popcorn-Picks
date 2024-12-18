@@ -102,6 +102,7 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.hamcrest)
+    testImplementation(libs.truth)
     //ui tests
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.ui.test.junit4)

@@ -10,6 +10,7 @@ import com.adamdawi.popcornpicks.feature.genres_choose.domain.Genre
 import com.adamdawi.popcornpicks.feature.movie_choose.domain.Movie
 import com.adamdawi.popcornpicks.feature.movie_choose.domain.repository.MovieChooseRepository
 import com.adamdawi.popcornpicks.utils.ReplaceMainDispatcherRule
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -75,6 +76,64 @@ class MovieChooseViewModelTest {
     fun getMovies_success_movieListStateUpdatedWithCorrectData() {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
+        val movieListID1 = listOf(
+            Movie(
+                id = 1,
+                title = "Spiderman",
+                poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+                releaseDate = "2020-04-02"
+            )
+        )
+
+        val movieListID2 = listOf(
+            Movie(
+                id = 2,
+                title = "Thor",
+                poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+                releaseDate = "2022-11-06"
+            )
+        )
+        val movieListID3 = listOf(
+            Movie(
+                id = 33,
+                title = "Iron Man",
+                poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+                releaseDate = "2023-12-01"
+            )
+        )
+        every { genresPreferences.getGenres() } returns genresIDs
+        coEvery { movieChooseRepository.getMovies(genresIDs[0], any()) } answers {
+            Result.Success(
+                movieListID1
+            )
+        }
+
+        coEvery { movieChooseRepository.getMovies(genresIDs[1], any()) } answers {
+            Result.Success(
+                movieListID2
+            )
+        }
+
+        coEvery { movieChooseRepository.getMovies(genresIDs[2], any()) } answers {
+            Result.Success(
+                movieListID3
+            )
+        }
+
+        //Act
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences)
+
+        //Assert
+        val expectedMovies = movieListID1 + movieListID1 + movieListID1 +
+                movieListID2 + movieListID2 + movieListID2 +
+                movieListID3 + movieListID3 + movieListID3
+        assertThat(sut.state.value.movies).containsExactlyElementsIn(expectedMovies)
+    }
+
+    @Test
+    fun getMovies_success_repositoryGetMoviesInvokedCorrectNumberOfTimes() {
+        //Arrange
+        val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
         coEvery { movieChooseRepository.getMovies(any(), any()) } answers {
             Result.Success(
@@ -86,7 +145,17 @@ class MovieChooseViewModelTest {
         sut = MovieChooseViewModel(movieChooseRepository, genresPreferences)
 
         //Assert
-        assertThat(sut.state.value.movies, `is`(List(9) { dummyMovieList }.flatten()))
+        coVerify(exactly = 1){ movieChooseRepository.getMovies(genresIDs[0], 1) }
+        coVerify(exactly = 1){ movieChooseRepository.getMovies(genresIDs[0], 2) }
+        coVerify(exactly = 1){ movieChooseRepository.getMovies(genresIDs[0], 3) }
+
+        coVerify(exactly = 1){ movieChooseRepository.getMovies(genresIDs[1], 1) }
+        coVerify(exactly = 1){ movieChooseRepository.getMovies(genresIDs[1], 2) }
+        coVerify(exactly = 1){ movieChooseRepository.getMovies(genresIDs[1], 3) }
+
+        coVerify(exactly = 1){ movieChooseRepository.getMovies(genresIDs[2], 1) }
+        coVerify(exactly = 1){ movieChooseRepository.getMovies(genresIDs[2], 2) }
+        coVerify(exactly = 1){ movieChooseRepository.getMovies(genresIDs[2], 3) }
     }
 
     @Test
@@ -108,7 +177,7 @@ class MovieChooseViewModelTest {
     }
 
     @Test
-    fun getMovies_success_loadingStateIsSetToTrueWhileFetching(){
+    fun getMovies_success_loadingStateIsSetToTrueWhileFetching() {
         // Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -127,7 +196,7 @@ class MovieChooseViewModelTest {
     }
 
     @Test
-    fun getMovies_success_loadingStateIsSetToFalseAfterFetching(){
+    fun getMovies_success_loadingStateIsSetToFalseAfterFetching() {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -145,12 +214,15 @@ class MovieChooseViewModelTest {
     }
 
     @Test
-    fun getMovies_error_errorStateUpdatedWithCorrectError(){
+    fun getMovies_error_errorStateUpdatedWithCorrectError() {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(any(), any()) } answers { Result<List<Genre>, DataError.Network>.Error(
-            DataError.Network.SERVER_ERROR) }
+        coEvery { movieChooseRepository.getMovies(any(), any()) } answers {
+            Result<List<Genre>, DataError.Network>.Error(
+                DataError.Network.SERVER_ERROR
+            )
+        }
 
         //Act
         sut = MovieChooseViewModel(movieChooseRepository, genresPreferences)
@@ -160,12 +232,15 @@ class MovieChooseViewModelTest {
     }
 
     @Test
-    fun getMovies_error_moviesListIsNotUpdated(){
+    fun getMovies_error_moviesListIsNotUpdated() {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(any(), any()) } answers { Result<List<Genre>, DataError.Network>.Error(
-            DataError.Network.SERVER_ERROR) }
+        coEvery { movieChooseRepository.getMovies(any(), any()) } answers {
+            Result<List<Genre>, DataError.Network>.Error(
+                DataError.Network.SERVER_ERROR
+            )
+        }
 
         //Act
         sut = MovieChooseViewModel(movieChooseRepository, genresPreferences)
@@ -175,7 +250,7 @@ class MovieChooseViewModelTest {
     }
 
     @Test
-    fun getMovies_error_loadingStateIsSetToTrueWhileFetching(){
+    fun getMovies_error_loadingStateIsSetToTrueWhileFetching() {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -192,7 +267,7 @@ class MovieChooseViewModelTest {
     }
 
     @Test
-    fun getMovies_error_loadingStateIsSetToFalseAfterFetching(){
+    fun getMovies_error_loadingStateIsSetToFalseAfterFetching() {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -207,13 +282,37 @@ class MovieChooseViewModelTest {
         assertThat(sut.state.value.isLoading, `is`(false))
     }
 
-    //INIT
     @Test
-    fun init_selectedGenres_empty(){
+    fun getMovies_successThenError_errorStateUpdatedWithCorrectError() {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(any(), any()) } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
+        coEvery { movieChooseRepository.getMovies(any(), 1) } answers {
+            Result<List<Genre>, DataError.Network>.Success(dummyMovieList)
+        }
+        coEvery { movieChooseRepository.getMovies(any(), 2) } answers {
+            Result<List<Genre>, DataError.Network>.Error(DataError.Network.SERVER_ERROR)
+        }
+
+        //Act
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences)
+
+        //Assert
+        assertThat(sut.state.value.error, `is`(DataError.Network.SERVER_ERROR.asUiText()))
+    }
+
+    //INIT
+    @Test
+    fun init_selectedGenres_empty() {
+        //Arrange
+        val genresIDs = listOf("3", "12", "878")
+        every { genresPreferences.getGenres() } returns genresIDs
+        coEvery {
+            movieChooseRepository.getMovies(
+                any(),
+                any()
+            )
+        } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
 
         //Act
         sut = MovieChooseViewModel(movieChooseRepository, genresPreferences)
@@ -224,11 +323,16 @@ class MovieChooseViewModelTest {
 
     //TOGGLE MOVIE SELECTION
     @Test
-    fun onAction_toggleMovieSelectionOnce_movieSelected(){
+    fun onAction_toggleMovieSelectionOnce_movieSelected() {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(any(), any()) } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
+        coEvery {
+            movieChooseRepository.getMovies(
+                any(),
+                any()
+            )
+        } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
         val movie = Movie(
             id = 1,
             title = "Spiderman",
@@ -246,11 +350,16 @@ class MovieChooseViewModelTest {
     }
 
     @Test
-    fun onAction_toggleMovieSelectionOnSameMovieTwice_movieDeselected(){
+    fun onAction_toggleMovieSelectionOnSameMovieTwice_movieDeselected() {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(any(), any()) } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
+        coEvery {
+            movieChooseRepository.getMovies(
+                any(),
+                any()
+            )
+        } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
         val movie = Movie(
             id = 1,
             title = "Spiderman",
@@ -269,11 +378,16 @@ class MovieChooseViewModelTest {
     }
 
     @Test
-    fun onAction_toggleMovieSelectionOnSameMovieThreeTimes_finishButtonDisabled(){
+    fun onAction_toggleMovieSelectionOnSameMovieThreeTimes_finishButtonDisabled() {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(any(), any()) } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
+        coEvery {
+            movieChooseRepository.getMovies(
+                any(),
+                any()
+            )
+        } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
         val movie = Movie(
             id = 1,
             title = "Spiderman",
@@ -292,11 +406,16 @@ class MovieChooseViewModelTest {
     }
 
     @Test
-    fun onAction_toggleMovieSelectionOnThreeDifferentMovies_threeDifferentMoviesSelected(){
+    fun onAction_toggleMovieSelectionOnThreeDifferentMovies_threeDifferentMoviesSelected() {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(any(), any()) } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
+        coEvery {
+            movieChooseRepository.getMovies(
+                any(),
+                any()
+            )
+        } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
         val movie = Movie(
             id = 1,
             title = "Spiderman",
@@ -330,11 +449,16 @@ class MovieChooseViewModelTest {
     }
 
     @Test
-    fun onAction_toggleMovieSelectionOnThreeDifferentMovies_finishButtonEnabled(){
+    fun onAction_toggleMovieSelectionOnThreeDifferentMovies_finishButtonEnabled() {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(any(), any()) } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
+        coEvery {
+            movieChooseRepository.getMovies(
+                any(),
+                any()
+            )
+        } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
         val movie = Movie(
             id = 1,
             title = "Spiderman",
