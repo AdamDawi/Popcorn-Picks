@@ -5,5 +5,5 @@ import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.feature.movie_choose.domain.Movie
 
 interface MovieChooseRepository {
-    suspend fun getMovies(genresIds: List<String>): Result<List<Movie>, DataError.Network>
+    suspend fun getMovies(genreId: String, page: Int): Result<List<Movie>, DataError.Network>
 }

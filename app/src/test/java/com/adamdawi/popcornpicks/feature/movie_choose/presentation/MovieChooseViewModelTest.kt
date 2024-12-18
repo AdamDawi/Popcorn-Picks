@@ -39,6 +39,7 @@ class MovieChooseViewModelTest {
     }
 
     //GET GENRES IDS
+    //TODO make tests for different scenarios for pages
     @Test
     fun getGenresIds_genresNotSavedInSharedPreferences_defaultGenresIdsListPassedToGetMovies() {
         // Arrange
@@ -49,7 +50,9 @@ class MovieChooseViewModelTest {
         sut = MovieChooseViewModel(movieChooseRepository, genresPreferences)
 
         // Assert
-        coVerify(exactly = 1) { movieChooseRepository.getMovies(defaultGenresIDs) }
+        coVerify(exactly = 1) { movieChooseRepository.getMovies(defaultGenresIDs[0], 1) }
+        coVerify(exactly = 1) { movieChooseRepository.getMovies(defaultGenresIDs[1], 1) }
+        coVerify(exactly = 1) { movieChooseRepository.getMovies(defaultGenresIDs[2], 1) }
     }
 
     @Test
@@ -62,7 +65,9 @@ class MovieChooseViewModelTest {
         sut = MovieChooseViewModel(movieChooseRepository, genresPreferences)
 
         // Assert
-        coVerify(exactly = 1) { movieChooseRepository.getMovies(genresIDs) }
+        coVerify(exactly = 1) { movieChooseRepository.getMovies(genresIDs[0], 1) }
+        coVerify(exactly = 1) { movieChooseRepository.getMovies(genresIDs[1], 1) }
+        coVerify(exactly = 1) { movieChooseRepository.getMovies(genresIDs[2], 1) }
     }
 
     //GET MOVIES
@@ -71,7 +76,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(genresIDs) } answers {
+        coEvery { movieChooseRepository.getMovies(any(), any()) } answers {
             Result.Success(
                 dummyMovieList
             )
@@ -81,7 +86,7 @@ class MovieChooseViewModelTest {
         sut = MovieChooseViewModel(movieChooseRepository, genresPreferences)
 
         //Assert
-        assertThat(sut.state.value.movies, `is`(dummyMovieList))
+        assertThat(sut.state.value.movies, `is`(List(9) { dummyMovieList }.flatten()))
     }
 
     @Test
@@ -89,7 +94,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(genresIDs) } answers {
+        coEvery { movieChooseRepository.getMovies(any(), any()) } answers {
             Result.Success(
                 dummyMovieList
             )
@@ -107,7 +112,7 @@ class MovieChooseViewModelTest {
         // Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(genresIDs) } coAnswers {
+        coEvery { movieChooseRepository.getMovies(any(), any()) } coAnswers {
             delay(1000)
             Result.Success(
                 dummyMovieList
@@ -126,7 +131,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(genresIDs) } answers {
+        coEvery { movieChooseRepository.getMovies(any(), any()) } answers {
             Result.Success(
                 dummyMovieList
             )
@@ -144,7 +149,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(genresIDs) } answers { Result<List<Genre>, DataError.Network>.Error(
+        coEvery { movieChooseRepository.getMovies(any(), any()) } answers { Result<List<Genre>, DataError.Network>.Error(
             DataError.Network.SERVER_ERROR) }
 
         //Act
@@ -159,7 +164,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(genresIDs) } answers { Result<List<Genre>, DataError.Network>.Error(
+        coEvery { movieChooseRepository.getMovies(any(), any()) } answers { Result<List<Genre>, DataError.Network>.Error(
             DataError.Network.SERVER_ERROR) }
 
         //Act
@@ -174,7 +179,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(genresIDs) } coAnswers {
+        coEvery { movieChooseRepository.getMovies(any(), any()) } coAnswers {
             delay(1000)
             Result<List<Genre>, DataError.Network>.Error(DataError.Network.SERVER_ERROR)
         }
@@ -187,11 +192,11 @@ class MovieChooseViewModelTest {
     }
 
     @Test
-    fun getGenres_error_loadingStateIsSetToFalseAfterFetching(){
+    fun getMovies_error_loadingStateIsSetToFalseAfterFetching(){
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(genresIDs) } answers {
+        coEvery { movieChooseRepository.getMovies(any(), any()) } answers {
             Result<List<Genre>, DataError.Network>.Error(DataError.Network.SERVER_ERROR)
         }
 
@@ -208,7 +213,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(genresIDs) } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
+        coEvery { movieChooseRepository.getMovies(any(), any()) } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
 
         //Act
         sut = MovieChooseViewModel(movieChooseRepository, genresPreferences)
@@ -223,7 +228,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(genresIDs) } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
+        coEvery { movieChooseRepository.getMovies(any(), any()) } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
         val movie = Movie(
             id = 1,
             title = "Spiderman",
@@ -245,7 +250,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(genresIDs) } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
+        coEvery { movieChooseRepository.getMovies(any(), any()) } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
         val movie = Movie(
             id = 1,
             title = "Spiderman",
@@ -268,7 +273,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(genresIDs) } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
+        coEvery { movieChooseRepository.getMovies(any(), any()) } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
         val movie = Movie(
             id = 1,
             title = "Spiderman",
@@ -291,7 +296,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(genresIDs) } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
+        coEvery { movieChooseRepository.getMovies(any(), any()) } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
         val movie = Movie(
             id = 1,
             title = "Spiderman",
@@ -329,7 +334,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { movieChooseRepository.getMovies(genresIDs) } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
+        coEvery { movieChooseRepository.getMovies(any(), any()) } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
         val movie = Movie(
             id = 1,
             title = "Spiderman",

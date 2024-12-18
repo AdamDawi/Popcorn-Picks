@@ -13,16 +13,16 @@ import io.ktor.client.HttpClient
 class MovieChooseRepositoryImpl(
     private val httpClient: HttpClient
 ): MovieChooseRepository {
-    override suspend fun getMovies(genresIds: List<String>): Result<List<Movie>, DataError.Network> {
+    override suspend fun getMovies(genreId: String, page: Int): Result<List<Movie>, DataError.Network> {
         val result = httpClient.get<MovieChooseResponse>(
             route = "discover/movie",
             queryParameters = mapOf(
                 "include_adult" to "false",
                 "include_video" to "false",
                 "language" to "en-US",
-                "page" to "1",
+                "page" to page.toString(),
                 "sort_by" to "revenue.desc",
-                "with_genres" to genresIds.joinToString("OR")
+                "with_genres" to genreId
             )
         )
 

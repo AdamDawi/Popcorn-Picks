@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 class MovieChooseViewModel(
     private val repository: MovieChooseRepository,
     private val genresPreferences: GenresPreferences
-): ViewModel() {
+) : ViewModel() {
     private val _state = MutableStateFlow(MovieChooseState())
     val state = _state.asStateFlow()
 
@@ -24,7 +24,7 @@ class MovieChooseViewModel(
     }
 
     fun onAction(action: MovieChooseAction) {
-        when(action) {
+        when (action) {
             is MovieChooseAction.ToggleMovieSelection -> onMovieClick(action.movie)
             else -> Unit
         }
@@ -32,43 +32,48 @@ class MovieChooseViewModel(
 
     private fun getGenresIDs(): List<String> {
         val result = genresPreferences.getGenres()
-        return if(result.isEmpty()){
+        return if (result.isEmpty()) {
             Constants.Local.DEFAULT_GENRES_IDS
-        }else{
+        } else {
             result
         }
     }
 
     private fun getMovies(genresIds: List<String>) {
-        viewModelScope.launch {
-            _state.value = _state.value.copy(
-                isLoading = true
-            )
-            val result = repository.getMovies(genresIds)
+        _state.value = _state.value.copy(
+            isLoading = true
+        )
+        for (i in 1..3) {
+            for (genre in genresIds) {
+                viewModelScope.launch {
+                    val result = repository.getMovies(genre, i)
 
-            when(result){
-                is Result.Error -> {
-                    _state.value = _state.value.copy(
-                        error = result.error.asUiText(),
-                        isLoading = false
-                    )
-                }
-                is Result.Success -> {
-                    _state.value = _state.value.copy(
-                        movies = result.data,
-                        isLoading = false
-                    )
+                    when (result) {
+                        is Result.Error -> {
+                            _state.value = _state.value.copy(
+                                error = result.error.asUiText(),
+                                isLoading = false
+                            )
+                        }
+
+                        is Result.Success -> {
+                            _state.value = _state.value.copy(
+                                movies = result.data + _state.value.movies,
+                                isLoading = false
+                            )
+                        }
+                    }
                 }
             }
         }
     }
 
-    private fun onMovieClick(movie: Movie){
-        if(_state.value.selectedMovies.contains(movie)){
+    private fun onMovieClick(movie: Movie) {
+        if (_state.value.selectedMovies.contains(movie)) {
             _state.value = _state.value.copy(
                 selectedMovies = _state.value.selectedMovies - movie
             )
-        }else{
+        } else {
             _state.value = _state.value.copy(
                 selectedMovies = _state.value.selectedMovies + movie
             )
