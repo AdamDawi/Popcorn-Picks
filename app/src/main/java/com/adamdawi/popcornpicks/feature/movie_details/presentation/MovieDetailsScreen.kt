@@ -21,7 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -52,6 +52,7 @@ import com.adamdawi.popcornpicks.core.domain.util.Constants
 import com.adamdawi.popcornpicks.core.presentation.theme.Grey
 import com.adamdawi.popcornpicks.core.presentation.theme.LightGrey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
+import com.adamdawi.popcornpicks.core.presentation.ui.mapping.formatRuntime
 import com.adamdawi.popcornpicks.feature.movie_details.domain.DetailedMovie
 import com.adamdawi.popcornpicks.feature.movie_details.presentation.MovieDetailsConstants.MAX_Y_OFFSET
 import com.adamdawi.popcornpicks.feature.movie_details.presentation.MovieDetailsConstants.POSTER_HEIGHT
@@ -161,7 +162,7 @@ private fun OverviewSection(
         )
         Text(
             modifier = Modifier.padding(top = 20.dp),
-            text = movieOverview,
+            text = movieOverview.repeat(5), //TODO: Remove repeat later
             color = LightGrey
         )
     }
@@ -239,7 +240,7 @@ private fun MovieInfoColumn(
         )
         TextValueRow(
             text = "Runtime",
-            value = (movie.runtime / 60).toString() + "h " + (movie.runtime % 60).toString() + "m"
+            value = formatRuntime(movie.runtime)
         )
     }
 }
@@ -252,13 +253,13 @@ private fun BackIcon(
     Icon(
         modifier = modifier
             .padding(16.dp)
-            .size(32.dp)
+            .size(36.dp)
             .clip(CircleShape)
             .clickable {
                 onClick()
 
             },
-        imageVector = Icons.AutoMirrored.Default.ArrowForward,
+        imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
         contentDescription = "Back",
         tint = Color.White
     )
