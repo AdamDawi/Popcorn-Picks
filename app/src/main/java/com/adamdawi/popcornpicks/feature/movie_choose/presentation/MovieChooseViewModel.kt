@@ -3,6 +3,7 @@ package com.adamdawi.popcornpicks.feature.movie_choose.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.adamdawi.popcornpicks.core.domain.GenresPreferences
+import com.adamdawi.popcornpicks.core.domain.OnBoardingManager
 import com.adamdawi.popcornpicks.core.domain.util.Constants
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
@@ -14,7 +15,8 @@ import kotlinx.coroutines.launch
 
 class MovieChooseViewModel(
     private val repository: MovieChooseRepository,
-    private val genresPreferences: GenresPreferences
+    private val genresPreferences: GenresPreferences,
+    private val onBoardingManager: OnBoardingManager
 ) : ViewModel() {
     private val _state = MutableStateFlow(MovieChooseState())
     val state = _state.asStateFlow()
@@ -26,6 +28,7 @@ class MovieChooseViewModel(
     fun onAction(action: MovieChooseAction) {
         when (action) {
             is MovieChooseAction.ToggleMovieSelection -> onMovieClick(action.movie)
+            is MovieChooseAction.OnFinishClick -> setOnboardingCompletedToTrue()
             else -> Unit
         }
     }
@@ -81,5 +84,9 @@ class MovieChooseViewModel(
         _state.value = _state.value.copy(
             finishButtonEnabled = _state.value.selectedMovies.size >= 3
         )
+    }
+
+    private fun setOnboardingCompletedToTrue() {
+        onBoardingManager.setOnboardingCompleted(true)
     }
 }

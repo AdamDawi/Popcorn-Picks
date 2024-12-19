@@ -1,5 +1,6 @@
 package com.adamdawi.popcornpicks.feature.recommendations.presentation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -47,6 +48,7 @@ fun RecommendationsScreen(
     onNavigateToProfile: () -> Unit,
     onNavigateToMovieDetails: () -> Unit
 ) {
+    BackHandler {  }
     val state = viewModel.state.collectAsStateWithLifecycle()
 
     RecommendationsContent(
@@ -121,21 +123,6 @@ fun ButtonsRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-//        Icon(
-//            modifier = Modifier
-//                .size(52.dp)
-//                .clip(CircleShape)
-//                .clickable(
-//                    enabled = areButtonsEnabled,
-//                    onClick = {
-//                        onAction(RecommendationsAction.OnMoreInfoClicked)
-//                    }
-//                )
-//                .background(color = if (areButtonsEnabled) Color.Transparent else DarkGrey),
-//            painter = painterResource(R.drawable.more_info_ic),
-//            contentDescription = "More info",
-//            tint = if (areButtonsEnabled) Blue else Grey
-//        )
         CircleIconButton(
             icon = painterResource(R.drawable.letter_i_ic),
             color = Blue,

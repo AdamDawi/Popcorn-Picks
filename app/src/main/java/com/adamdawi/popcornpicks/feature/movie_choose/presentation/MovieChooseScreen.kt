@@ -54,7 +54,10 @@ fun MovieChooseScreen(
             MovieChooseContent(
                 onAction = { action ->
                     when (action) {
-                        is MovieChooseAction.OnFinishClick -> onFinishClick()
+                        is MovieChooseAction.OnFinishClick -> {
+                            onFinishClick()
+//                            viewModel.onAction(action) //TODO add viewModel onAction to work
+                        }
                         else -> viewModel.onAction(action)
                     }
                 },
