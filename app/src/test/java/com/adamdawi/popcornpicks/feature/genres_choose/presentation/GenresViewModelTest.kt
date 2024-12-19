@@ -1,7 +1,7 @@
 package com.adamdawi.popcornpicks.feature.genres_choose.presentation
 
 import com.adamdawi.popcornpicks.core.data.dummy.dummyGenresList
-import com.adamdawi.popcornpicks.core.domain.GenresPreferences
+import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
 import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText

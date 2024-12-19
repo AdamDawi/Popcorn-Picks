@@ -5,7 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.adamdawi.popcornpicks.core.domain.OnBoardingManager
+import com.adamdawi.popcornpicks.core.domain.local.OnBoardingManager
 import com.adamdawi.popcornpicks.feature.genres_choose.presentation.GenresScreen
 import com.adamdawi.popcornpicks.feature.movie_choose.presentation.MovieChooseScreen
 import com.adamdawi.popcornpicks.feature.movie_details.presentation.MovieDetailsScreen

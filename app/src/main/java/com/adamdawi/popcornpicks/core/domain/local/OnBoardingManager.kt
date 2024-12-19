@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.core.domain
+package com.adamdawi.popcornpicks.core.domain.local
 
 interface OnBoardingManager {
     fun isOnboardingCompleted(): Boolean

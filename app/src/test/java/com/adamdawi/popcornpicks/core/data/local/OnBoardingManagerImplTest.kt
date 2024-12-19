@@ -1,7 +1,7 @@
 package com.adamdawi.popcornpicks.core.data.local
 
 import android.content.SharedPreferences
-import com.adamdawi.popcornpicks.core.domain.OnBoardingManager
+import com.adamdawi.popcornpicks.core.domain.local.OnBoardingManager
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just

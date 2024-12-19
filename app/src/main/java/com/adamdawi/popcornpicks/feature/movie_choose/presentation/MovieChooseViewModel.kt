@@ -2,8 +2,9 @@ package com.adamdawi.popcornpicks.feature.movie_choose.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.adamdawi.popcornpicks.core.domain.GenresPreferences
-import com.adamdawi.popcornpicks.core.domain.OnBoardingManager
+import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
+import com.adamdawi.popcornpicks.core.domain.local.OnBoardingManager
+import com.adamdawi.popcornpicks.core.domain.repository.MoviesDbRepository
 import com.adamdawi.popcornpicks.core.domain.util.Constants
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
@@ -16,7 +17,8 @@ import kotlinx.coroutines.launch
 class MovieChooseViewModel(
     private val repository: MovieChooseRepository,
     private val genresPreferences: GenresPreferences,
-    private val onBoardingManager: OnBoardingManager
+    private val onBoardingManager: OnBoardingManager,
+    private val moviesDbRepositoryImpl: MoviesDbRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(MovieChooseState())
     val state = _state.asStateFlow()
@@ -28,7 +30,10 @@ class MovieChooseViewModel(
     fun onAction(action: MovieChooseAction) {
         when (action) {
             is MovieChooseAction.ToggleMovieSelection -> onMovieClick(action.movie)
-            is MovieChooseAction.OnFinishClick -> setOnboardingCompletedToTrue()
+            is MovieChooseAction.OnFinishClick -> {
+                setOnboardingCompletedToTrue()
+                addMoviesToDb()
+            }
             else -> Unit
         }
     }
@@ -88,5 +93,12 @@ class MovieChooseViewModel(
 
     private fun setOnboardingCompletedToTrue() {
         onBoardingManager.setOnboardingCompleted(true)
+    }
+
+    //TODO check for errors
+    private fun addMoviesToDb(){
+        viewModelScope.launch{
+            moviesDbRepositoryImpl.addMovies(_state.value.selectedMovies)
+        }
     }
 }

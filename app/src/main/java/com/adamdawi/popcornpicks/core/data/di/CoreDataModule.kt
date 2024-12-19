@@ -1,11 +1,16 @@
 package com.adamdawi.popcornpicks.core.data.di
 
 import android.content.SharedPreferences
+import androidx.room.Room
 import com.adamdawi.popcornpicks.core.data.local.GenresPreferencesImpl
+import com.adamdawi.popcornpicks.core.data.local.MoviesDao
+import com.adamdawi.popcornpicks.core.data.local.MoviesDbRepositoryImpl
 import com.adamdawi.popcornpicks.core.data.local.OnBoardingManagerImpl
+import com.adamdawi.popcornpicks.core.data.local.PopcornPicksDatabase
 import com.adamdawi.popcornpicks.core.data.networking.HttpClientFactory
-import com.adamdawi.popcornpicks.core.domain.GenresPreferences
-import com.adamdawi.popcornpicks.core.domain.OnBoardingManager
+import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
+import com.adamdawi.popcornpicks.core.domain.local.OnBoardingManager
+import com.adamdawi.popcornpicks.core.domain.repository.MoviesDbRepository
 import com.adamdawi.popcornpicks.core.domain.util.Constants
 import io.ktor.client.HttpClient
 import org.koin.android.ext.koin.androidContext
@@ -24,4 +29,17 @@ val coreDataModule = module {
     }
     singleOf(::OnBoardingManagerImpl) { bind<OnBoardingManager>() }
     singleOf(::GenresPreferencesImpl) { bind<GenresPreferences>() }
+
+
+    single<PopcornPicksDatabase>{
+        Room.databaseBuilder(
+            androidContext(),
+            PopcornPicksDatabase::class.java,
+            Constants.Database.DB_NAME
+        ).build()
+    }
+    single<MoviesDao>{
+        get<PopcornPicksDatabase>().moviesDao
+    }
+    singleOf(::MoviesDbRepositoryImpl) { bind<MoviesDbRepository>() }
 }

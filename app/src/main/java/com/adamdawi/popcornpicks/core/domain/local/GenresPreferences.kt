@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.core.domain
+package com.adamdawi.popcornpicks.core.domain.local
 
 import com.adamdawi.popcornpicks.feature.genres_choose.domain.Genre
 

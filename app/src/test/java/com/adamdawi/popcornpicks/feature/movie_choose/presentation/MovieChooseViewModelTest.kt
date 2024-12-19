@@ -1,8 +1,9 @@
 package com.adamdawi.popcornpicks.feature.movie_choose.presentation
 
 import com.adamdawi.popcornpicks.core.data.dummy.dummyMovieList
-import com.adamdawi.popcornpicks.core.domain.GenresPreferences
-import com.adamdawi.popcornpicks.core.domain.OnBoardingManager
+import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
+import com.adamdawi.popcornpicks.core.domain.local.OnBoardingManager
+import com.adamdawi.popcornpicks.core.domain.repository.MoviesDbRepository
 import com.adamdawi.popcornpicks.core.domain.util.Constants
 import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.Result
@@ -29,6 +30,7 @@ class MovieChooseViewModelTest {
     private lateinit var movieChooseRepository: MovieChooseRepository
     private lateinit var genresPreferences: GenresPreferences
     private lateinit var onBoardingManager: OnBoardingManager
+    private lateinit var moviesDbRepository: MoviesDbRepository
     private lateinit var sut: MovieChooseViewModel
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -40,8 +42,10 @@ class MovieChooseViewModelTest {
         movieChooseRepository = mockk<MovieChooseRepository>()
         genresPreferences = mockk<GenresPreferences>()
         onBoardingManager = mockk<OnBoardingManager>()
+        moviesDbRepository = mockk<MoviesDbRepository>()
     }
 
+    //TODO make tests for saving movies to db
     //GET GENRES IDS
     @Test
     fun getGenresIds_genresNotSavedInSharedPreferences_defaultGenresIdsListPassedToGetMovies() {
@@ -50,7 +54,7 @@ class MovieChooseViewModelTest {
         every { genresPreferences.getGenres() } returns emptyList()
 
         // Act
-        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager)
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager, moviesDbRepository)
 
         // Assert
         coVerify(exactly = 1) { movieChooseRepository.getMovies(defaultGenresIDs[0], 1) }
@@ -65,7 +69,7 @@ class MovieChooseViewModelTest {
         every { genresPreferences.getGenres() } returns genresIDs
 
         // Act
-        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager)
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager, moviesDbRepository)
 
         // Assert
         coVerify(exactly = 1) { movieChooseRepository.getMovies(genresIDs[0], 1) }
@@ -123,7 +127,7 @@ class MovieChooseViewModelTest {
         }
 
         //Act
-        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager)
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager, moviesDbRepository)
 
         //Assert
         val expectedMovies = movieListID1 + movieListID1 + movieListID1 +
@@ -144,7 +148,7 @@ class MovieChooseViewModelTest {
         }
 
         //Act
-        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager)
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager, moviesDbRepository)
 
         //Assert
         coVerify(exactly = 1){ movieChooseRepository.getMovies(genresIDs[0], 1) }
@@ -172,7 +176,7 @@ class MovieChooseViewModelTest {
         }
 
         //Act
-        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager)
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager, moviesDbRepository)
 
         //Assert
         assertThat(sut.state.value.error.isNullOrEmpty(), `is`(true))
@@ -191,7 +195,7 @@ class MovieChooseViewModelTest {
         }
 
         // Act
-        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager)
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager, moviesDbRepository)
 
         //Assert
         assertThat(sut.state.value.isLoading, `is`(true))
@@ -209,7 +213,7 @@ class MovieChooseViewModelTest {
         }
 
         //Act
-        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager)
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager, moviesDbRepository)
 
         //Assert
         assertThat(sut.state.value.isLoading, `is`(false))
@@ -227,7 +231,7 @@ class MovieChooseViewModelTest {
         }
 
         //Act
-        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager)
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager, moviesDbRepository)
 
         //Assert
         assertThat(sut.state.value.error, `is`(DataError.Network.SERVER_ERROR.asUiText()))
@@ -245,7 +249,7 @@ class MovieChooseViewModelTest {
         }
 
         //Act
-        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager)
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager, moviesDbRepository)
 
         //Assert
         assertThat(sut.state.value.movies, `is`(emptyList()))
@@ -262,7 +266,7 @@ class MovieChooseViewModelTest {
         }
 
         //Act
-        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager)
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager, moviesDbRepository)
 
         //Assert
         assertThat(sut.state.value.isLoading, `is`(true))
@@ -278,7 +282,7 @@ class MovieChooseViewModelTest {
         }
 
         //Act
-        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager)
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager, moviesDbRepository)
 
         //Assert
         assertThat(sut.state.value.isLoading, `is`(false))
@@ -297,7 +301,7 @@ class MovieChooseViewModelTest {
         }
 
         //Act
-        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager)
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager, moviesDbRepository)
 
         //Assert
         assertThat(sut.state.value.error, `is`(DataError.Network.SERVER_ERROR.asUiText()))
@@ -317,7 +321,7 @@ class MovieChooseViewModelTest {
         } answers { Result<List<Genre>, DataError.Network>.Success(dummyMovieList) }
 
         //Act
-        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager)
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager, moviesDbRepository)
 
         //Assert
         assertThat(sut.state.value.selectedMovies.size, `is`(0))
@@ -343,7 +347,7 @@ class MovieChooseViewModelTest {
         )
 
         //Act
-        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager)
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager, moviesDbRepository)
         sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
 
         //Assert
@@ -370,7 +374,7 @@ class MovieChooseViewModelTest {
         )
 
         //Act
-        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager)
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager, moviesDbRepository)
         sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
         sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
 
@@ -398,7 +402,7 @@ class MovieChooseViewModelTest {
         )
 
         //Act
-        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager)
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager, moviesDbRepository)
         sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
         sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
         sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
@@ -438,7 +442,7 @@ class MovieChooseViewModelTest {
         )
 
         //Act
-        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager)
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager, moviesDbRepository)
         sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
         sut.onAction(MovieChooseAction.ToggleMovieSelection(movie2))
         sut.onAction(MovieChooseAction.ToggleMovieSelection(movie3))
@@ -481,7 +485,7 @@ class MovieChooseViewModelTest {
         )
 
         //Act
-        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager)
+        sut = MovieChooseViewModel(movieChooseRepository, genresPreferences, onBoardingManager, moviesDbRepository)
         sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
         sut.onAction(MovieChooseAction.ToggleMovieSelection(movie2))
         sut.onAction(MovieChooseAction.ToggleMovieSelection(movie3))

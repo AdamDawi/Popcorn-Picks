@@ -2,7 +2,7 @@ package com.adamdawi.popcornpicks.feature.genres_choose.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.adamdawi.popcornpicks.core.domain.GenresPreferences
+import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.feature.genres_choose.domain.Genre
