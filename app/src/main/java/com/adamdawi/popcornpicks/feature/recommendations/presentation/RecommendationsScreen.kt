@@ -90,7 +90,7 @@ fun RecommendationsContent(
                 modifier = Modifier
                     .height(470.dp)
                     .fillMaxWidth(0.9f),
-                overlayImage = ImageBitmap.imageResource(R.drawable.popcorn_overlay3),
+                overlayImage = ImageBitmap.imageResource(R.drawable.popcorn_overlay),
                 baseImageUrl = BASE_IMAGE_URL + state.recommendedMovie.poster,
                 isImageScratched = { state.isMovieScratched },
                 onImageScratched = { onAction(RecommendationsAction.OnImageScratched) }
@@ -190,7 +190,7 @@ private fun RecommendationsScreenPreview() {
         RecommendationsContent(
             state = RecommendationsState(
                 recommendedMovie = dummyRecommendedMovie,
-                isMovieScratched = true
+                isMovieScratched = false
             ),
             onAction = {}
         )

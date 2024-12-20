@@ -154,7 +154,7 @@ private data class Line(
 fun ImageScratchPreview() {
     PopcornPicksTheme {
         ImageScratch(
-            overlayImage = ImageBitmap.imageResource(R.drawable.popcorn_overlay3),
+            overlayImage = ImageBitmap.imageResource(R.drawable.popcorn_overlay),
             baseImageUrl = dummyMovie.poster.toString(),
             isImageScratched = {false},
             onImageScratched = {}
