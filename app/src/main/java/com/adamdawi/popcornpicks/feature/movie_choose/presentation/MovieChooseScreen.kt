@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -70,25 +69,19 @@ fun MovieChooseScreen(
         state.value.movies.isEmpty() -> ErrorScreen(message = state.value.error)
         else ->
             MovieChooseContent(
-                onAction = { action ->
-                    when (action) {
-                        is MovieChooseAction.OnFinishClick -> viewModel.onAction(action)
-                        else -> viewModel.onAction(action)
-                    }
-                },
+                onAction = viewModel::onAction,
                 state = state.value
             )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieChooseContent(
     onAction: (MovieChooseAction) -> Unit,
     state: MovieChooseState
 ) {
     val lazyListState = rememberLazyGridState()
-    var showContinueText = remember { mutableStateOf(true) }
+    val showContinueText = remember { mutableStateOf(true) }
 
     // Detect if the user is scrolling up or down
     val lastFirstVisibleItemIndex = remember { mutableIntStateOf(0) }
@@ -167,7 +160,7 @@ private fun MovieGrid(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        itemsIndexed(moviesList) { index, movie ->
+        itemsIndexed(moviesList) { _, movie ->
             MovieItem(
                 movie = movie,
                 isSelected = selectedMovies.contains(movie),

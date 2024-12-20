@@ -14,6 +14,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MovieChooseViewModel(
@@ -38,8 +39,6 @@ class MovieChooseViewModel(
             is MovieChooseAction.OnFinishClick -> {
                 addMoviesToDb()
             }
-
-            else -> Unit
         }
     }
 
@@ -63,17 +62,21 @@ class MovieChooseViewModel(
 
                     when (result) {
                         is Result.Error -> {
-                            _state.value = _state.value.copy(
-                                error = result.error.asUiText(),
-                                isLoading = false
-                            )
+                            _state.update {
+                                it.copy(
+                                    error = result.error.asUiText(),
+                                    isLoading = false
+                                )
+}
                         }
 
                         is Result.Success -> {
-                            _state.value = _state.value.copy(
-                                movies = result.data + _state.value.movies,
-                                isLoading = false
-                            )
+                            _state.update {
+                                it.copy(
+                                    movies = result.data + _state.value.movies,
+                                    isLoading = false
+                                )
+                            }
                         }
                     }
                 }
