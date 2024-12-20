@@ -1,5 +1,6 @@
 package com.adamdawi.popcornpicks.feature.movie_choose.presentation
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +37,7 @@ import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.theme.fontFamily
 import com.adamdawi.popcornpicks.core.presentation.ui.ErrorScreen
 import com.adamdawi.popcornpicks.core.presentation.ui.LoadingScreen
+import com.adamdawi.popcornpicks.core.presentation.ui.ObserveAsEvents
 import com.adamdawi.popcornpicks.feature.movie_choose.domain.Movie
 import com.adamdawi.popcornpicks.feature.movie_choose.presentation.components.FinishFAB
 import com.adamdawi.popcornpicks.feature.movie_choose.presentation.components.MovieItem
@@ -46,6 +49,21 @@ fun MovieChooseScreen(
     viewModel: MovieChooseViewModel = koinViewModel<MovieChooseViewModel>()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            is MovieChooseEvent.Success -> {
+                Toast.makeText(context, "Onboarding completed", Toast.LENGTH_SHORT).show()
+                onFinishClick()
+            }
+
+            is MovieChooseEvent.Error -> {
+                Toast.makeText(context, event.error, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     when {
         state.value.isLoading -> LoadingScreen()
         state.value.error != null -> ErrorScreen(message = state.value.error)
@@ -54,10 +72,7 @@ fun MovieChooseScreen(
             MovieChooseContent(
                 onAction = { action ->
                     when (action) {
-                        is MovieChooseAction.OnFinishClick -> {
-                            onFinishClick()
-                            viewModel.onAction(action)
-                        }
+                        is MovieChooseAction.OnFinishClick -> viewModel.onAction(action)
                         else -> viewModel.onAction(action)
                     }
                 },
@@ -94,8 +109,8 @@ fun MovieChooseContent(
             FinishFAB(
                 showText = showContinueText.value,
                 onFinishClick = {
-                    if(state.finishButtonEnabled)
-                    onAction(MovieChooseAction.OnFinishClick)
+                    if (state.finishButtonEnabled)
+                        onAction(MovieChooseAction.OnFinishClick)
                 },
                 enabled = state.finishButtonEnabled
             )

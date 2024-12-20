@@ -10,8 +10,10 @@ import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.feature.movie_choose.domain.Movie
 import com.adamdawi.popcornpicks.feature.movie_choose.domain.repository.MovieChooseRepository
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class MovieChooseViewModel(
@@ -23,6 +25,9 @@ class MovieChooseViewModel(
     private val _state = MutableStateFlow(MovieChooseState())
     val state = _state.asStateFlow()
 
+    private val eventChannel = Channel<MovieChooseEvent>()
+    val events = eventChannel.receiveAsFlow()
+
     init {
         getMovies(getGenresIDs())
     }
@@ -31,9 +36,9 @@ class MovieChooseViewModel(
         when (action) {
             is MovieChooseAction.ToggleMovieSelection -> onMovieClick(action.movie)
             is MovieChooseAction.OnFinishClick -> {
-                setOnboardingCompletedToTrue()
                 addMoviesToDb()
             }
+
             else -> Unit
         }
     }
@@ -91,14 +96,24 @@ class MovieChooseViewModel(
         )
     }
 
-    private fun setOnboardingCompletedToTrue() {
-        onBoardingManager.setOnboardingCompleted(true)
+    //TODO check for errors and test this cases
+    private fun addMoviesToDb() {
+        viewModelScope.launch {
+            val result = moviesDbRepositoryImpl.addMovies(_state.value.selectedMovies)
+            when (result) {
+                is Result.Error -> {
+                    eventChannel.send(MovieChooseEvent.Error(result.error.asUiText()))
+                }
+
+                is Result.Success -> {
+                    setOnboardingCompletedToTrue()
+                    eventChannel.send(MovieChooseEvent.Success)
+                }
+            }
+        }
     }
 
-    //TODO check for errors
-    private fun addMoviesToDb(){
-        viewModelScope.launch{
-            moviesDbRepositoryImpl.addMovies(_state.value.selectedMovies)
-        }
+    private fun setOnboardingCompletedToTrue() {
+        onBoardingManager.setOnboardingCompleted(true)
     }
 }

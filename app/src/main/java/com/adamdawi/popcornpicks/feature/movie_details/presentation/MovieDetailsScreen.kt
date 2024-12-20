@@ -162,7 +162,7 @@ private fun OverviewSection(
         )
         Text(
             modifier = Modifier.padding(top = 20.dp),
-            text = movieOverview.repeat(5), //TODO: Remove repeat later
+            text = movieOverview,
             color = LightGrey
         )
     }
