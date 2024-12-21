@@ -99,7 +99,6 @@ class MovieChooseViewModel(
         )
     }
 
-    //TODO check for errors and test this cases
     private fun addMoviesToDb() {
         viewModelScope.launch {
             val result = moviesDbRepositoryImpl.addMovies(_state.value.selectedMovies)

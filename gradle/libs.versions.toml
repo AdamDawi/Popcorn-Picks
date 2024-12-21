@@ -21,6 +21,7 @@ ktor = "2.3.11"
 ktorClientLogging = "2.3.8"
 koin = "3.5.6"
 truth = "1.1.5"
+turbine = "1.2.0"
 uiTestJunit4 = "1.7.6"
 uiTestManifest = "1.7.6"
 
@@ -63,6 +64,7 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 androidx-core = { module = "androidx.test:core", version.ref = "core" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "uiTestJunit4" }
 ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifest" }
 
