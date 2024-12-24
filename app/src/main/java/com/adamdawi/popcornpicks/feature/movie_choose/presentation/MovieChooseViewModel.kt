@@ -67,7 +67,7 @@ class MovieChooseViewModel(
                                     error = result.error.asUiText(),
                                     isLoading = false
                                 )
-}
+                            }
                         }
 
                         is Result.Success -> {

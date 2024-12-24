@@ -22,11 +22,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +53,7 @@ import com.adamdawi.popcornpicks.core.presentation.theme.Grey
 import com.adamdawi.popcornpicks.core.presentation.theme.LightGrey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.formatRuntime
+import com.adamdawi.popcornpicks.core.presentation.ui.shimmerBrush
 import com.adamdawi.popcornpicks.feature.movie_details.domain.DetailedMovie
 import com.adamdawi.popcornpicks.feature.movie_details.presentation.MovieDetailsConstants.MAX_Y_OFFSET
 import com.adamdawi.popcornpicks.feature.movie_details.presentation.MovieDetailsConstants.POSTER_HEIGHT
@@ -71,14 +72,12 @@ fun MovieDetailsScreen(
         action = { action ->
             when (action) {
                 is MovieDetailsAction.OnBackClick -> onNavigateBack()
-                else -> viewModel.onAction(action)
             }
         },
         state = state.value
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MovieDetailsContent(
     action: (MovieDetailsAction) -> Unit,
@@ -134,10 +133,14 @@ private fun BackgroundImage(
     modifier: Modifier = Modifier,
     url: String
 ) {
+    val showShimmer = remember { mutableStateOf(true) }
     AsyncImage(
+        modifier = modifier
+            .background(shimmerBrush(showShimmer = showShimmer.value)),
         model = url,
         contentDescription = "Movie background image",
-        modifier = modifier,
+        onSuccess = { showShimmer.value = false },
+        onError = {showShimmer.value = false},
         error = painterResource(R.drawable.no_poster),
         contentScale = ContentScale.Crop,
         alpha = 0.6f
@@ -203,15 +206,19 @@ private fun PosterImage(
     modifier: Modifier = Modifier,
     posterUrl: String
 ) {
+    val showShimmer = remember { mutableStateOf(true) }
     AsyncImage(
-        model = Constants.Network.BASE_IMAGE_URL + posterUrl,
-        contentDescription = "Movie poster",
         modifier = modifier
             .width(POSTER_WIDTH)
             .height(POSTER_HEIGHT)
             .clip(RoundedCornerShape(6.dp))
-            .border(1.dp, Grey, RoundedCornerShape(6.dp)),
+            .border(1.dp, Grey, RoundedCornerShape(6.dp))
+            .background(shimmerBrush(showShimmer = showShimmer.value)),
+        model = Constants.Network.BASE_IMAGE_URL + posterUrl,
+        contentDescription = "Movie poster",
         error = painterResource(R.drawable.no_poster),
+        onError = {showShimmer.value = false},
+        onSuccess = {showShimmer.value = false},
         contentScale = ContentScale.Crop
     )
 }

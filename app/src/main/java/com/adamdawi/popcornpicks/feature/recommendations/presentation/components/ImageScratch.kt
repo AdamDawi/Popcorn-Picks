@@ -1,7 +1,6 @@
 package com.adamdawi.popcornpicks.feature.recommendations.presentation.components
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -24,6 +23,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
@@ -32,7 +32,6 @@ import coil.compose.AsyncImage
 import com.adamdawi.popcornpicks.R
 import com.adamdawi.popcornpicks.core.data.dummy.dummyMovie
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
-import com.adamdawi.popcornpicks.core.presentation.ui.shimmerBrush
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -65,10 +64,11 @@ fun ImageScratch(
             contentDescription = "Base image",
             modifier = Modifier
                 .fillMaxSize()
-                .clip(RoundedCornerShape(12.dp))
-                .background(shimmerBrush(showShimmer = showShimmer.value), shape = RoundedCornerShape(12.dp)),
+                .clip(RoundedCornerShape(12.dp)),
             contentScale = ContentScale.Crop,
-            onSuccess = { showShimmer.value = false }
+            onSuccess = { showShimmer.value = false },
+            placeholder = painterResource(R.drawable.no_poster),
+            error = painterResource(R.drawable.no_poster)
         )
         Box(
             modifier = Modifier
@@ -110,7 +110,7 @@ fun ImageScratch(
                     }
             ) {
                 val imageSize = IntSize(width = size.width.toInt(), height = size.height.toInt())
-                val maxCanvasArea = this.size.width.toFloat() * this.size.height.toFloat()
+                val maxCanvasArea = this.size.width * this.size.height
 
                 //if total scratched area is below the threshold, show the overlay image
                 if(!isImageScratched() && totalScratchedArea.floatValue/maxCanvasArea < scratchingThresholdPercentage) {

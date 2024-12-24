@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,11 +29,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adamdawi.popcornpicks.R
 import com.adamdawi.popcornpicks.core.data.dummy.dummyRecommendedMovie
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Network.BASE_IMAGE_URL
 import com.adamdawi.popcornpicks.core.presentation.theme.Blue
 import com.adamdawi.popcornpicks.core.presentation.theme.Grey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.theme.Red
-import com.adamdawi.popcornpicks.core.domain.util.Constants.Network.BASE_IMAGE_URL
 import com.adamdawi.popcornpicks.feature.recommendations.domain.RecommendedMovie
 import com.adamdawi.popcornpicks.feature.recommendations.domain.formatMovieDetails
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.components.CircleIconButton
@@ -63,13 +62,15 @@ fun RecommendationsScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecommendationsContent(
     state: RecommendationsState,
     onAction: (RecommendationsAction) -> Unit,
 ) {
-    val animatedAlpha = animateFloatAsState(targetValue = if (state.isMovieScratched) 1f else 0f)
+    val animatedAlpha = animateFloatAsState(
+        targetValue = if (state.isMovieScratched) 1f else 0f,
+        label = "animated alpha"
+    )
     Scaffold(
         topBar = {
             RecommendationsScreenTopAppBar(
