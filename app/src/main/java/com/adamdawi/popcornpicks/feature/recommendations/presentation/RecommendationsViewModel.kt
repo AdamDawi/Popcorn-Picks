@@ -15,7 +15,7 @@ class RecommendationsViewModel: ViewModel() {
         }
     }
 
-    fun onImageScratched() {
+    private fun onImageScratched() {
         _state.value = _state.value.copy(isMovieScratched = true)
     }
 }

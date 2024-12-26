@@ -7,10 +7,8 @@ import org.koin.core.context.GlobalContext.startKoin
 import timber.log.Timber
 import com.adamdawi.popcornpicks.BuildConfig
 import com.adamdawi.popcornpicks.core.data.di.coreDataModule
-import com.adamdawi.popcornpicks.feature.genres_choose.data.di.genresDataModule
-import com.adamdawi.popcornpicks.feature.genres_choose.presentation.di.genresViewModelModule
-import com.adamdawi.popcornpicks.feature.movie_choose.data.di.movieChooseDataModule
-import com.adamdawi.popcornpicks.feature.movie_choose.presentation.di.movieChooseViewModelModule
+import com.adamdawi.popcornpicks.feature.onboarding.data.di.onboardingDataModule
+import com.adamdawi.popcornpicks.feature.onboarding.presentation.di.onboardingViewModelModule
 import com.adamdawi.popcornpicks.feature.movie_details.data.di.movieDetailsDataModule
 import com.adamdawi.popcornpicks.feature.movie_details.presentation.di.movieDetailsViewModelModule
 import com.adamdawi.popcornpicks.feature.recommendations.data.di.recommendationsDataModule
@@ -28,10 +26,8 @@ class MyApplication: Application() {
             androidContext(this@MyApplication)
             modules(
                 coreDataModule,
-                genresDataModule,
-                genresViewModelModule,
-                movieChooseDataModule,
-                movieChooseViewModelModule,
+                onboardingDataModule,
+                onboardingViewModelModule,
                 recommendationsDataModule,
                 recommendationsViewModelModule,
                 movieDetailsDataModule,

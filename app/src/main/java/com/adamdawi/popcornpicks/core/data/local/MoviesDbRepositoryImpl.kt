@@ -5,8 +5,8 @@ import com.adamdawi.popcornpicks.core.domain.repository.MoviesDbRepository
 import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.EmptyResult
 import com.adamdawi.popcornpicks.core.domain.util.Result
-import com.adamdawi.popcornpicks.feature.movie_choose.domain.Movie
-import com.adamdawi.popcornpicks.feature.movie_choose.domain.toMovieEntity
+import com.adamdawi.popcornpicks.feature.onboarding.domain.Movie
+import com.adamdawi.popcornpicks.feature.onboarding.domain.toMovieEntity
 
 class MoviesDbRepositoryImpl(
     private val moviesDao: MoviesDao

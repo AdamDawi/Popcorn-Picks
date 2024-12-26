@@ -2,7 +2,7 @@ package com.adamdawi.popcornpicks.core.data.local
 
 import android.content.SharedPreferences
 import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
-import com.adamdawi.popcornpicks.feature.genres_choose.domain.Genre
+import com.adamdawi.popcornpicks.feature.onboarding.domain.Genre
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
