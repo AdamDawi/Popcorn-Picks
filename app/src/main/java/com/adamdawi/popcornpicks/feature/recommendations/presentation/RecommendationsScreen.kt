@@ -35,10 +35,10 @@ import com.adamdawi.popcornpicks.core.presentation.theme.Grey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.theme.Red
 import com.adamdawi.popcornpicks.feature.recommendations.domain.RecommendedMovie
-import com.adamdawi.popcornpicks.feature.recommendations.domain.formatMovieDetails
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.components.CircleIconButton
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.components.ImageScratch
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.components.RecommendationsScreenTopAppBar
+import com.adamdawi.popcornpicks.feature.recommendations.presentation.components.formatMovieDetails
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -146,7 +146,7 @@ fun ButtonsRow(
             icon = painterResource(R.drawable.retry_ic),
             color = Blue,
             onClick = {
-                onAction(RecommendationsAction.OnRetryClicked)
+                onAction(RecommendationsAction.OnRerollClicked)
             },
             enabled = areButtonsEnabled,
             contentDescription = "Retry"

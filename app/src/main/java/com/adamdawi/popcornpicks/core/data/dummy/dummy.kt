@@ -62,7 +62,6 @@ val dummyRecommendedMovie = RecommendedMovie(
     poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
     releaseDate = "2020-04-02",
     voteAverage = 7.6,
-    popularity = 16.7777,
     genres = dummyGenresList
 )
 
@@ -72,4 +71,26 @@ val selectedMovies: List<Movie> = listOf(
     dummyMovie.copy(id = 2),
     dummyMovie.copy(id = 6),
     dummyMovie.copy(id = 9)
+)
+
+val genreIdToNameMap = mapOf(
+    28 to "Action",
+    12 to "Adventure",
+    16 to "Animation",
+    35 to "Comedy",
+    80 to "Crime",
+    99 to "Documentary",
+    18 to "Drama",
+    10751 to "Family",
+    14 to "Fantasy",
+    36 to "History",
+    27 to "Horror",
+    10402 to "Music",
+    9648 to "Mystery",
+    10749 to "Romance",
+    878 to "Science Fiction",
+    10770 to "TV Movie",
+    53 to "Thriller",
+    10752 to "War",
+    37 to "Western"
 )

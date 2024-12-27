@@ -9,7 +9,7 @@ import com.adamdawi.popcornpicks.core.domain.util.Constants
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.feature.onboarding.domain.Movie
-import com.adamdawi.popcornpicks.feature.onboarding.domain.repository.MovieChooseRepository
+import com.adamdawi.popcornpicks.feature.onboarding.domain.repository.MoviesByGenreRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MovieChooseViewModel(
-    private val repository: MovieChooseRepository,
+    private val repository: MoviesByGenreRepository,
     private val genresPreferences: GenresPreferences,
     private val onBoardingManager: OnBoardingManager,
     private val moviesDbRepositoryImpl: MoviesDbRepository
@@ -58,7 +58,7 @@ class MovieChooseViewModel(
         for (i in 1..3) {
             for (genre in genresIds) {
                 viewModelScope.launch {
-                    val result = repository.getMovies(genre, i)
+                    val result = repository.getMoviesBasedOnGenre(genre, i)
 
                     when (result) {
                         is Result.Error -> {

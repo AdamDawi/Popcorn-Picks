@@ -4,6 +4,6 @@ sealed interface RecommendationsAction {
     object OnImageScratched: RecommendationsAction
     object OnMoreInfoClicked: RecommendationsAction
     object OnHeartClicked: RecommendationsAction
-    object OnRetryClicked: RecommendationsAction
+    object OnRerollClicked: RecommendationsAction
     object OnProfileClicked: RecommendationsAction
 }
