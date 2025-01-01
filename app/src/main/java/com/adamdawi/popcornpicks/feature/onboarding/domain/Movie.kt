@@ -6,7 +6,9 @@ data class Movie(
     val id: Int,
     val title: String,
     val poster: String?,
-    val releaseDate: String
+    val releaseDate: String,
+    val voteAverage: Double,
+    val genres: List<Genre>
 )
 
 fun Movie.toMovieEntity(): MovieEntity {
@@ -14,6 +16,8 @@ fun Movie.toMovieEntity(): MovieEntity {
         id = id,
         title = title,
         poster = poster,
-        releaseDate = releaseDate
+        releaseDate = releaseDate,
+        voteAverage = voteAverage,
+        genresIds = genres.map { it.id }
     )
 }

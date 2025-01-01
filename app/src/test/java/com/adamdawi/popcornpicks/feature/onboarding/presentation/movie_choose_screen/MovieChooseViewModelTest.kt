@@ -9,6 +9,7 @@ import com.adamdawi.popcornpicks.core.domain.util.Constants
 import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
+import com.adamdawi.popcornpicks.feature.onboarding.domain.Genre
 import com.adamdawi.popcornpicks.feature.onboarding.domain.Movie
 import com.adamdawi.popcornpicks.feature.onboarding.domain.repository.MoviesByGenreRepository
 import com.adamdawi.popcornpicks.utils.ReplaceMainDispatcherRule
@@ -101,7 +102,12 @@ class MovieChooseViewModelTest {
                 id = 1,
                 title = "Spiderman",
                 poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-                releaseDate = "2020-04-02"
+                releaseDate = "2020-04-02",
+                voteAverage = 5.0,
+                genres = listOf(
+                    Genre(2, "Action"),
+                    Genre(6, "Comedy")
+                )
             )
         )
 
@@ -110,7 +116,12 @@ class MovieChooseViewModelTest {
                 id = 2,
                 title = "Thor",
                 poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-                releaseDate = "2022-11-06"
+                releaseDate = "2022-11-06",
+                voteAverage = 5.0,
+                genres = listOf(
+                    Genre(2, "Action"),
+                    Genre(6, "Comedy")
+                )
             )
         )
         val movieListID3 = listOf(
@@ -118,7 +129,12 @@ class MovieChooseViewModelTest {
                 id = 33,
                 title = "Iron Man",
                 poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-                releaseDate = "2023-12-01"
+                releaseDate = "2023-12-01",
+                voteAverage = 5.0,
+                genres = listOf(
+                    Genre(2, "Action"),
+                    Genre(6, "Comedy")
+                )
             )
         )
         every { genresPreferences.getGenres() } returns genresIDs
@@ -412,7 +428,12 @@ class MovieChooseViewModelTest {
             id = 1,
             title = "Spiderman",
             poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-            releaseDate = "2020-04-02"
+            releaseDate = "2020-04-02",
+            voteAverage = 5.0,
+            genres = listOf(
+                Genre(2, "Action"),
+                Genre(6, "Comedy")
+            )
         )
 
         //Act
@@ -444,7 +465,12 @@ class MovieChooseViewModelTest {
             id = 1,
             title = "Spiderman",
             poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-            releaseDate = "2020-04-02"
+            releaseDate = "2020-04-02",
+            voteAverage = 5.0,
+            genres = listOf(
+                Genre(2, "Action"),
+                Genre(6, "Comedy")
+            )
         )
 
         //Act
@@ -477,7 +503,12 @@ class MovieChooseViewModelTest {
             id = 1,
             title = "Spiderman",
             poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-            releaseDate = "2020-04-02"
+            releaseDate = "2020-04-02",
+            voteAverage = 5.0,
+            genres = listOf(
+                Genre(2, "Action"),
+                Genre(6, "Comedy")
+            )
         )
 
         //Act
@@ -510,19 +541,34 @@ class MovieChooseViewModelTest {
             id = 1,
             title = "Spiderman",
             poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-            releaseDate = "2020-04-02"
+            releaseDate = "2020-04-02",
+            voteAverage = 5.0,
+            genres = listOf(
+                Genre(2, "Action"),
+                Genre(6, "Comedy")
+            )
         )
         val movie2 = Movie(
             id = 2,
             title = "Thor",
             poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-            releaseDate = "2022-11-06"
+            releaseDate = "2022-11-06",
+            voteAverage = 5.0,
+            genres = listOf(
+                Genre(2, "Action"),
+                Genre(6, "Comedy")
+            )
         )
         val movie3 = Movie(
             id = 33,
             title = "Iron Man",
             poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-            releaseDate = "2023-12-01"
+            releaseDate = "2023-12-01",
+            voteAverage = 5.0,
+            genres = listOf(
+                Genre(2, "Action"),
+                Genre(6, "Comedy")
+            )
         )
 
         //Act
@@ -558,19 +604,34 @@ class MovieChooseViewModelTest {
             id = 1,
             title = "Spiderman",
             poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-            releaseDate = "2020-04-02"
+            releaseDate = "2020-04-02",
+            voteAverage = 5.0,
+            genres = listOf(
+                Genre(2, "Action"),
+                Genre(6, "Comedy")
+            )
         )
         val movie2 = Movie(
             id = 2,
             title = "Thor",
             poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-            releaseDate = "2022-11-06"
+            releaseDate = "2022-11-06",
+            voteAverage = 5.0,
+            genres = listOf(
+                Genre(2, "Action"),
+                Genre(6, "Comedy")
+            )
         )
         val movie3 = Movie(
             id = 33,
             title = "Iron Man",
             poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-            releaseDate = "2023-12-01"
+            releaseDate = "2023-12-01",
+            voteAverage = 5.0,
+            genres = listOf(
+                Genre(2, "Action"),
+                Genre(6, "Comedy")
+            )
         )
 
         //Act
@@ -609,19 +670,34 @@ class MovieChooseViewModelTest {
             id = 1,
             title = "Spiderman",
             poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-            releaseDate = "2020-04-02"
+            releaseDate = "2020-04-02",
+            voteAverage = 5.0,
+            genres = listOf(
+                Genre(2, "Action"),
+                Genre(6, "Comedy")
+            )
         )
         val movie2 = Movie(
             id = 2,
             title = "Thor",
             poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-            releaseDate = "2022-11-06"
+            releaseDate = "2022-11-06",
+            voteAverage = 5.0,
+            genres = listOf(
+                Genre(2, "Action"),
+                Genre(6, "Comedy")
+            )
         )
         val movie3 = Movie(
             id = 33,
             title = "Iron Man",
             poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-            releaseDate = "2023-12-01"
+            releaseDate = "2023-12-01",
+            voteAverage = 5.0,
+            genres = listOf(
+                Genre(2, "Action"),
+                Genre(6, "Comedy")
+            )
         )
 
         //Act
@@ -720,19 +796,34 @@ class MovieChooseViewModelTest {
             id = 1,
             title = "Spiderman",
             poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-            releaseDate = "2020-04-02"
+            releaseDate = "2020-04-02",
+            voteAverage = 5.0,
+            genres = listOf(
+                Genre(2, "Action"),
+                Genre(6, "Comedy")
+            )
         )
         val movie2 = Movie(
             id = 2,
             title = "Thor",
             poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-            releaseDate = "2022-11-06"
+            releaseDate = "2022-11-06",
+            voteAverage = 5.0,
+            genres = listOf(
+                Genre(2, "Action"),
+                Genre(6, "Comedy")
+            )
         )
         val movie3 = Movie(
             id = 33,
             title = "Iron Man",
             poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-            releaseDate = "2023-12-01"
+            releaseDate = "2023-12-01",
+            voteAverage = 5.0,
+            genres = listOf(
+                Genre(2, "Action"),
+                Genre(6, "Comedy")
+            )
         )
 
         //Act

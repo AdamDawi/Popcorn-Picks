@@ -28,13 +28,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adamdawi.popcornpicks.R
-import com.adamdawi.popcornpicks.core.data.dummy.dummyRecommendedMovie
+import com.adamdawi.popcornpicks.core.data.dummy.dummyMovie
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Network.BASE_IMAGE_URL
 import com.adamdawi.popcornpicks.core.presentation.theme.Blue
 import com.adamdawi.popcornpicks.core.presentation.theme.Grey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.theme.Red
-import com.adamdawi.popcornpicks.feature.recommendations.domain.RecommendedMovie
+import com.adamdawi.popcornpicks.feature.onboarding.domain.Movie
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.components.CircleIconButton
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.components.ImageScratch
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.components.RecommendationsScreenTopAppBar
@@ -158,7 +158,7 @@ fun ButtonsRow(
 fun MovieDetails(
     modifier: Modifier = Modifier,
     alpha: Float,
-    movie: RecommendedMovie
+    movie: Movie
 ) {
     Column(
         modifier = modifier
@@ -190,7 +190,7 @@ private fun RecommendationsScreenPreview() {
     PopcornPicksTheme {
         RecommendationsContent(
             state = RecommendationsState(
-                recommendedMovie = dummyRecommendedMovie,
+                recommendedMovie = dummyMovie,
                 isMovieScratched = false
             ),
             onAction = {}

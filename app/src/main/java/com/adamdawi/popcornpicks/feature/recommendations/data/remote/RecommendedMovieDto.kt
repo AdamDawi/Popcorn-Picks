@@ -1,8 +1,7 @@
 package com.adamdawi.popcornpicks.feature.recommendations.data.remote
 
-import com.adamdawi.popcornpicks.core.data.dummy.genreIdToNameMap
-import com.adamdawi.popcornpicks.feature.onboarding.domain.Genre
-import com.adamdawi.popcornpicks.feature.recommendations.domain.RecommendedMovie
+import com.adamdawi.popcornpicks.core.data.mapper.mapGenreIdsToGenre
+import com.adamdawi.popcornpicks.feature.onboarding.domain.Movie
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -24,18 +23,13 @@ data class RecommendedMovieDto(
     val vote_count: Int
 )
 
-fun RecommendedMovieDto.toRecommendedMovie(): RecommendedMovie {
-    return RecommendedMovie(
+fun RecommendedMovieDto.toMovie(): Movie {
+    return Movie(
         id = id,
         title = title,
         poster = poster_path,
         releaseDate = release_date,
         voteAverage = vote_average,
-        genres = genre_ids.map { genreId ->
-            Genre(
-                id = genreId,
-                name = genreIdToNameMap[genreId] ?: "Unknown"
-            )
-        }
+        genres = mapGenreIdsToGenre(genre_ids)
     )
 }

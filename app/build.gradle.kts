@@ -96,6 +96,8 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.core)
     implementation(libs.koin.androidx.compose)
+    //serialization
+    implementation("com.google.code.gson:gson:2.11.0")
 
     //unit tests
     testImplementation(libs.androidx.core)

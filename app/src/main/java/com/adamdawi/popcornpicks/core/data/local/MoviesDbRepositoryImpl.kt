@@ -48,6 +48,7 @@ class MoviesDbRepositoryImpl(
     }
 
     private fun <T> handleLocalError(e: Exception): Result<T, DataError.Local> {
+        e.printStackTrace()
         return when (e) {
             is java.io.IOException -> Result.Error(DataError.Local.DISK_FULL)
             else -> Result.Error(DataError.Local.UNKNOWN)

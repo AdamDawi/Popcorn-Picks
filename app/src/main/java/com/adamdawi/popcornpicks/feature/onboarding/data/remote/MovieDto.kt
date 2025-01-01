@@ -1,5 +1,6 @@
 package com.adamdawi.popcornpicks.feature.onboarding.data.remote
 
+import com.adamdawi.popcornpicks.core.data.mapper.mapGenreIdsToGenre
 import com.adamdawi.popcornpicks.feature.onboarding.domain.Movie
 import kotlinx.serialization.Serializable
 
@@ -26,6 +27,8 @@ fun MovieDto.toMovie(): Movie {
         id = id,
         title = title,
         poster = poster_path,
-        releaseDate = release_date
+        releaseDate = release_date,
+        voteAverage = vote_average,
+        genres = mapGenreIdsToGenre(genre_ids)
     )
 }
