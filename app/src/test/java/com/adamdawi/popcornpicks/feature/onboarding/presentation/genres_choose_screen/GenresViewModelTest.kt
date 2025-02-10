@@ -1,5 +1,6 @@
 package com.adamdawi.popcornpicks.feature.onboarding.presentation.genres_choose_screen
 
+import app.cash.turbine.test
 import com.adamdawi.popcornpicks.core.data.dummy.dummyGenresList
 import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
 import com.adamdawi.popcornpicks.core.domain.util.DataError
@@ -13,6 +14,10 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
@@ -33,224 +38,308 @@ class GenresViewModelTest {
     fun setUp(){
         genresPreferences = mockk<GenresPreferences>(relaxed = true)
         genresRepository = mockk<GenresRepository>()
+        sut = GenresViewModel(genresRepository, genresPreferences)
     }
 
     //GET GENRES
     @Test
-    fun getGenres_success_genresListStateUpdatedWithCorrectData(){
+    fun getGenres_success_genresListStateUpdatedWithCorrectData() = runTest{
         //Arrange
-        coEvery { genresRepository.getGenres() } answers { Result.Success(dummyGenresList) }
+        coEvery { genresRepository.getGenres() } coAnswers {
+            delay(500)
+            Result.Success(dummyGenresList)
+        }
 
         //Act
-        sut = GenresViewModel(genresRepository, genresPreferences)
+        val states = sut.state.take(2).toList()
 
         //Assert
-        assertThat(sut.state.value.genres, `is`(dummyGenresList))
+        assertThat(states.last().genres, `is`(dummyGenresList))
     }
 
     @Test
-    fun getGenres_success_errorStateIsNotUpdated(){
+    fun getGenres_success_errorStateIsNotUpdated() = runTest{
         //Arrange
-        coEvery { genresRepository.getGenres() } answers { Result.Success(dummyGenresList) }
+        coEvery { genresRepository.getGenres() } coAnswers {
+            delay(500)
+            Result.Success(dummyGenresList)
+        }
 
         //Act
-        sut = GenresViewModel(genresRepository, genresPreferences)
+        val states = sut.state.take(2).toList()
 
         //Assert
-        assertThat(sut.state.value.error.isNullOrEmpty(), `is`(true))
+        assertThat(states.last().error.isNullOrEmpty(), `is`(true))
     }
 
     @Test
-    fun getGenres_success_loadingStateIsSetToTrueWhileFetching(){
+    fun getGenres_success_loadingStateIsSetToTrueWhileFetching() = runTest{
         // Arrange
         coEvery { genresRepository.getGenres() } coAnswers {
-            delay(1000)
+            delay(500)
             Result.Success(dummyGenresList)
         }
 
         // Act
-        sut = GenresViewModel(genresRepository, genresPreferences)
+        val state = sut.state.first()
 
         //Assert
-        assertThat(sut.state.value.isLoading, `is`(true))
+        assertThat(state.isLoading, `is`(true))
     }
 
     @Test
-    fun getGenres_success_loadingStateIsSetToFalseAfterFetching(){
-        //Arrange
-        coEvery { genresRepository.getGenres() } answers { Result.Success(dummyGenresList) }
-
-        //Act
-        sut = GenresViewModel(genresRepository, genresPreferences)
-
-        //Assert
-        assertThat(sut.state.value.isLoading, `is`(false))
-    }
-
-    @Test
-    fun getGenres_error_errorStateUpdatedWithCorrectError(){
-        //Arrange
-        coEvery { genresRepository.getGenres() } answers { Result.Error(
-            DataError.Network.SERVER_ERROR) }
-
-        //Act
-        sut = GenresViewModel(genresRepository, genresPreferences)
-
-        //Assert
-        assertThat(sut.state.value.error, `is`(DataError.Network.SERVER_ERROR.asUiText()))
-    }
-
-    @Test
-    fun getGenres_error_genresListIsNotUpdated(){
-        //Arrange
-        coEvery { genresRepository.getGenres() } answers { Result.Error(
-            DataError.Network.SERVER_ERROR) }
-
-        //Act
-        sut = GenresViewModel(genresRepository, genresPreferences)
-
-        //Assert
-        assertThat(sut.state.value.genres, `is`(emptyList()))
-    }
-
-    @Test
-    fun getGenres_error_loadingStateIsSetToTrueWhileFetching(){
+    fun getGenres_success_loadingStateIsSetToFalseAfterFetching() = runTest{
         //Arrange
         coEvery { genresRepository.getGenres() } coAnswers {
-            delay(1000)
-            Result.Error(DataError.Network.SERVER_ERROR)
+            delay(500)
+            Result.Success(dummyGenresList)
         }
 
         //Act
-        sut = GenresViewModel(genresRepository, genresPreferences)
+        val states = sut.state.take(2).toList()
 
-        //Assert
-        assertThat(sut.state.value.isLoading, `is`(true))
+        // Assert
+        assertThat(states.last().isLoading, `is`(false))
     }
 
     @Test
-    fun getGenres_error_loadingStateIsSetToFalseAfterFetching(){
+    fun getGenres_error_errorStateUpdatedWithCorrectError() = runTest{
         //Arrange
-        coEvery { genresRepository.getGenres() } answers {
+        coEvery { genresRepository.getGenres() } coAnswers {
+            delay(500)
+            Result.Error(
+            DataError.Network.SERVER_ERROR)
+        }
+
+        //Act
+        val states = sut.state.take(2).toList()
+
+        //Assert
+        assertThat(states.last().error, `is`(DataError.Network.SERVER_ERROR.asUiText()))
+    }
+
+    @Test
+    fun getGenres_error_genresListIsNotUpdated() = runTest{
+        //Arrange
+        coEvery { genresRepository.getGenres() } coAnswers {
+            delay(500)
+            Result.Error(
+                DataError.Network.SERVER_ERROR
+            )
+        }
+
+        //Act
+        val states = sut.state.take(2).toList()
+
+        //Assert
+        assertThat(states.last().genres, `is`(emptyList()))
+    }
+
+    @Test
+    fun getGenres_error_loadingStateIsSetToTrueWhileFetching() = runTest{
+        //Arrange
+        coEvery { genresRepository.getGenres() } coAnswers {
+            delay(500)
             Result.Error(DataError.Network.SERVER_ERROR)
         }
 
         //Act
-        sut = GenresViewModel(genresRepository, genresPreferences)
+        val state = sut.state.first()
 
         //Assert
-        assertThat(sut.state.value.isLoading, `is`(false))
+        assertThat(state.isLoading, `is`(true))
+    }
+
+    @Test
+    fun getGenres_error_loadingStateIsSetToFalseAfterFetching() = runTest{
+        //Arrange
+        coEvery { genresRepository.getGenres() } coAnswers {
+            delay(500)
+            Result.Error(DataError.Network.SERVER_ERROR)
+        }
+
+        //Act
+        val states = sut.state.take(2).toList()
+
+        //Assert
+        assertThat(states.last().isLoading, `is`(false))
     }
 
     //INIT
     @Test
-    fun init_selectedGenres_empty(){
+    fun init_selectedGenres_empty() = runTest{
         //Arrange
-        coEvery { genresRepository.getGenres() } answers { Result.Success(dummyGenresList) }
+        coEvery { genresRepository.getGenres() } coAnswers {
+            delay(500)
+            Result.Success(dummyGenresList)
+        }
 
         //Act
-        sut = GenresViewModel(genresRepository, genresPreferences)
+        val states = sut.state.take(2).toList()
 
         //Assert
-        assertThat(sut.state.value.selectedGenres.size, `is`(0))
+        assertThat(states.last().selectedGenres.size, `is`(0))
     }
 
     //TOGGLE GENRE SELECTION
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun onAction_toggleGenreSelectionOnce_genreSelected(){
+    fun onAction_toggleGenreSelectionOnce_genreSelected() = runTest{
         //Arrange
-        coEvery { genresRepository.getGenres() } answers { Result.Success(dummyGenresList) }
+        coEvery { genresRepository.getGenres() } coAnswers {
+            delay(500)
+            Result.Success(dummyGenresList)
+        }
         val genre = Genre(id = 36, name = "History")
 
-        //Act
-        sut = GenresViewModel(genresRepository, genresPreferences)
-        sut.onAction(GenresAction.ToggleGenreSelection(genre))
+        sut.state.test {
+            awaitItem() // Initial state
 
-        //Assert
-        assertThat(sut.state.value.selectedGenres.size, `is`(1))
-        assertThat(sut.state.value.selectedGenres.contains(genre), `is`(true))
+            //Act
+            sut.onAction(GenresAction.ToggleGenreSelection(genre))
+
+            val updatedState = awaitItem()
+
+            //Assert
+            assertThat(updatedState.selectedGenres.size, `is`(1))
+            assertThat(updatedState.selectedGenres.contains(genre), `is`(true))
+
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
-    fun onAction_toggleGenreSelectionOnSameGenreTwice_genreDeselected(){
+    fun onAction_toggleGenreSelectionOnSameGenreTwice_genreDeselected() = runTest{
         //Arrange
-        coEvery { genresRepository.getGenres() } answers { Result.Success(dummyGenresList) }
+        coEvery { genresRepository.getGenres() } coAnswers {
+            delay(500)
+            Result.Success(dummyGenresList)
+        }
         val genre = Genre(id = 36, name = "History")
 
-        //Act
-        sut = GenresViewModel(genresRepository, genresPreferences)
-        sut.onAction(GenresAction.ToggleGenreSelection(genre))
-        sut.onAction(GenresAction.ToggleGenreSelection(genre))
+        sut.state.test {
+            awaitItem() // Initial state
 
-        //Assert
-        assertThat(sut.state.value.selectedGenres.size, `is`(0))
-        assertThat(sut.state.value.selectedGenres.contains(genre), `is`(false))
+            //Act
+            sut.onAction(GenresAction.ToggleGenreSelection(genre))
+            awaitItem()
+            sut.onAction(GenresAction.ToggleGenreSelection(genre))
+            val updatedState = awaitItem()
+
+            //Assert
+            assertThat(updatedState.selectedGenres.size, `is`(0))
+            assertThat(updatedState.selectedGenres.contains(genre), `is`(false))
+
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
-    fun onAction_toggleGenreSelectionOnSameGenreTwice_continueButtonDisabled(){
+    fun onAction_toggleGenreSelectionOnSameGenreTwice_continueButtonDisabled() = runTest{
         //Arrange
-        coEvery { genresRepository.getGenres() } answers { Result.Success(dummyGenresList) }
+        coEvery { genresRepository.getGenres() } coAnswers {
+            delay(500)
+            Result.Success(dummyGenresList)
+        }
         val genre = Genre(id = 36, name = "History")
 
-        //Act
-        sut = GenresViewModel(genresRepository, genresPreferences)
-        sut.onAction(GenresAction.ToggleGenreSelection(genre))
-        sut.onAction(GenresAction.ToggleGenreSelection(genre))
+        sut.state.test {
+            awaitItem() // Initial state
 
-        //Assert
-        assertThat(sut.state.value.continueButtonEnabled, `is`(false))
+            //Act
+            sut.onAction(GenresAction.ToggleGenreSelection(genre))
+            awaitItem()
+            sut.onAction(GenresAction.ToggleGenreSelection(genre))
+            val updatedState = awaitItem()
+
+            //Assert
+            assertThat(updatedState.continueButtonEnabled, `is`(false))
+
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
-    fun onAction_toggleGenreSelectionOnDifferentGenresTwice_bothGenresSelected(){
+    fun onAction_toggleGenreSelectionOnDifferentGenresTwice_bothGenresSelected() = runTest{
         //Arrange
-        coEvery { genresRepository.getGenres() } answers { Result.Success(dummyGenresList) }
+        coEvery { genresRepository.getGenres() } coAnswers {
+            delay(500)
+            Result.Success(dummyGenresList)
+        }
         val genre = Genre(id = 36, name = "History")
         val genre2 = Genre(id = 80, name = "Crime")
 
-        //Act
-        sut = GenresViewModel(genresRepository, genresPreferences)
-        sut.onAction(GenresAction.ToggleGenreSelection(genre))
-        sut.onAction(GenresAction.ToggleGenreSelection(genre2))
+        sut.state.test {
+            awaitItem() // Initial state
 
-        //Assert
-        assertThat(sut.state.value.selectedGenres.size, `is`(2))
-        assertThat(sut.state.value.selectedGenres.contains(genre), `is`(true))
-        assertThat(sut.state.value.selectedGenres.contains(genre2), `is`(true))
+            //Act
+            sut.onAction(GenresAction.ToggleGenreSelection(genre))
+            awaitItem()
+            sut.onAction(GenresAction.ToggleGenreSelection(genre2))
+            val updatedState = awaitItem()
+
+            //Assert
+            assertThat(updatedState.selectedGenres.size, `is`(2))
+            assertThat(updatedState.selectedGenres.contains(genre), `is`(true))
+            assertThat(updatedState.selectedGenres.contains(genre2), `is`(true))
+
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
-    fun onAction_toggleGenreSelectionOnDifferentGenresTwice_continueButtonEnabled(){
+    fun onAction_toggleGenreSelectionOnDifferentGenresTwice_continueButtonEnabled() = runTest{
         //Arrange
-        coEvery { genresRepository.getGenres() } answers { Result.Success(dummyGenresList) }
+        coEvery { genresRepository.getGenres() } coAnswers {
+            delay(500)
+            Result.Success(dummyGenresList)
+        }
         val genre = Genre(id = 36, name = "History")
         val genre2 = Genre(id = 80, name = "Crime")
 
-        //Act
-        sut = GenresViewModel(genresRepository, genresPreferences)
-        sut.onAction(GenresAction.ToggleGenreSelection(genre))
-        sut.onAction(GenresAction.ToggleGenreSelection(genre2))
+        sut.state.test {
+            awaitItem() // Initial state
 
-        //Assert
-        assertThat(sut.state.value.continueButtonEnabled, `is`(true))
+            //Act
+            sut.onAction(GenresAction.ToggleGenreSelection(genre))
+            awaitItem()
+            sut.onAction(GenresAction.ToggleGenreSelection(genre2))
+            val updatedState = awaitItem()
+
+            //Assert
+            assertThat(updatedState.continueButtonEnabled, `is`(true))
+
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     // ON CONTINUE CLICK
     @Test
-    fun onAction_onContinueClick_genresSavedInPreferences() {
+    fun onAction_onContinueClick_genresSavedInPreferences() = runTest{
         // Arrange
-        coEvery { genresRepository.getGenres() } answers { Result.Success(dummyGenresList) }
-        sut = GenresViewModel(genresRepository, genresPreferences)
+        coEvery { genresRepository.getGenres() } coAnswers {
+            delay(500)
+            Result.Success(dummyGenresList)
+        }
         val selectedGenres = listOf(
             Genre(id = 36, name = "History"),
             Genre(id = 80, name = "Crime")
         )
-        sut.onAction(GenresAction.ToggleGenreSelection(selectedGenres[0]))
-        sut.onAction(GenresAction.ToggleGenreSelection(selectedGenres[1]))
+        sut.state.test {
+            awaitItem() // Initial state
 
-        // Act
-        sut.onAction(GenresAction.OnContinueClick)
+            //Act
+            sut.onAction(GenresAction.ToggleGenreSelection(selectedGenres[0]))
+            awaitItem()
+            sut.onAction(GenresAction.ToggleGenreSelection(selectedGenres[1]))
+
+            val updatedState = awaitItem()
+            println(updatedState)
+
+            sut.onAction(GenresAction.OnContinueClick)
+
+            cancelAndIgnoreRemainingEvents()
+        }
 
         // Assert
         verify(exactly = 1) { genresPreferences.saveGenres(selectedGenres) }

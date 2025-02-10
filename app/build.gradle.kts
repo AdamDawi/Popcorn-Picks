@@ -12,6 +12,10 @@ android {
     namespace = "com.adamdawi.popcornpicks"
     compileSdk = 34
 
+    tasks.withType<Test> {
+        jvmArgs("-XX:+EnableDynamicAgentLoading")
+    }
+
     defaultConfig {
         applicationId = "com.adamdawi.popcornpicks"
         minSdk = 24
@@ -98,6 +102,8 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     //serialization
     implementation("com.google.code.gson:gson:2.11.0")
+    //slf4j - to fix issue about logging
+    testImplementation("org.slf4j:slf4j-simple:1.6.1")
 
     //unit tests
     testImplementation(libs.androidx.core)
