@@ -101,9 +101,9 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.androidx.compose)
     //serialization
-    implementation("com.google.code.gson:gson:2.11.0")
+    implementation(libs.gson)
     //slf4j - to fix issue about logging
-    testImplementation("org.slf4j:slf4j-simple:1.6.1")
+    testImplementation(libs.slf4j.simple)
 
     //unit tests
     testImplementation(libs.androidx.core)
