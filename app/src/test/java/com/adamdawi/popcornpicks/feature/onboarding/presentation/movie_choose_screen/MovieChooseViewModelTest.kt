@@ -43,28 +43,36 @@ class MovieChooseViewModelTest {
     @get: Rule
     val replaceMainDispatcherRule = ReplaceMainDispatcherRule()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setUp() {
         moviesByGenreRepository = mockk<MoviesByGenreRepository>()
         genresPreferences = mockk<GenresPreferences>()
         onBoardingManager = mockk<OnBoardingManager>()
         moviesDbRepository = mockk<MoviesDbRepository>()
-    }
-
-    //GET GENRES IDS
-    @Test
-    fun getGenresIds_genresNotSavedInSharedPreferences_defaultGenresIdsListPassedToGetMovies() {
-        // Arrange
-        val defaultGenresIDs = Constants.Local.DEFAULT_GENRES_IDS
-        every { genresPreferences.getGenres() } returns emptyList()
-
-        // Act
         sut = MovieChooseViewModel(
             moviesByGenreRepository,
             genresPreferences,
             onBoardingManager,
-            moviesDbRepository
+            moviesDbRepository,
+            replaceMainDispatcherRule.testDispatcher
         )
+    }
+
+    //GET GENRES IDS
+    @Test
+    fun getGenresIds_genresNotSavedInSharedPreferences_defaultGenresIdsListPassedToGetMovies() = runTest {
+        // Arrange
+        val defaultGenresIDs = Constants.Local.DEFAULT_GENRES_IDS
+        every { genresPreferences.getGenres() } returns emptyList()
+        coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+            Result.Success(emptyList())
+        }
+
+        // Act
+        sut.state.test{
+            cancelAndIgnoreRemainingEvents()
+        }
 
         // Assert
         coVerify(exactly = 1) { moviesByGenreRepository.getMoviesBasedOnGenre(defaultGenresIDs[0], 1) }
@@ -73,18 +81,18 @@ class MovieChooseViewModelTest {
     }
 
     @Test
-    fun getGenresIds_genresSavedInSharedPreferences_correctGenresIdsListPassedToGetMovies() {
+    fun getGenresIds_genresSavedInSharedPreferences_correctGenresIdsListPassedToGetMovies() = runTest {
         // Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
+        coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+            Result.Success(emptyList())
+        }
 
         // Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
+        sut.state.test{
+            cancelAndIgnoreRemainingEvents()
+        }
 
         // Assert
         coVerify(exactly = 1) { moviesByGenreRepository.getMoviesBasedOnGenre(genresIDs[0], 1) }
@@ -94,7 +102,7 @@ class MovieChooseViewModelTest {
 
     //GET MOVIES
     @Test
-    fun getMovies_success_movieListStateUpdatedWithCorrectData() {
+    fun getMovies_success_movieListStateUpdatedWithCorrectData() = runTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         val movieListID1 = listOf(
@@ -137,6 +145,9 @@ class MovieChooseViewModelTest {
                 )
             )
         )
+        val expectedMovies = movieListID1 + movieListID1 + movieListID1 +
+                movieListID2 + movieListID2 + movieListID2 +
+                movieListID3 + movieListID3 + movieListID3
         every { genresPreferences.getGenres() } returns genresIDs
         coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(genresIDs[0], any()) } answers {
             Result.Success(
@@ -156,23 +167,19 @@ class MovieChooseViewModelTest {
             )
         }
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
+        sut.state.test{
+            //Act
+            val movies = awaitItem().movies
 
-        //Assert
-        val expectedMovies = movieListID1 + movieListID1 + movieListID1 +
-                movieListID2 + movieListID2 + movieListID2 +
-                movieListID3 + movieListID3 + movieListID3
-        assertThat(sut.state.value.movies).containsExactlyElementsIn(expectedMovies)
+            //Assert
+            assertThat(movies).containsExactlyElementsIn(expectedMovies)
+
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
-    fun getMovies_success_repositoryGetMoviesInvokedCorrectNumberOfTimes() {
+    fun getMovies_success_repositoryGetMoviesInvokedCorrectNumberOfTimes() = runTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -183,12 +190,9 @@ class MovieChooseViewModelTest {
         }
 
         //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
+        sut.state.test{
+            cancelAndIgnoreRemainingEvents()
+        }
 
         //Assert
         coVerify(exactly = 1) { moviesByGenreRepository.getMoviesBasedOnGenre(genresIDs[0], 1) }
@@ -205,7 +209,7 @@ class MovieChooseViewModelTest {
     }
 
     @Test
-    fun getMovies_success_errorStateIsNotUpdated() {
+    fun getMovies_success_errorStateIsNotUpdated() = runTest{
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -215,44 +219,42 @@ class MovieChooseViewModelTest {
             )
         }
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
+        sut.state.test{
+            //Act
+            val updatedState = awaitItem()
 
-        //Assert
-        assertThat(sut.state.value.error.isNullOrEmpty(), `is`(true))
+            //Assert
+            assertThat(updatedState.error.isNullOrEmpty(), `is`(true))
+
+            ensureAllEventsConsumed()
+        }
     }
 
     @Test
-    fun getMovies_success_loadingStateIsSetToTrueWhileFetching() {
+    fun getMovies_success_loadingStateIsSetToTrueWhileFetching() = runTest{
         // Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
         coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(any(), any()) } coAnswers {
-            delay(1000)
+            delay(500)
             Result.Success(
                 dummyMovieList
             )
         }
 
-        // Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
+        sut.state.test{
+            // Act
+            val updatedState = awaitItem()
 
-        //Assert
-        assertThat(sut.state.value.isLoading, `is`(true))
+            //Assert
+            assertThat(updatedState.isLoading, `is`(true))
+
+            ensureAllEventsConsumed()
+        }
     }
 
     @Test
-    fun getMovies_success_loadingStateIsSetToFalseAfterFetching() {
+    fun getMovies_success_loadingStateIsSetToFalseAfterFetching() = runTest{
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -262,20 +264,19 @@ class MovieChooseViewModelTest {
             )
         }
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
+        sut.state.test{
+            // Act
+            val updatedState = awaitItem()
 
-        //Assert
-        assertThat(sut.state.value.isLoading, `is`(false))
+            //Assert
+            assertThat(updatedState.isLoading, `is`(false))
+
+            ensureAllEventsConsumed()
+        }
     }
 
     @Test
-    fun getMovies_error_errorStateUpdatedWithCorrectError() {
+    fun getMovies_error_errorStateUpdatedWithCorrectError() = runTest{
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -285,20 +286,19 @@ class MovieChooseViewModelTest {
             )
         }
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
+        sut.state.test{
+            //Act
+            val updatedState = awaitItem()
 
-        //Assert
-        assertThat(sut.state.value.error, `is`(DataError.Network.SERVER_ERROR.asUiText()))
+            //Assert
+            assertThat(updatedState.error, `is`(DataError.Network.SERVER_ERROR.asUiText()))
+
+            ensureAllEventsConsumed()
+        }
     }
 
     @Test
-    fun getMovies_error_moviesListIsNotUpdated() {
+    fun getMovies_error_moviesListIsNotUpdated() = runTest{
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -308,42 +308,41 @@ class MovieChooseViewModelTest {
             )
         }
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
+        sut.state.test{
+            //Act
+            val updatedState = awaitItem()
 
-        //Assert
-        assertThat(sut.state.value.movies, `is`(emptyList()))
+            //Assert
+            assertThat(updatedState.movies, `is`(emptyList()))
+
+            ensureAllEventsConsumed()
+        }
     }
 
     @Test
-    fun getMovies_error_loadingStateIsSetToTrueWhileFetching() {
+    fun getMovies_error_loadingStateIsSetToTrueWhileFetching() = runTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
         coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(any(), any()) } coAnswers {
-            delay(1000)
+            delay(500)
             Result.Error(DataError.Network.SERVER_ERROR)
         }
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
 
-        //Assert
-        assertThat(sut.state.value.isLoading, `is`(true))
+        sut.state.test{
+            //Act
+            val updatedState = awaitItem()
+
+            //Assert
+            assertThat(updatedState.isLoading, `is`(true))
+
+            ensureAllEventsConsumed()
+        }
     }
 
     @Test
-    fun getMovies_error_loadingStateIsSetToFalseAfterFetching() {
+    fun getMovies_error_loadingStateIsSetToFalseAfterFetching() = runTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -351,20 +350,19 @@ class MovieChooseViewModelTest {
             Result.Error(DataError.Network.SERVER_ERROR)
         }
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
+        sut.state.test{
+            //Act
+            val updatedState = awaitItem()
 
-        //Assert
-        assertThat(sut.state.value.isLoading, `is`(false))
+            //Assert
+            assertThat(updatedState.isLoading, `is`(false))
+
+            ensureAllEventsConsumed()
+        }
     }
 
     @Test
-    fun getMovies_successThenError_errorStateUpdatedWithCorrectError() {
+    fun getMovies_successThenError_errorStateUpdatedWithCorrectError() = runTest{
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -375,21 +373,21 @@ class MovieChooseViewModelTest {
             Result.Error(DataError.Network.SERVER_ERROR)
         }
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
 
-        //Assert
-        assertThat(sut.state.value.error, `is`(DataError.Network.SERVER_ERROR.asUiText()))
+        sut.state.test{
+            //Act
+            val updatedState = awaitItem()
+
+            //Assert
+            assertThat(updatedState.error, `is`(DataError.Network.SERVER_ERROR.asUiText()))
+
+            ensureAllEventsConsumed()
+        }
     }
 
     //INIT
     @Test
-    fun init_selectedGenres_empty() {
+    fun init_selectedGenres_empty() = runTest{
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -400,21 +398,20 @@ class MovieChooseViewModelTest {
             )
         } answers { Result.Success(dummyMovieList) }
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
+        sut.state.test{
+            //Act
+            val updatedState = awaitItem()
 
-        //Assert
-        assertThat(sut.state.value.selectedMovies.size, `is`(0))
+            //Assert
+            assertThat(updatedState.selectedMovies.size, `is`(0))
+
+            ensureAllEventsConsumed()
+        }
     }
 
     //TOGGLE MOVIE SELECTION
     @Test
-    fun toggleMovieSelection_toggleMovieSelectionOnce_movieSelected() {
+    fun toggleMovieSelection_toggleMovieSelectionOnce_movieSelected() = runTest{
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -436,22 +433,23 @@ class MovieChooseViewModelTest {
             )
         )
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
-        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
+        sut.state.test{
+            skipItems(1) //Initial state
 
-        //Assert
-        assertThat(sut.state.value.selectedMovies.size, `is`(1))
-        assertThat(sut.state.value.selectedMovies.contains(movie), `is`(true))
+            //Act
+            sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
+            val updatedState = awaitItem()
+
+            //Assert
+            assertThat(updatedState.selectedMovies.size, `is`(1))
+            assertThat(updatedState.selectedMovies.contains(movie), `is`(true))
+
+            ensureAllEventsConsumed()
+        }
     }
 
     @Test
-    fun toggleMovieSelection_toggleMovieSelectionOnSameMovieTwice_movieDeselected() {
+    fun toggleMovieSelection_toggleMovieSelectionOnSameMovieTwice_movieDeselected() = runTest{
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -473,23 +471,25 @@ class MovieChooseViewModelTest {
             )
         )
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
-        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
-        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
+        sut.state.test{
+            skipItems(1) //Initial state
 
-        //Assert
-        assertThat(sut.state.value.selectedMovies.size, `is`(0))
-        assertThat(sut.state.value.selectedMovies.contains(movie), `is`(false))
+            //Act
+            sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
+            skipItems(1)
+            sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
+            val updatedState = awaitItem()
+
+            //Assert
+            assertThat(updatedState.selectedMovies.size, `is`(0))
+            assertThat(updatedState.selectedMovies.contains(movie), `is`(false))
+
+            ensureAllEventsConsumed()
+        }
     }
 
     @Test
-    fun toggleMovieSelection_toggleMovieSelectionOnSameMovieThreeTimes_finishButtonDisabled() {
+    fun toggleMovieSelection_toggleMovieSelectionOnSameMovieThreeTimes_finishButtonDisabled() = runTest{
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -511,23 +511,26 @@ class MovieChooseViewModelTest {
             )
         )
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
-        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
-        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
-        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
+        sut.state.test{
+            skipItems(1) //Initial state
 
-        //Assert
-        assertThat(sut.state.value.finishButtonEnabled, `is`(false))
+            //Act
+            sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
+            skipItems(1)
+            sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
+            skipItems(1)
+            sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
+            val updatedState = awaitItem()
+
+            //Assert
+            assertThat(updatedState.finishButtonEnabled, `is`(false))
+
+            ensureAllEventsConsumed()
+        }
     }
 
     @Test
-    fun toggleMovieSelection_toggleMovieSelectionOnThreeDifferentMovies_threeDifferentMoviesSelected() {
+    fun toggleMovieSelection_toggleMovieSelectionOnThreeDifferentMovies_threeDifferentMoviesSelected() = runTest{
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -571,26 +574,30 @@ class MovieChooseViewModelTest {
             )
         )
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
-        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
-        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie2))
-        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie3))
 
-        //Assert
-        assertThat(sut.state.value.selectedMovies.size, `is`(3))
-        assertThat(sut.state.value.selectedMovies.contains(movie), `is`(true))
-        assertThat(sut.state.value.selectedMovies.contains(movie2), `is`(true))
-        assertThat(sut.state.value.selectedMovies.contains(movie3), `is`(true))
+        sut.state.test{
+            skipItems(1) //Initial state
+
+            //Act
+            sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
+            skipItems(1)
+            sut.onAction(MovieChooseAction.ToggleMovieSelection(movie2))
+            skipItems(1)
+            sut.onAction(MovieChooseAction.ToggleMovieSelection(movie3))
+            val updatedState = awaitItem()
+
+            //Assert
+            assertThat(updatedState.selectedMovies.size, `is`(3))
+            assertThat(updatedState.selectedMovies.contains(movie), `is`(true))
+            assertThat(updatedState.selectedMovies.contains(movie2), `is`(true))
+            assertThat(updatedState.selectedMovies.contains(movie3), `is`(true))
+
+            ensureAllEventsConsumed()
+        }
     }
 
     @Test
-    fun toggleMovieSelection_toggleMovieSelectionOnThreeDifferentMovies_finishButtonEnabled() {
+    fun toggleMovieSelection_toggleMovieSelectionOnThreeDifferentMovies_finishButtonEnabled() = runTest{
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -634,25 +641,27 @@ class MovieChooseViewModelTest {
             )
         )
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
-        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
-        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie2))
-        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie3))
+        sut.state.test{
+            skipItems(1) //Initial state
 
-        //Assert
-        assertThat(sut.state.value.finishButtonEnabled, `is`(true))
+            //Act
+            sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
+            skipItems(1)
+            sut.onAction(MovieChooseAction.ToggleMovieSelection(movie2))
+            skipItems(1)
+            sut.onAction(MovieChooseAction.ToggleMovieSelection(movie3))
+            val updatedState = awaitItem()
+
+            //Assert
+            assertThat(updatedState.finishButtonEnabled, `is`(true))
+
+            ensureAllEventsConsumed()
+        }
     }
 
     //ADD MOVIES TO DB
-
     @Test
-    fun addMoviesToDb_success_addMoviesInvokedOnceWithCorrectSelectedMovies() {
+    fun addMoviesToDb_success_addMoviesInvokedOnceWithCorrectSelectedMovies() = runTest{
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -665,6 +674,7 @@ class MovieChooseViewModelTest {
         coEvery { moviesDbRepository.addMovies(any()) } answers {
             Result.Success(Unit)
         }
+        every { onBoardingManager.setOnboardingCompleted(any()) } answers {}
 
         val movie = Movie(
             id = 1,
@@ -700,24 +710,26 @@ class MovieChooseViewModelTest {
             )
         )
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
-        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
-        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie2))
-        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie3))
-        sut.onAction(MovieChooseAction.OnFinishClick)
+        sut.state.test{
+            skipItems(1) //Initial state
+
+            //Act
+            sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
+            sut.onAction(MovieChooseAction.ToggleMovieSelection(movie2))
+            sut.onAction(MovieChooseAction.ToggleMovieSelection(movie3))
+            sut.onAction(MovieChooseAction.OnFinishClick)
+
+            skipItems(3)
+
+            ensureAllEventsConsumed()
+        }
 
         //Assert
         coVerify(exactly = 1) { moviesDbRepository.addMovies(listOf(movie, movie2, movie3)) }
     }
 
     @Test
-    fun addMoviesToDb_success_setOnboardingCompletedInvokedOnceWithTrue() {
+    fun addMoviesToDb_success_setOnboardingCompletedInvokedOnceWithTrue() = runTest{
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -730,22 +742,23 @@ class MovieChooseViewModelTest {
         coEvery { moviesDbRepository.addMovies(any()) } answers {
             Result.Success(Unit)
         }
+        every { onBoardingManager.setOnboardingCompleted(any()) } answers {}
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
-        sut.onAction(MovieChooseAction.OnFinishClick)
+        sut.state.test{
+            skipItems(1) //Initial state
+
+            //Act
+            sut.onAction(MovieChooseAction.OnFinishClick)
+
+            ensureAllEventsConsumed()
+        }
 
         //Assert
         verify(exactly = 1) { onBoardingManager.setOnboardingCompleted(true) }
     }
 
     @Test
-    fun addMoviesToDb_success_eventChannelUpdatedWithSuccess()= runTest {
+    fun addMoviesToDb_success_eventChannelUpdatedWithSuccess() = runTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -760,25 +773,19 @@ class MovieChooseViewModelTest {
             Result.Success(Unit)
         }
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
-
-        //Assert
         sut.events.test {
+            //Act
             sut.onAction(MovieChooseAction.OnFinishClick)
             val emission = awaitItem()
-            assertTrue(emission is MovieChooseEvent.Success)
-            cancelAndIgnoreRemainingEvents() // Stop collecting after the first event
+            //Assert
+            assertThat(emission, `is`(MovieChooseEvent.Success))
+
+            ensureAllEventsConsumed()
         }
     }
 
     @Test
-    fun addMoviesToDb_error_addMoviesInvokedOnceWithCorrectSelectedMovies() {
+    fun addMoviesToDb_error_addMoviesInvokedOnceWithCorrectSelectedMovies() = runTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -826,24 +833,25 @@ class MovieChooseViewModelTest {
             )
         )
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
-        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
-        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie2))
-        sut.onAction(MovieChooseAction.ToggleMovieSelection(movie3))
-        sut.onAction(MovieChooseAction.OnFinishClick)
+        sut.state.test{
+            skipItems(1) //Initial state
+
+            //Act
+            sut.onAction(MovieChooseAction.ToggleMovieSelection(movie))
+            sut.onAction(MovieChooseAction.ToggleMovieSelection(movie2))
+            sut.onAction(MovieChooseAction.ToggleMovieSelection(movie3))
+            sut.onAction(MovieChooseAction.OnFinishClick)
+
+            skipItems(3)
+            ensureAllEventsConsumed()
+        }
 
         //Assert
         coVerify(exactly = 1) { moviesDbRepository.addMovies(listOf(movie, movie2, movie3)) }
     }
 
     @Test
-    fun addMoviesToDb_error_setOnboardingCompletedNotInvoked() {
+    fun addMoviesToDb_error_setOnboardingCompletedNotInvoked() = runTest{
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
@@ -857,14 +865,14 @@ class MovieChooseViewModelTest {
             Result.Error(DataError.Local.DISK_FULL)
         }
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
-        sut.onAction(MovieChooseAction.OnFinishClick)
+        sut.state.test{
+            skipItems(1) //Initial state
+
+            //Act
+            sut.onAction(MovieChooseAction.OnFinishClick)
+
+            ensureAllEventsConsumed()
+        }
 
         //Assert
         verify(exactly = 0) { onBoardingManager.setOnboardingCompleted(any()) }
@@ -885,19 +893,15 @@ class MovieChooseViewModelTest {
             Result.Error(DataError.Local.DISK_FULL)
         }
 
-        //Act
-        sut = MovieChooseViewModel(
-            moviesByGenreRepository,
-            genresPreferences,
-            onBoardingManager,
-            moviesDbRepository
-        )
-        //Assert
         sut.events.test {
+            //Act
             sut.onAction(MovieChooseAction.OnFinishClick)
             val emission = awaitItem()
+
+            //Assert
             assertTrue(emission is MovieChooseEvent.Error && emission.error == DataError.Local.DISK_FULL.asUiText())
-            cancelAndIgnoreRemainingEvents() // Stop collecting after the first event
+
+            ensureAllEventsConsumed()
         }
     }
 }

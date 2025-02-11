@@ -45,16 +45,15 @@ class GenresViewModelTest {
     @Test
     fun getGenres_success_genresListStateUpdatedWithCorrectData() = runTest{
         //Arrange
-        coEvery { genresRepository.getGenres() } coAnswers {
-            delay(500)
+        coEvery { genresRepository.getGenres() } answers {
             Result.Success(dummyGenresList)
         }
 
         //Act
-        val states = sut.state.take(2).toList()
+        val state = sut.state.first()
 
         //Assert
-        assertThat(states.last().genres, `is`(dummyGenresList))
+        assertThat(state.genres, `is`(dummyGenresList))
     }
 
     @Test
@@ -105,17 +104,16 @@ class GenresViewModelTest {
     @Test
     fun getGenres_error_errorStateUpdatedWithCorrectError() = runTest{
         //Arrange
-        coEvery { genresRepository.getGenres() } coAnswers {
-            delay(500)
+        coEvery { genresRepository.getGenres() } answers {
             Result.Error(
             DataError.Network.SERVER_ERROR)
         }
 
         //Act
-        val states = sut.state.take(2).toList()
+        val state = sut.state.first()
 
         //Assert
-        assertThat(states.last().error, `is`(DataError.Network.SERVER_ERROR.asUiText()))
+        assertThat(state.error, `is`(DataError.Network.SERVER_ERROR.asUiText()))
     }
 
     @Test
@@ -135,6 +133,7 @@ class GenresViewModelTest {
         assertThat(states.last().genres, `is`(emptyList()))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getGenres_error_loadingStateIsSetToTrueWhileFetching() = runTest{
         //Arrange
@@ -186,14 +185,13 @@ class GenresViewModelTest {
     @Test
     fun onAction_toggleGenreSelectionOnce_genreSelected() = runTest{
         //Arrange
-        coEvery { genresRepository.getGenres() } coAnswers {
-            delay(500)
+        coEvery { genresRepository.getGenres() } answers {
             Result.Success(dummyGenresList)
         }
         val genre = Genre(id = 36, name = "History")
 
         sut.state.test {
-            awaitItem() // Initial state
+            skipItems(1) // Initial state
 
             //Act
             sut.onAction(GenresAction.ToggleGenreSelection(genre))
@@ -204,21 +202,20 @@ class GenresViewModelTest {
             assertThat(updatedState.selectedGenres.size, `is`(1))
             assertThat(updatedState.selectedGenres.contains(genre), `is`(true))
 
-            cancelAndIgnoreRemainingEvents()
+            ensureAllEventsConsumed()
         }
     }
 
     @Test
     fun onAction_toggleGenreSelectionOnSameGenreTwice_genreDeselected() = runTest{
         //Arrange
-        coEvery { genresRepository.getGenres() } coAnswers {
-            delay(500)
+        coEvery { genresRepository.getGenres() } answers {
             Result.Success(dummyGenresList)
         }
         val genre = Genre(id = 36, name = "History")
 
         sut.state.test {
-            awaitItem() // Initial state
+            skipItems(1) // Initial state
 
             //Act
             sut.onAction(GenresAction.ToggleGenreSelection(genre))
@@ -230,21 +227,20 @@ class GenresViewModelTest {
             assertThat(updatedState.selectedGenres.size, `is`(0))
             assertThat(updatedState.selectedGenres.contains(genre), `is`(false))
 
-            cancelAndIgnoreRemainingEvents()
+            ensureAllEventsConsumed()
         }
     }
 
     @Test
     fun onAction_toggleGenreSelectionOnSameGenreTwice_continueButtonDisabled() = runTest{
         //Arrange
-        coEvery { genresRepository.getGenres() } coAnswers {
-            delay(500)
+        coEvery { genresRepository.getGenres() } answers {
             Result.Success(dummyGenresList)
         }
         val genre = Genre(id = 36, name = "History")
 
         sut.state.test {
-            awaitItem() // Initial state
+            skipItems(1) // Initial state
 
             //Act
             sut.onAction(GenresAction.ToggleGenreSelection(genre))
@@ -255,22 +251,21 @@ class GenresViewModelTest {
             //Assert
             assertThat(updatedState.continueButtonEnabled, `is`(false))
 
-            cancelAndIgnoreRemainingEvents()
+            ensureAllEventsConsumed()
         }
     }
 
     @Test
     fun onAction_toggleGenreSelectionOnDifferentGenresTwice_bothGenresSelected() = runTest{
         //Arrange
-        coEvery { genresRepository.getGenres() } coAnswers {
-            delay(500)
+        coEvery { genresRepository.getGenres() } answers {
             Result.Success(dummyGenresList)
         }
         val genre = Genre(id = 36, name = "History")
         val genre2 = Genre(id = 80, name = "Crime")
 
         sut.state.test {
-            awaitItem() // Initial state
+            skipItems(1) // Initial state
 
             //Act
             sut.onAction(GenresAction.ToggleGenreSelection(genre))
@@ -283,23 +278,21 @@ class GenresViewModelTest {
             assertThat(updatedState.selectedGenres.contains(genre), `is`(true))
             assertThat(updatedState.selectedGenres.contains(genre2), `is`(true))
 
-            cancelAndIgnoreRemainingEvents()
+            ensureAllEventsConsumed()
         }
     }
 
     @Test
     fun onAction_toggleGenreSelectionOnDifferentGenresTwice_continueButtonEnabled() = runTest{
         //Arrange
-        coEvery { genresRepository.getGenres() } coAnswers {
-            delay(500)
+        coEvery { genresRepository.getGenres() } answers {
             Result.Success(dummyGenresList)
         }
         val genre = Genre(id = 36, name = "History")
         val genre2 = Genre(id = 80, name = "Crime")
 
         sut.state.test {
-            awaitItem() // Initial state
-
+            skipItems(1) // Initial state
             //Act
             sut.onAction(GenresAction.ToggleGenreSelection(genre))
             awaitItem()
@@ -309,7 +302,7 @@ class GenresViewModelTest {
             //Assert
             assertThat(updatedState.continueButtonEnabled, `is`(true))
 
-            cancelAndIgnoreRemainingEvents()
+            ensureAllEventsConsumed()
         }
     }
 
@@ -317,8 +310,7 @@ class GenresViewModelTest {
     @Test
     fun onAction_onContinueClick_genresSavedInPreferences() = runTest{
         // Arrange
-        coEvery { genresRepository.getGenres() } coAnswers {
-            delay(500)
+        coEvery { genresRepository.getGenres() } answers {
             Result.Success(dummyGenresList)
         }
         val selectedGenres = listOf(
@@ -326,19 +318,17 @@ class GenresViewModelTest {
             Genre(id = 80, name = "Crime")
         )
         sut.state.test {
-            awaitItem() // Initial state
+            skipItems(1) // Initial state
+
+            sut.onAction(GenresAction.ToggleGenreSelection(selectedGenres[0]))
+            skipItems(1)
+            sut.onAction(GenresAction.ToggleGenreSelection(selectedGenres[1]))
+            skipItems(1)
 
             //Act
-            sut.onAction(GenresAction.ToggleGenreSelection(selectedGenres[0]))
-            awaitItem()
-            sut.onAction(GenresAction.ToggleGenreSelection(selectedGenres[1]))
-
-            val updatedState = awaitItem()
-            println(updatedState)
-
             sut.onAction(GenresAction.OnContinueClick)
 
-            cancelAndIgnoreRemainingEvents()
+            ensureAllEventsConsumed()
         }
 
         // Assert

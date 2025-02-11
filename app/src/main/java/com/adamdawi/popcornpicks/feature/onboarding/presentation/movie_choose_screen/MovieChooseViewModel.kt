@@ -10,10 +10,15 @@ import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.feature.onboarding.domain.Movie
 import com.adamdawi.popcornpicks.feature.onboarding.domain.repository.MoviesByGenreRepository
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -21,17 +26,22 @@ class MovieChooseViewModel(
     private val repository: MoviesByGenreRepository,
     private val genresPreferences: GenresPreferences,
     private val onBoardingManager: OnBoardingManager,
-    private val moviesDbRepositoryImpl: MoviesDbRepository
+    private val moviesDbRepositoryImpl: MoviesDbRepository,
+    private val coroutineDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _state = MutableStateFlow(MovieChooseState())
-    val state = _state.asStateFlow()
+    val state = _state.onStart {
+        getMovies(getGenresIDs())
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        _state.value
+    )
 
     private val eventChannel = Channel<MovieChooseEvent>()
     val events = eventChannel.receiveAsFlow()
 
-    init {
-        getMovies(getGenresIDs())
-    }
+    private val getMoviesJob = Job()
 
     fun onAction(action: MovieChooseAction) {
         when (action) {
@@ -52,16 +62,21 @@ class MovieChooseViewModel(
     }
 
     private fun getMovies(genresIds: List<String>) {
+        val scope = CoroutineScope(coroutineDispatcher + getMoviesJob)
+
         _state.value = _state.value.copy(
             isLoading = true
         )
+
         for (i in 1..3) {
             for (genre in genresIds) {
-                viewModelScope.launch {
+                scope.launch {
                     val result = repository.getMoviesBasedOnGenre(genre, i)
 
                     when (result) {
                         is Result.Error -> {
+                            getMoviesJob.cancel()
+
                             _state.update {
                                 it.copy(
                                     error = result.error.asUiText(),
@@ -84,19 +99,19 @@ class MovieChooseViewModel(
         }
     }
 
+
     private fun onMovieClick(movie: Movie) {
         if (_state.value.selectedMovies.contains(movie)) {
             _state.value = _state.value.copy(
-                selectedMovies = _state.value.selectedMovies - movie
+                selectedMovies = _state.value.selectedMovies - movie,
+                finishButtonEnabled = _state.value.selectedMovies.size-1 >= 3
             )
         } else {
             _state.value = _state.value.copy(
-                selectedMovies = _state.value.selectedMovies + movie
+                selectedMovies = _state.value.selectedMovies + movie,
+                finishButtonEnabled = _state.value.selectedMovies.size+1 >= 3
             )
         }
-        _state.value = _state.value.copy(
-            finishButtonEnabled = _state.value.selectedMovies.size >= 3
-        )
     }
 
     private fun addMoviesToDb() {
@@ -117,5 +132,10 @@ class MovieChooseViewModel(
 
     private fun setOnboardingCompletedToTrue() {
         onBoardingManager.setOnboardingCompleted(true)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        getMoviesJob.cancel()
     }
 }

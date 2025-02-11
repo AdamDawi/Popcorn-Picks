@@ -8,7 +8,6 @@ import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.feature.onboarding.domain.repository.MoviesByGenreRepository
 import com.adamdawi.popcornpicks.feature.recommendations.domain.repository.RecommendationsRepository
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +19,7 @@ class RecommendationsViewModel(
     private val moviesByGenreRepository: MoviesByGenreRepository,
     private val recommendationsRepository: RecommendationsRepository,
     private val moviesDbRepository: MoviesDbRepository,
-    private val databaseDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val databaseDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _state = MutableStateFlow(RecommendationsState())
     val state = _state.asStateFlow()
