@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +40,7 @@ import com.adamdawi.popcornpicks.feature.onboarding.domain.Movie
 import com.adamdawi.popcornpicks.feature.onboarding.presentation.movie_choose_screen.components.FinishFAB
 import com.adamdawi.popcornpicks.feature.onboarding.presentation.movie_choose_screen.components.MovieItem
 import org.koin.androidx.compose.koinViewModel
+import kotlin.math.abs
 
 @Composable
 fun MovieChooseScreen(
@@ -81,26 +81,11 @@ fun MovieChooseContent(
     state: MovieChooseState
 ) {
     val lazyListState = rememberLazyGridState()
-    val showContinueText = remember { mutableStateOf(true) }
-
-    // Detect if the user is scrolling up or down
-    val lastFirstVisibleItemIndex = remember { mutableIntStateOf(0) }
-    val firstVisibleItemIndex = remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }
-
-    LaunchedEffect(firstVisibleItemIndex.value) {
-        val currentFirstVisibleItemIndex = lazyListState.firstVisibleItemIndex
-        if (currentFirstVisibleItemIndex < lastFirstVisibleItemIndex.intValue) {
-            showContinueText.value = true // Scrolling up
-        } else if (currentFirstVisibleItemIndex > lastFirstVisibleItemIndex.intValue) {
-            showContinueText.value = false // Scrolling down
-        }
-        lastFirstVisibleItemIndex.intValue = currentFirstVisibleItemIndex
-    }
 
     Scaffold(
         floatingActionButton = {
             FinishFAB(
-                showText = showContinueText.value,
+                showText = lazyListState.isScrollingUp(),
                 onFinishClick = {
                     if (state.finishButtonEnabled)
                         onAction(MovieChooseAction.OnFinishClick)
@@ -160,7 +145,7 @@ private fun MovieGrid(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        itemsIndexed(moviesList) { _, movie ->
+        itemsIndexed(moviesList, key = { _, movie -> movie.id }) { _, movie ->
             MovieItem(
                 movie = movie,
                 isSelected = selectedMovies.contains(movie),
@@ -168,6 +153,29 @@ private fun MovieGrid(
             )
         }
     }
+}
+
+@Composable
+private fun LazyGridState.isScrollingUp(threshold: Int = 50): Boolean {
+    var previousIndex = remember(this) { mutableIntStateOf(firstVisibleItemIndex) }
+    var previousScrollOffset = remember(this) { mutableIntStateOf(firstVisibleItemScrollOffset) }
+    val isScrollingUp = remember { mutableStateOf(true) }
+    return remember(this) {
+        derivedStateOf {
+            if (
+                previousIndex.intValue != firstVisibleItemIndex ||
+                (abs(firstVisibleItemScrollOffset - previousScrollOffset.intValue) >= threshold)
+            ) {
+                isScrollingUp.value = (firstVisibleItemIndex < previousIndex.intValue) ||
+                        (firstVisibleItemIndex == previousIndex.intValue &&
+                                firstVisibleItemScrollOffset < previousScrollOffset.intValue)
+                previousIndex.intValue = firstVisibleItemIndex
+                previousScrollOffset.intValue = firstVisibleItemScrollOffset
+
+            }
+            isScrollingUp.value
+        }
+    }.value
 }
 
 @Preview

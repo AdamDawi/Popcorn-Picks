@@ -88,7 +88,7 @@ class MovieChooseViewModel(
                         is Result.Success -> {
                             _state.update {
                                 it.copy(
-                                    movies = result.data + _state.value.movies,
+                                    movies = _state.value.movies + result.data,
                                     isLoading = false
                                 )
                             }
@@ -98,7 +98,6 @@ class MovieChooseViewModel(
             }
         }
     }
-
 
     private fun onMovieClick(movie: Movie) {
         if (_state.value.selectedMovies.contains(movie)) {
