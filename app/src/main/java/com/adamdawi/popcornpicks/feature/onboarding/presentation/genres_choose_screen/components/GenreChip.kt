@@ -13,10 +13,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.GENRE_CHIP
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.GENRE_NOT_SELECTED
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.GENRE_SELECTED
 import com.adamdawi.popcornpicks.core.presentation.theme.DarkGrey
 import com.adamdawi.popcornpicks.core.presentation.theme.fontFamily
 import com.adamdawi.popcornpicks.feature.onboarding.domain.Genre
@@ -36,8 +42,22 @@ fun GenreChip(
             .clip(CircleShape)
             .clickable { onClick() }
             .then(
-                if (isSelected) Modifier.background(randomGradient)
-                else Modifier.background(DarkGrey)
+                if (isSelected) Modifier
+                    .background(randomGradient)
+                    .testTag(GENRE_CHIP)
+                    .semantics {
+                        contentDescription = GENRE_SELECTED
+                    }
+                else {
+                    Modifier
+                        .background(DarkGrey)
+                        .semantics {
+                            contentDescription = GENRE_NOT_SELECTED
+                        }
+                }.also {
+                    it.testTag(GENRE_CHIP)
+                }
+
             )
             .padding(8.dp)
             .padding(horizontal = 8.dp),

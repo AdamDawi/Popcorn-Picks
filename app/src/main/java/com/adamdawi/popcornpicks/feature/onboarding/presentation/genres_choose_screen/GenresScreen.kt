@@ -61,7 +61,6 @@ fun GenresScreen(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun GenresContent(
     onAction: (GenresAction) -> Unit,
@@ -125,7 +124,7 @@ private fun GenresFlowRow(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         genres.forEachIndexed { index, genre ->
-            key(index) {
+            key(genre.id) {
                 GenreChip(
                     genre = genre,
                     isSelected = selectedGenres.contains(genre),

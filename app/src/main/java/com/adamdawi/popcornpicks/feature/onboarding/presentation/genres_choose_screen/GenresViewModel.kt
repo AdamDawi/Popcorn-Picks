@@ -31,7 +31,6 @@ class GenresViewModel(
         when (action) {
             is GenresAction.OnContinueClick -> saveGenresToPreferences()
             is GenresAction.ToggleGenreSelection -> onGenreClick(action.genre)
-            else -> Unit
         }
     }
 

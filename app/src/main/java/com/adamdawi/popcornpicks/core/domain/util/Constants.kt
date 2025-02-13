@@ -13,4 +13,10 @@ object Constants {
         const val DB_NAME = "popcorn_picks_db"
         const val MOVIES_TABLE = "movies_table"
     }
+
+    object Tests{
+        const val GENRE_SELECTED = "Selected genre"
+        const val GENRE_NOT_SELECTED = "Not selected genre"
+        const val GENRE_CHIP = "genre_chip"
+    }
 }

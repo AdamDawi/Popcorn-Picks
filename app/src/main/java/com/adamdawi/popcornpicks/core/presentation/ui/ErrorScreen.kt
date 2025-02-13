@@ -44,7 +44,7 @@ fun ErrorScreen(
         )
         Spacer(modifier = Modifier.height(32.dp))
         Text(
-            text = if (message != null) message else "Something went wrong",
+            text = message ?: "Something went wrong",
             fontFamily = fontFamily,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
