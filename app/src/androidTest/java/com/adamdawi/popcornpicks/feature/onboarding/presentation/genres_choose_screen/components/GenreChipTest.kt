@@ -20,7 +20,7 @@ class GenreChipTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun genreChip_displayed() {
+    fun genreChip_isDisplayed() {
         composeTestRule.setContent {
             GenreChip(
                 genre = Genre(id = 1, name = "Action"),
