@@ -2,8 +2,10 @@ package com.adamdawi.popcornpicks.feature.recommendations.presentation.component
 
 import com.adamdawi.popcornpicks.feature.onboarding.domain.Movie
 
-fun Movie.formatMovieDetails(): String{
+fun Movie.formatMovieDetails(): String {
     val genres = this.genres.map { it.name }
-    val genreText = genres.take(2).joinToString("/")
-    return "${this.releaseDate.take(4)} · $genreText · ${this.voteAverage}/10"
+    val genreText = if (genres.isEmpty()) "???" else genres.take(2).joinToString("/")
+    val releaseDateText = if (this.releaseDate.isEmpty()) "???" else this.releaseDate.take(4)
+
+    return "$releaseDateText · $genreText · ${this.voteAverage}/10"
 }
