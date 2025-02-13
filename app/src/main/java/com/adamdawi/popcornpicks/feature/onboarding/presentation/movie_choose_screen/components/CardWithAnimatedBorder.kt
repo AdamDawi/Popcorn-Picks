@@ -19,7 +19,9 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.CARD_WITH_ANIMATED_BORDER
 import com.adamdawi.popcornpicks.core.presentation.theme.DarkRed
 import com.adamdawi.popcornpicks.core.presentation.theme.Red
 
@@ -53,7 +55,7 @@ fun CardWithAnimatedBorder(
         if (borderColors.isNotEmpty()) Brush.sweepGradient(borderColors)
         else Brush.sweepGradient(listOf(Color.Gray, Color.White))
 
-    Surface(modifier = modifier.clickable { onCardClick() }, shape = RoundedCornerShape(12.dp)) {
+    Surface(modifier = modifier.testTag(CARD_WITH_ANIMATED_BORDER).clickable { onCardClick() }, shape = RoundedCornerShape(12.dp)) {
         Surface(
             modifier =
             Modifier

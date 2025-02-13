@@ -23,5 +23,6 @@ object Constants {
         const val MOVIE_ITEM = "movie_item"
         const val REGULAR_IMAGE = "regular_image"
         const val IMAGE_WITH_ANIMATED_BORDER = "image_with_animated_border"
+        const val CARD_WITH_ANIMATED_BORDER = "card_with_animated_border"
     }
 }

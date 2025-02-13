@@ -33,7 +33,7 @@ class GenreChipTest {
     }
 
     @Test
-    fun genreChip_clicked_triggersOnClick() {
+    fun genreChip_performsClickAction() {
         var clicked = false
         composeTestRule.setContent {
             GenreChip(
