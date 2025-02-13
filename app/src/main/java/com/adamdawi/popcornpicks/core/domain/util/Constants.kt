@@ -19,5 +19,6 @@ object Constants {
         const val GENRE_NOT_SELECTED = "Not selected genre"
         const val GENRE_CHIP = "genre_chip"
         const val ERROR_SCREEN = "error_screen"
+        const val FINISH_FAB = "finish_fab"
     }
 }

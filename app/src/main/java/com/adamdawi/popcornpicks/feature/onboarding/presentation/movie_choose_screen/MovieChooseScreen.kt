@@ -85,10 +85,9 @@ fun MovieChooseContent(
     Scaffold(
         floatingActionButton = {
             FinishFAB(
-                showText = lazyListState.isScrollingUp(),
+                isTextExpanded = lazyListState.isScrollingUp(),
                 onFinishClick = {
-                    if (state.finishButtonEnabled)
-                        onAction(MovieChooseAction.OnFinishClick)
+                    onAction(MovieChooseAction.OnFinishClick)
                 },
                 enabled = state.finishButtonEnabled
             )
@@ -157,8 +156,8 @@ private fun MovieGrid(
 
 @Composable
 private fun LazyGridState.isScrollingUp(threshold: Int = 50): Boolean {
-    var previousIndex = remember(this) { mutableIntStateOf(firstVisibleItemIndex) }
-    var previousScrollOffset = remember(this) { mutableIntStateOf(firstVisibleItemScrollOffset) }
+    val previousIndex = remember(this) { mutableIntStateOf(firstVisibleItemIndex) }
+    val previousScrollOffset = remember(this) { mutableIntStateOf(firstVisibleItemScrollOffset) }
     val isScrollingUp = remember { mutableStateOf(true) }
     return remember(this) {
         derivedStateOf {
