@@ -13,19 +13,19 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="genreChip_selected_hasCorrectSemanticDescription()">
+      <SelectionState runConfigName="MovieItemTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="GenreChipTest">
+      <SelectionState runConfigName="movieItem_yearIsNull_displaysCorrectString()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ErrorScreenTest">
+      <SelectionState runConfigName="movieItem_yearIsEmpty_displaysCorrectString()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="finishFAB_isDisplayed()">
+      <SelectionState runConfigName="movieItem_performsClickAction()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="FinishFABTest">
+      <SelectionState runConfigName="movieItem_selected_displaysImageWithAnimatedBorder()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

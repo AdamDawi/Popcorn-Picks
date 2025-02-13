@@ -51,11 +51,10 @@ fun GenreChip(
                 else {
                     Modifier
                         .background(DarkGrey)
+                        .testTag(GENRE_CHIP)
                         .semantics {
                             contentDescription = GENRE_NOT_SELECTED
                         }
-                }.also {
-                    it.testTag(GENRE_CHIP)
                 }
 
             )

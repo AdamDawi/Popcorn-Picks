@@ -67,7 +67,6 @@ class FinishFABTest{
         composeTestRule.onNodeWithText("Finish", useUnmergedTree = true).assertExists().assertIsDisplayed()
     }
 
-
     @Test
     fun finishFAB_notExpanded_textIsNotDisplayed(){
         composeTestRule.setContent {

@@ -1,8 +1,8 @@
 package com.adamdawi.popcornpicks.feature.onboarding.presentation.genres_choose_screen.components
 
+import androidx.compose.ui.test.assertContentDescriptionEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -57,7 +57,7 @@ class GenreChipTest {
                 onClick = {}
             )
         }
-        composeTestRule.onNodeWithContentDescription(GENRE_SELECTED).assertExists().assertIsDisplayed()
+        composeTestRule.onNodeWithTag(GENRE_CHIP).assertContentDescriptionEquals(GENRE_SELECTED)
     }
 
     @Test
@@ -69,7 +69,7 @@ class GenreChipTest {
                 onClick = {}
             )
         }
-        composeTestRule.onNodeWithContentDescription(GENRE_NOT_SELECTED).assertExists().assertIsDisplayed()
+        composeTestRule.onNodeWithTag(GENRE_CHIP).assertContentDescriptionEquals(GENRE_NOT_SELECTED)
     }
 
     @Test

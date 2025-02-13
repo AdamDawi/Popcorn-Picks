@@ -37,7 +37,7 @@ fun CardWithAnimatedBorder(
     animationDurationMillis: Int = 7000,
     content: @Composable () -> Unit
 ) {
-    val infiniteTransition = rememberInfiniteTransition()
+    val infiniteTransition = rememberInfiniteTransition(label = "cardInfiniteTransition")
     val angle =
         infiniteTransition.animateFloat(
             initialValue = 0f,
@@ -46,7 +46,7 @@ fun CardWithAnimatedBorder(
             infiniteRepeatable(
                 animation = tween(animationDurationMillis, easing = LinearEasing),
                 repeatMode = RepeatMode.Restart
-            )
+            ), label = "angleAnimation"
         )
 
     val brush =

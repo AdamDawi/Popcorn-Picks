@@ -14,17 +14,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.adamdawi.popcornpicks.R
+import com.adamdawi.popcornpicks.core.data.dummy.dummyMovie
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Network.BASE_IMAGE_URL
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.IMAGE_WITH_ANIMATED_BORDER
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.MOVIE_ITEM
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.REGULAR_IMAGE
 import com.adamdawi.popcornpicks.core.presentation.theme.Blue
 import com.adamdawi.popcornpicks.core.presentation.theme.DarkGrey
 import com.adamdawi.popcornpicks.core.presentation.theme.LightGrey
+import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.theme.fontFamily
 import com.adamdawi.popcornpicks.core.presentation.ui.shimmerBrush
 import com.adamdawi.popcornpicks.feature.onboarding.domain.Movie
@@ -37,17 +44,27 @@ fun MovieItem(
     onClick: () -> Unit
 ) {
     val showShimmer = remember { mutableStateOf(true) }
-    Column {
+    Column(
+        modifier = Modifier.testTag(MOVIE_ITEM)
+    ) {
         if (!isSelected || showShimmer.value) {
             AsyncImage(
                 model = BASE_IMAGE_URL + movie.poster,
                 contentDescription = movie.title,
                 modifier = modifier
-                    .background(shimmerBrush(showShimmer = showShimmer.value), shape = RoundedCornerShape(12.dp))
+                    .testTag(REGULAR_IMAGE)
+                    .background(
+                        shimmerBrush(showShimmer = showShimmer.value),
+                        shape = RoundedCornerShape(12.dp)
+                    )
                     .height(220.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .then(
-                        if (!showShimmer.value) Modifier.border(1.dp, DarkGrey, RoundedCornerShape(12.dp))
+                        if (!showShimmer.value) Modifier.border(
+                            1.dp,
+                            DarkGrey,
+                            RoundedCornerShape(12.dp)
+                        )
                         else Modifier
                     )
                     .clickable {
@@ -61,6 +78,7 @@ fun MovieItem(
         } else {
             CardWithAnimatedBorder(
                 modifier = modifier
+                    .testTag(IMAGE_WITH_ANIMATED_BORDER)
                     .clip(RoundedCornerShape(12.dp)),
                 onCardClick = onClick
             ) {
@@ -96,6 +114,18 @@ fun MovieItem(
             color = Blue,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun MovieItemPreview() {
+    PopcornPicksTheme {
+        MovieItem(
+            movie = dummyMovie,
+            isSelected = true,
+            onClick = {}
         )
     }
 }
