@@ -44,8 +44,8 @@ fun ImageScratch(
     scratchingThresholdPercentage : Float = 0.8f,
     scratchLineWidth : Dp = 32.dp,
     scratchLineCap : StrokeCap = StrokeCap.Round,
-    isImageScratched: () -> Boolean,
-    onImageScratched: () -> Unit
+    isScratched: Boolean,
+    onScratchComplete: () -> Unit
 ) {
     val scratchLines = remember {
         mutableStateListOf<Line>()
@@ -113,22 +113,29 @@ fun ImageScratch(
                 val maxCanvasArea = this.size.width * this.size.height
 
                 //if total scratched area is below the threshold, show the overlay image
-                if(!isImageScratched() && totalScratchedArea.floatValue/maxCanvasArea < scratchingThresholdPercentage) {
+                if(!isScratched && totalScratchedArea.floatValue/maxCanvasArea < scratchingThresholdPercentage) {
                     drawImage(image = overlayImage, dstSize = imageSize)
+                    //draw the scratch lines with transparency to "erase" the overlay
+                    scratchLines.forEach { line ->
+                        drawLine(
+                            color = Color.Transparent,
+                            start = line.start,
+                            end = line.end,
+                            strokeWidth = line.strokeWidth,
+                            cap = scratchLineCap,
+                            blendMode = BlendMode.Clear //clears the pixels covered by the source in the destination
+                        )
+                    }
                 }else{
-                    onImageScratched()
-                }
-
-                //draw the scratch lines with transparency to "erase" the overlay
-                scratchLines.forEach { line ->
-                    drawLine(
-                        color = Color.Transparent,
-                        start = line.start,
-                        end = line.end,
-                        strokeWidth = line.strokeWidth,
-                        cap = scratchLineCap,
-                        blendMode = BlendMode.Clear
-                    )
+                    if(totalScratchedArea.floatValue>0) {
+                        if(!isScratched){
+                            onScratchComplete()
+                        }
+                        if(isScratched){
+                            scratchLines.clear()
+                            totalScratchedArea.floatValue = 0f
+                        }
+                    }
                 }
             }
         }
@@ -156,8 +163,8 @@ fun ImageScratchPreview() {
         ImageScratch(
             overlayImage = ImageBitmap.imageResource(R.drawable.popcorn_overlay),
             baseImageUrl = dummyMovie.poster.toString(),
-            isImageScratched = {false},
-            onImageScratched = {}
+            isScratched = false,
+            onScratchComplete = {}
         )
     }
 }

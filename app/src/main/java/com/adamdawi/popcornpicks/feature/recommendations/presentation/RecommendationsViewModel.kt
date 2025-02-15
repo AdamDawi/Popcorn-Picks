@@ -10,8 +10,10 @@ import com.adamdawi.popcornpicks.feature.recommendations.domain.repository.Recom
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -22,15 +24,16 @@ class RecommendationsViewModel(
     private val databaseDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _state = MutableStateFlow(RecommendationsState())
-    val state = _state.asStateFlow()
+    val state = _state.onStart {
+        fetchRecommendedMovies()
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = _state.value
+    )
 
     private val eventChannel = Channel<RecommendationsEvent>()
     val events = eventChannel.receiveAsFlow()
-
-
-    init {
-        fetchRecommendedMovies()
-    }
 
     private fun fetchRecommendedMovies() {
         viewModelScope.launch(databaseDispatcher) {
@@ -66,7 +69,7 @@ class RecommendationsViewModel(
                 _state.update {
                     it.copy(
                         recommendedMovies = result.data,
-//                        recommendedMovie = result.data[0],
+                        recommendedMovie = result.data[0],
                         isLoading = false
                     )
                 }
