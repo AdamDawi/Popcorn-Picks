@@ -1,6 +1,6 @@
 package com.adamdawi.popcornpicks.feature.onboarding.presentation.movie_choose_screen
 
-import com.adamdawi.popcornpicks.feature.onboarding.domain.Movie
+import com.adamdawi.popcornpicks.core.domain.model.Movie
 
 data class MovieChooseState(
     val movies: List<Movie> = emptyList(),

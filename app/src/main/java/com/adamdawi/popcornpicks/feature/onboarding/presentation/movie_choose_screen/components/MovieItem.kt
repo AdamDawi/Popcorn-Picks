@@ -34,7 +34,7 @@ import com.adamdawi.popcornpicks.core.presentation.theme.LightGrey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.theme.fontFamily
 import com.adamdawi.popcornpicks.core.presentation.ui.shimmerBrush
-import com.adamdawi.popcornpicks.feature.onboarding.domain.Movie
+import com.adamdawi.popcornpicks.core.domain.model.Movie
 
 @Composable
 fun MovieItem(

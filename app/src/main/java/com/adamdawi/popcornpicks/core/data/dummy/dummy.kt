@@ -1,7 +1,7 @@
 package com.adamdawi.popcornpicks.core.data.dummy
 
 import com.adamdawi.popcornpicks.feature.onboarding.domain.Genre
-import com.adamdawi.popcornpicks.feature.onboarding.domain.Movie
+import com.adamdawi.popcornpicks.core.domain.model.Movie
 import com.adamdawi.popcornpicks.feature.movie_details.domain.DetailedMovie
 
 val dummyGenresList = listOf(

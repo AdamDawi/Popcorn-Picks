@@ -4,12 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
 import com.adamdawi.popcornpicks.core.domain.local.OnBoardingManager
-import com.adamdawi.popcornpicks.core.domain.repository.MoviesDbRepository
+import com.adamdawi.popcornpicks.core.domain.local.LikedMoviesDbRepository
+import com.adamdawi.popcornpicks.core.domain.remote.RemoteMovieRecommendationsRepository
 import com.adamdawi.popcornpicks.core.domain.util.Constants
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
-import com.adamdawi.popcornpicks.feature.onboarding.domain.Movie
-import com.adamdawi.popcornpicks.feature.onboarding.domain.repository.MoviesByGenreRepository
+import com.adamdawi.popcornpicks.core.domain.model.Movie
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -23,10 +23,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MovieChooseViewModel(
-    private val repository: MoviesByGenreRepository,
+    private val repository: RemoteMovieRecommendationsRepository,
     private val genresPreferences: GenresPreferences,
     private val onBoardingManager: OnBoardingManager,
-    private val moviesDbRepositoryImpl: MoviesDbRepository,
+    private val likedMoviesDbRepositoryImpl: LikedMoviesDbRepository,
     private val coroutineDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _state = MutableStateFlow(MovieChooseState())
@@ -54,10 +54,8 @@ class MovieChooseViewModel(
 
     private fun getGenresIDs(): List<String> {
         val result = genresPreferences.getGenres()
-        return if (result.isEmpty()) {
+        return result.ifEmpty {
             Constants.Local.DEFAULT_GENRES_IDS
-        } else {
-            result
         }
     }
 
@@ -115,7 +113,7 @@ class MovieChooseViewModel(
 
     private fun addMoviesToDb() {
         viewModelScope.launch {
-            val result = moviesDbRepositoryImpl.addMovies(_state.value.selectedMovies)
+            val result = likedMoviesDbRepositoryImpl.addLikedMovies(_state.value.selectedMovies)
             when (result) {
                 is Result.Error -> {
                     eventChannel.send(MovieChooseEvent.Error(result.error.asUiText()))

@@ -8,8 +8,8 @@ import androidx.navigation.compose.rememberNavController
 import com.adamdawi.popcornpicks.core.domain.local.OnBoardingManager
 import com.adamdawi.popcornpicks.feature.onboarding.presentation.genres_choose_screen.GenresScreen
 import com.adamdawi.popcornpicks.feature.onboarding.presentation.movie_choose_screen.MovieChooseScreen
-import com.adamdawi.popcornpicks.feature.movie_details.presentation.MovieDetailsScreen
-import com.adamdawi.popcornpicks.feature.recommendations.presentation.RecommendationsScreen
+import com.adamdawi.popcornpicks.feature.movie_details.presentation.movie_details_screen.MovieDetailsScreen
+import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.RecommendationsScreen
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.ProfileScreen
 import org.koin.compose.koinInject
 

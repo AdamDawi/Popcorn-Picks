@@ -36,7 +36,7 @@ import com.adamdawi.popcornpicks.core.presentation.theme.fontFamily
 import com.adamdawi.popcornpicks.core.presentation.ui.ErrorScreen
 import com.adamdawi.popcornpicks.core.presentation.ui.LoadingScreen
 import com.adamdawi.popcornpicks.core.presentation.ui.ObserveAsEvents
-import com.adamdawi.popcornpicks.feature.onboarding.domain.Movie
+import com.adamdawi.popcornpicks.core.domain.model.Movie
 import com.adamdawi.popcornpicks.feature.onboarding.presentation.movie_choose_screen.components.FinishFAB
 import com.adamdawi.popcornpicks.feature.onboarding.presentation.movie_choose_screen.components.MovieItem
 import org.koin.androidx.compose.koinViewModel

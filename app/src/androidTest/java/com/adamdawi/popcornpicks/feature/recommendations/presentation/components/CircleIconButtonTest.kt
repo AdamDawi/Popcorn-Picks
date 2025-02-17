@@ -8,6 +8,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import com.adamdawi.popcornpicks.R
+import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.components.CircleIconButton
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import org.junit.Rule

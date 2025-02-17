@@ -4,14 +4,14 @@ import app.cash.turbine.test
 import com.adamdawi.popcornpicks.core.data.dummy.dummyMovieList
 import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
 import com.adamdawi.popcornpicks.core.domain.local.OnBoardingManager
-import com.adamdawi.popcornpicks.core.domain.repository.MoviesDbRepository
+import com.adamdawi.popcornpicks.core.domain.local.LikedMoviesDbRepository
 import com.adamdawi.popcornpicks.core.domain.util.Constants
 import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.feature.onboarding.domain.Genre
-import com.adamdawi.popcornpicks.feature.onboarding.domain.Movie
-import com.adamdawi.popcornpicks.feature.onboarding.domain.repository.MoviesByGenreRepository
+import com.adamdawi.popcornpicks.core.domain.model.Movie
+import com.adamdawi.popcornpicks.core.domain.remote.RemoteMovieRecommendationsRepository
 import com.adamdawi.popcornpicks.utils.ReplaceMainDispatcherRule
 import com.google.common.truth.Truth.assertThat
 import io.mockk.Runs
@@ -33,10 +33,10 @@ import org.junit.Test
 
 class MovieChooseViewModelTest {
 
-    private lateinit var moviesByGenreRepository: MoviesByGenreRepository
+    private lateinit var remoteMovieRecommendationsRepository: RemoteMovieRecommendationsRepository
     private lateinit var genresPreferences: GenresPreferences
     private lateinit var onBoardingManager: OnBoardingManager
-    private lateinit var moviesDbRepository: MoviesDbRepository
+    private lateinit var likedMoviesDbRepository: LikedMoviesDbRepository
     private lateinit var sut: MovieChooseViewModel
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -46,15 +46,15 @@ class MovieChooseViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setUp() {
-        moviesByGenreRepository = mockk<MoviesByGenreRepository>()
+        remoteMovieRecommendationsRepository = mockk<RemoteMovieRecommendationsRepository>()
         genresPreferences = mockk<GenresPreferences>()
         onBoardingManager = mockk<OnBoardingManager>()
-        moviesDbRepository = mockk<MoviesDbRepository>()
+        likedMoviesDbRepository = mockk<LikedMoviesDbRepository>()
         sut = MovieChooseViewModel(
-            moviesByGenreRepository,
+            remoteMovieRecommendationsRepository,
             genresPreferences,
             onBoardingManager,
-            moviesDbRepository,
+            likedMoviesDbRepository,
             replaceMainDispatcherRule.testDispatcher
         )
     }
@@ -65,7 +65,7 @@ class MovieChooseViewModelTest {
         // Arrange
         val defaultGenresIDs = Constants.Local.DEFAULT_GENRES_IDS
         every { genresPreferences.getGenres() } returns emptyList()
-        coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
             Result.Success(emptyList())
         }
 
@@ -75,9 +75,9 @@ class MovieChooseViewModelTest {
         }
 
         // Assert
-        coVerify(exactly = 1) { moviesByGenreRepository.getMoviesBasedOnGenre(defaultGenresIDs[0], 1) }
-        coVerify(exactly = 1) { moviesByGenreRepository.getMoviesBasedOnGenre(defaultGenresIDs[1], 1) }
-        coVerify(exactly = 1) { moviesByGenreRepository.getMoviesBasedOnGenre(defaultGenresIDs[2], 1) }
+        coVerify(exactly = 1) { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(defaultGenresIDs[0], 1) }
+        coVerify(exactly = 1) { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(defaultGenresIDs[1], 1) }
+        coVerify(exactly = 1) { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(defaultGenresIDs[2], 1) }
     }
 
     @Test
@@ -85,7 +85,7 @@ class MovieChooseViewModelTest {
         // Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
             Result.Success(emptyList())
         }
 
@@ -95,9 +95,9 @@ class MovieChooseViewModelTest {
         }
 
         // Assert
-        coVerify(exactly = 1) { moviesByGenreRepository.getMoviesBasedOnGenre(genresIDs[0], 1) }
-        coVerify(exactly = 1) { moviesByGenreRepository.getMoviesBasedOnGenre(genresIDs[1], 1) }
-        coVerify(exactly = 1) { moviesByGenreRepository.getMoviesBasedOnGenre(genresIDs[2], 1) }
+        coVerify(exactly = 1) { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[0], 1) }
+        coVerify(exactly = 1) { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[1], 1) }
+        coVerify(exactly = 1) { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[2], 1) }
     }
 
     //GET MOVIES
@@ -149,19 +149,19 @@ class MovieChooseViewModelTest {
                 movieListID2 + movieListID2 + movieListID2 +
                 movieListID3 + movieListID3 + movieListID3
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(genresIDs[0], any()) } answers {
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[0], any()) } answers {
             Result.Success(
                 movieListID1
             )
         }
 
-        coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(genresIDs[1], any()) } answers {
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[1], any()) } answers {
             Result.Success(
                 movieListID2
             )
         }
 
-        coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(genresIDs[2], any()) } answers {
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[2], any()) } answers {
             Result.Success(
                 movieListID3
             )
@@ -183,7 +183,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
             Result.Success(
                 dummyMovieList
             )
@@ -195,17 +195,17 @@ class MovieChooseViewModelTest {
         }
 
         //Assert
-        coVerify(exactly = 1) { moviesByGenreRepository.getMoviesBasedOnGenre(genresIDs[0], 1) }
-        coVerify(exactly = 1) { moviesByGenreRepository.getMoviesBasedOnGenre(genresIDs[0], 2) }
-        coVerify(exactly = 1) { moviesByGenreRepository.getMoviesBasedOnGenre(genresIDs[0], 3) }
+        coVerify(exactly = 1) { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[0], 1) }
+        coVerify(exactly = 1) { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[0], 2) }
+        coVerify(exactly = 1) { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[0], 3) }
 
-        coVerify(exactly = 1) { moviesByGenreRepository.getMoviesBasedOnGenre(genresIDs[1], 1) }
-        coVerify(exactly = 1) { moviesByGenreRepository.getMoviesBasedOnGenre(genresIDs[1], 2) }
-        coVerify(exactly = 1) { moviesByGenreRepository.getMoviesBasedOnGenre(genresIDs[1], 3) }
+        coVerify(exactly = 1) { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[1], 1) }
+        coVerify(exactly = 1) { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[1], 2) }
+        coVerify(exactly = 1) { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[1], 3) }
 
-        coVerify(exactly = 1) { moviesByGenreRepository.getMoviesBasedOnGenre(genresIDs[2], 1) }
-        coVerify(exactly = 1) { moviesByGenreRepository.getMoviesBasedOnGenre(genresIDs[2], 2) }
-        coVerify(exactly = 1) { moviesByGenreRepository.getMoviesBasedOnGenre(genresIDs[2], 3) }
+        coVerify(exactly = 1) { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[2], 1) }
+        coVerify(exactly = 1) { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[2], 2) }
+        coVerify(exactly = 1) { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[2], 3) }
     }
 
     @Test
@@ -213,7 +213,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
             Result.Success(
                 dummyMovieList
             )
@@ -235,7 +235,7 @@ class MovieChooseViewModelTest {
         // Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(any(), any()) } coAnswers {
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } coAnswers {
             delay(500)
             Result.Success(
                 dummyMovieList
@@ -258,7 +258,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
             Result.Success(
                 dummyMovieList
             )
@@ -280,7 +280,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
             Result.Error(
                 DataError.Network.SERVER_ERROR
             )
@@ -302,7 +302,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
             Result.Error(
                 DataError.Network.SERVER_ERROR
             )
@@ -324,7 +324,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(any(), any()) } coAnswers {
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } coAnswers {
             delay(500)
             Result.Error(DataError.Network.SERVER_ERROR)
         }
@@ -346,7 +346,7 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
             Result.Error(DataError.Network.SERVER_ERROR)
         }
 
@@ -366,10 +366,10 @@ class MovieChooseViewModelTest {
         //Arrange
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
-        coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(any(), 1) } answers {
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), 1) } answers {
             Result.Success(dummyMovieList)
         }
-        coEvery { moviesByGenreRepository.getMoviesBasedOnGenre(any(), 2) } answers {
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), 2) } answers {
             Result.Error(DataError.Network.SERVER_ERROR)
         }
 
@@ -392,7 +392,7 @@ class MovieChooseViewModelTest {
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
         coEvery {
-            moviesByGenreRepository.getMoviesBasedOnGenre(
+            remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(
                 any(),
                 any()
             )
@@ -416,7 +416,7 @@ class MovieChooseViewModelTest {
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
         coEvery {
-            moviesByGenreRepository.getMoviesBasedOnGenre(
+            remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(
                 any(),
                 any()
             )
@@ -454,7 +454,7 @@ class MovieChooseViewModelTest {
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
         coEvery {
-            moviesByGenreRepository.getMoviesBasedOnGenre(
+            remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(
                 any(),
                 any()
             )
@@ -494,7 +494,7 @@ class MovieChooseViewModelTest {
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
         coEvery {
-            moviesByGenreRepository.getMoviesBasedOnGenre(
+            remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(
                 any(),
                 any()
             )
@@ -535,7 +535,7 @@ class MovieChooseViewModelTest {
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
         coEvery {
-            moviesByGenreRepository.getMoviesBasedOnGenre(
+            remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(
                 any(),
                 any()
             )
@@ -602,7 +602,7 @@ class MovieChooseViewModelTest {
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
         coEvery {
-            moviesByGenreRepository.getMoviesBasedOnGenre(
+            remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(
                 any(),
                 any()
             )
@@ -666,12 +666,12 @@ class MovieChooseViewModelTest {
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
         coEvery {
-            moviesByGenreRepository.getMoviesBasedOnGenre(
+            remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(
                 any(),
                 any()
             )
         } answers { Result.Success(dummyMovieList) }
-        coEvery { moviesDbRepository.addMovies(any()) } answers {
+        coEvery { likedMoviesDbRepository.addLikedMovies(any()) } answers {
             Result.Success(Unit)
         }
         every { onBoardingManager.setOnboardingCompleted(any()) } answers {}
@@ -725,7 +725,7 @@ class MovieChooseViewModelTest {
         }
 
         //Assert
-        coVerify(exactly = 1) { moviesDbRepository.addMovies(listOf(movie, movie2, movie3)) }
+        coVerify(exactly = 1) { likedMoviesDbRepository.addLikedMovies(listOf(movie, movie2, movie3)) }
     }
 
     @Test
@@ -734,12 +734,12 @@ class MovieChooseViewModelTest {
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
         coEvery {
-            moviesByGenreRepository.getMoviesBasedOnGenre(
+            remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(
                 any(),
                 any()
             )
         } answers { Result.Success(dummyMovieList) }
-        coEvery { moviesDbRepository.addMovies(any()) } answers {
+        coEvery { likedMoviesDbRepository.addLikedMovies(any()) } answers {
             Result.Success(Unit)
         }
         every { onBoardingManager.setOnboardingCompleted(any()) } answers {}
@@ -763,13 +763,13 @@ class MovieChooseViewModelTest {
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
         coEvery {
-            moviesByGenreRepository.getMoviesBasedOnGenre(
+            remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(
                 any(),
                 any()
             )
         } answers { Result.Success(dummyMovieList) }
         every { onBoardingManager.setOnboardingCompleted(true) } just Runs
-        coEvery { moviesDbRepository.addMovies(any()) } answers {
+        coEvery { likedMoviesDbRepository.addLikedMovies(any()) } answers {
             Result.Success(Unit)
         }
 
@@ -790,12 +790,12 @@ class MovieChooseViewModelTest {
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
         coEvery {
-            moviesByGenreRepository.getMoviesBasedOnGenre(
+            remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(
                 any(),
                 any()
             )
         } answers { Result.Success(dummyMovieList) }
-        coEvery { moviesDbRepository.addMovies(any()) } answers {
+        coEvery { likedMoviesDbRepository.addLikedMovies(any()) } answers {
             Result.Error(DataError.Local.DISK_FULL)
         }
 
@@ -847,7 +847,7 @@ class MovieChooseViewModelTest {
         }
 
         //Assert
-        coVerify(exactly = 1) { moviesDbRepository.addMovies(listOf(movie, movie2, movie3)) }
+        coVerify(exactly = 1) { likedMoviesDbRepository.addLikedMovies(listOf(movie, movie2, movie3)) }
     }
 
     @Test
@@ -856,12 +856,12 @@ class MovieChooseViewModelTest {
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
         coEvery {
-            moviesByGenreRepository.getMoviesBasedOnGenre(
+            remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(
                 any(),
                 any()
             )
         } answers { Result.Success(dummyMovieList) }
-        coEvery { moviesDbRepository.addMovies(any()) } answers {
+        coEvery { likedMoviesDbRepository.addLikedMovies(any()) } answers {
             Result.Error(DataError.Local.DISK_FULL)
         }
 
@@ -884,12 +884,12 @@ class MovieChooseViewModelTest {
         val genresIDs = listOf("3", "12", "878")
         every { genresPreferences.getGenres() } returns genresIDs
         coEvery {
-            moviesByGenreRepository.getMoviesBasedOnGenre(
+            remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(
                 any(),
                 any()
             )
         } answers { Result.Success(dummyMovieList) }
-        coEvery { moviesDbRepository.addMovies(any()) } answers {
+        coEvery { likedMoviesDbRepository.addLikedMovies(any()) } answers {
             Result.Error(DataError.Local.DISK_FULL)
         }
 

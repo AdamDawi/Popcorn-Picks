@@ -10,7 +10,7 @@ import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.IMAGE_WITH_ANI
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.MOVIE_ITEM
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.REGULAR_IMAGE
 import com.adamdawi.popcornpicks.feature.onboarding.domain.Genre
-import com.adamdawi.popcornpicks.feature.onboarding.domain.Movie
+import com.adamdawi.popcornpicks.core.domain.model.Movie
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Rule

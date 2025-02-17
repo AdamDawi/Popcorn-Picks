@@ -2,14 +2,15 @@ package com.adamdawi.popcornpicks.feature.recommendations.presentation
 
 import com.adamdawi.popcornpicks.core.data.dummy.dummyMovie
 import com.adamdawi.popcornpicks.core.data.dummy.dummyMovieList
-import com.adamdawi.popcornpicks.core.domain.repository.MoviesDbRepository
+import com.adamdawi.popcornpicks.core.domain.local.LikedMoviesDbRepository
 import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.feature.onboarding.domain.Genre
-import com.adamdawi.popcornpicks.feature.onboarding.domain.Movie
-import com.adamdawi.popcornpicks.feature.onboarding.domain.repository.MoviesByGenreRepository
-import com.adamdawi.popcornpicks.feature.recommendations.domain.repository.RecommendationsRepository
+import com.adamdawi.popcornpicks.core.domain.model.Movie
+import com.adamdawi.popcornpicks.core.domain.remote.RemoteMovieRecommendationsRepository
+import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.RecommendationsAction
+import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.RecommendationsViewModel
 import com.adamdawi.popcornpicks.utils.ReplaceMainDispatcherRule
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -26,9 +27,8 @@ import org.junit.Test
 class RecommendationsViewModelTest {
 
     private lateinit var sut: RecommendationsViewModel
-    private lateinit var moviesByGenreRepository: MoviesByGenreRepository
-    private lateinit var recommendationsRepository: RecommendationsRepository
-    private lateinit var moviesDbRepository: MoviesDbRepository
+    private lateinit var remoteMovieRecommendationsRepository: RemoteMovieRecommendationsRepository
+    private lateinit var likedMoviesDbRepository: LikedMoviesDbRepository
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @get: Rule
@@ -36,9 +36,8 @@ class RecommendationsViewModelTest {
 
     @Before
     fun setup(){
-        moviesByGenreRepository = mockk()
-        recommendationsRepository = mockk()
-        moviesDbRepository = mockk()
+        remoteMovieRecommendationsRepository = mockk()
+        likedMoviesDbRepository = mockk()
     }
 
     //INIT
@@ -47,7 +46,7 @@ class RecommendationsViewModelTest {
         //Arrange
 
         //Act
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
 
         //Assert
         assertThat(sut.state.value.isMovieLiked, `is`(false))
@@ -58,7 +57,7 @@ class RecommendationsViewModelTest {
         //Arrange
 
         //Act
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
 
         //Assert
         assertThat(sut.state.value.isMovieScratched, `is`(false))
@@ -68,7 +67,7 @@ class RecommendationsViewModelTest {
     fun init_recommendationsState_recommendedMovieStateIsEmpty(){
         //Arrange
         val emptyRecommendedMovie = Movie(0, "", "", "", 0.0, emptyList())
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
 
         //Act
 
@@ -82,7 +81,7 @@ class RecommendationsViewModelTest {
         //Arrange
 
         //Act
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
 
         //Assert
         assertThat(sut.state.value.recommendedMovies, `is`(emptyList()))
@@ -92,7 +91,7 @@ class RecommendationsViewModelTest {
     @Test
     fun onImageScratched_imageIsScratched_isMovieScratchedStateUpdatedToTrue(){
         //Arrange
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
 
         //Act
         sut.onAction(RecommendationsAction.OnImageScratched)
@@ -104,7 +103,7 @@ class RecommendationsViewModelTest {
     @Test
     fun onImageScratched_imageIsNotScratched_isMovieScratchedStateUpdatedToTrue(){
         //Arrange
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
 
         //Act
         sut.onAction(RecommendationsAction.OnImageScratched)
@@ -117,7 +116,7 @@ class RecommendationsViewModelTest {
     @Test
     fun onHeartClicked_movieNotLiked_isMovieLikedStateUpdatedToTrue(){
         //Arrange
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
 
         //Act
         sut.onAction(RecommendationsAction.OnHeartClicked)
@@ -130,7 +129,7 @@ class RecommendationsViewModelTest {
     @Test
     fun onHeartClicked_movieLiked_isMovieLikedStateUpdatedToFalse(){
         //Arrange
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
 
         //Act
         sut.onAction(RecommendationsAction.OnHeartClicked)
@@ -156,7 +155,7 @@ class RecommendationsViewModelTest {
     @Test
     fun onRerollClicked_movieNotLiked_isMovieLikedStateUpdatedToFalse(){
         //Arrange
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
 
         //Act
         sut.onAction(RecommendationsAction.OnRerollClicked)
@@ -168,7 +167,7 @@ class RecommendationsViewModelTest {
     @Test
     fun onRerollClicked_movieLiked_isMovieLikedStateUpdatedToFalse(){
         //Arrange
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
         sut.onAction(RecommendationsAction.OnHeartClicked)
 
         //Act
@@ -181,7 +180,7 @@ class RecommendationsViewModelTest {
     @Test
     fun onRerollClicked_movieNotScratched_isMovieScratchedStateUpdatedToFalse(){
         //Arrange
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
 
         //Act
         sut.onAction(RecommendationsAction.OnRerollClicked)
@@ -194,7 +193,7 @@ class RecommendationsViewModelTest {
     @Test
     fun onRerollClicked_movieScratched_isMovieScratchedStateUpdatedToFalse(){
         //Arrange
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
         sut.onAction(RecommendationsAction.OnImageScratched)
 
         //Act
@@ -241,12 +240,12 @@ class RecommendationsViewModelTest {
                 genres = listOf(Genre(2, "Action"), Genre(6, "Comedy"))
             )
         )
-        coEvery { moviesDbRepository.getMovies() } answers {
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
             Result.Success(listOfMovies)
         }
 
         //Act
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
 
         //Assert
         assertThat(sut.state.value.likedMovies, `is`(listOfMovies))
@@ -255,12 +254,12 @@ class RecommendationsViewModelTest {
     @Test
     fun fetchRecommendedMovies_successFromDbWithEmptyList_likedMoviesStateUpdatedWithEmptyList(){
         //Arrange
-        coEvery { moviesDbRepository.getMovies() } answers {
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
             Result.Success(emptyList())
         }
 
         //Act
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
 
         //Assert
         assertThat(sut.state.value.likedMovies, `is`(emptyList()))
@@ -269,12 +268,12 @@ class RecommendationsViewModelTest {
     @Test
     fun fetchRecommendedMovies_errorFromDb_likedMoviesStateNotUpdated(){
         //Arrange
-        coEvery { moviesDbRepository.getMovies() } answers {
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
             Result.Error(DataError.Local.DISK_FULL)
         }
 
         //Act
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
 
         //Assert
         assertThat(sut.state.value.likedMovies, `is`(emptyList()))
@@ -302,15 +301,15 @@ class RecommendationsViewModelTest {
             )
         )
         val recommendedMovies = listOf(dummyMovie)
-        coEvery { moviesDbRepository.getMovies() } answers {
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
             Result.Success(listOfMoviesDb)
         }
-        coEvery { recommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
             Result.Success(recommendedMovies)
         }
 
         //Act
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
 
         //Assert
         assertThat(sut.state.value.recommendedMovies, `is`(recommendedMovies))
@@ -319,12 +318,12 @@ class RecommendationsViewModelTest {
     @Test
     fun fetchRecommendedMovies_success_loadingStateIsSetToTrueWhileFetching(){
         //Arrange
-        coEvery { moviesDbRepository.getMovies() } coAnswers {
+        coEvery { likedMoviesDbRepository.getLikedMovies() } coAnswers {
             delay(1000)
             Result.Success(dummyMovieList)
         }
         //Act
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
 
         //Assert
         assertThat(sut.state.value.isLoading, `is`(true))
@@ -333,12 +332,12 @@ class RecommendationsViewModelTest {
     @Test
     fun fetchRecommendedMovies_success_loadingStateIsSetToFalseAfterFetching(){
         //Arrange
-        coEvery { moviesDbRepository.getMovies() } answers  {
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers  {
             Result.Success(dummyMovieList)
         }
 
         //Act
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
 
         //Assert
         assertThat(sut.state.value.isLoading, `is`(false))
@@ -366,15 +365,15 @@ class RecommendationsViewModelTest {
             )
         )
         val recommendedMovies = listOf(dummyMovie)
-        coEvery { moviesDbRepository.getMovies() } answers {
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
             Result.Success(listOfMoviesDb)
         }
-        coEvery { recommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
             Result.Success(recommendedMovies)
         }
 
         //Act
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
 
         //Assert
         assertThat(sut.state.value.recommendedMovies, `is`(recommendedMovies))
@@ -401,15 +400,15 @@ class RecommendationsViewModelTest {
                 genres = listOf(Genre(2, "Action"), Genre(6, "Comedy"))
             )
         )
-        coEvery { moviesDbRepository.getMovies() } answers {
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
             Result.Success(listOfMoviesDb)
         }
-        coEvery { recommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
             Result.Error(DataError.Network.SERVER_ERROR)
         }
 
         //Act
-        sut = RecommendationsViewModel(moviesByGenreRepository, recommendationsRepository, moviesDbRepository, replaceMainDispatcherRule.testDispatcher)
+        sut = RecommendationsViewModel(remoteMovieRecommendationsRepository, likedMoviesDbRepository, replaceMainDispatcherRule.testDispatcher)
 
         //Assert
         assertThat(sut.state.value.error, `is`(DataError.Network.SERVER_ERROR.asUiText()))
