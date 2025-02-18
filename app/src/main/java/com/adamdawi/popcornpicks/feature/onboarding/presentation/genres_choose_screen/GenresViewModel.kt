@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
-import com.adamdawi.popcornpicks.feature.onboarding.domain.model.Genre
-import com.adamdawi.popcornpicks.feature.onboarding.domain.repository.GenresRepository
+import com.adamdawi.popcornpicks.core.domain.model.Genre
+import com.adamdawi.popcornpicks.core.domain.local.GenresRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart

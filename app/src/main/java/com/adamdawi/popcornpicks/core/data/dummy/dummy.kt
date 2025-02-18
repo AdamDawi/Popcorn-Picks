@@ -1,6 +1,6 @@
 package com.adamdawi.popcornpicks.core.data.dummy
 
-import com.adamdawi.popcornpicks.feature.onboarding.domain.model.Genre
+import com.adamdawi.popcornpicks.core.domain.model.Genre
 import com.adamdawi.popcornpicks.core.domain.model.Movie
 import com.adamdawi.popcornpicks.feature.movie_details.domain.DetailedMovie
 

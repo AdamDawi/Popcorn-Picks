@@ -9,7 +9,7 @@ import androidx.compose.ui.test.performClick
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.IMAGE_WITH_ANIMATED_BORDER
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.MOVIE_ITEM
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.REGULAR_IMAGE
-import com.adamdawi.popcornpicks.feature.onboarding.domain.model.Genre
+import com.adamdawi.popcornpicks.core.domain.model.Genre
 import com.adamdawi.popcornpicks.core.domain.model.Movie
 import junit.framework.TestCase.assertTrue
 import org.junit.Before

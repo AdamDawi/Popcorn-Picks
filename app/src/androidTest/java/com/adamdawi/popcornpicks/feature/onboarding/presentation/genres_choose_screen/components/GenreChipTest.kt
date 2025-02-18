@@ -9,7 +9,7 @@ import androidx.compose.ui.test.performClick
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.GENRE_CHIP
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.GENRE_NOT_SELECTED
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.GENRE_SELECTED
-import com.adamdawi.popcornpicks.feature.onboarding.domain.model.Genre
+import com.adamdawi.popcornpicks.core.domain.model.Genre
 import junit.framework.TestCase.assertTrue
 import org.junit.Rule
 import org.junit.Test

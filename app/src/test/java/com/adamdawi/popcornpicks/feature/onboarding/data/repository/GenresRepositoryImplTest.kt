@@ -1,6 +1,7 @@
 package com.adamdawi.popcornpicks.feature.onboarding.data.repository
 
-import com.adamdawi.popcornpicks.feature.onboarding.domain.repository.GenresRepository
+import com.adamdawi.popcornpicks.core.data.remote.GenresRepositoryImpl
+import com.adamdawi.popcornpicks.core.domain.local.GenresRepository
 import com.adamdawi.popcornpicks.utils.ReplaceMainDispatcherRule
 import io.ktor.client.HttpClient
 import io.mockk.mockk

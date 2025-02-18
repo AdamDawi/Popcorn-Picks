@@ -2,7 +2,7 @@ package com.adamdawi.popcornpicks.core.data.local
 
 import android.content.SharedPreferences
 import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
-import com.adamdawi.popcornpicks.feature.onboarding.domain.model.Genre
+import com.adamdawi.popcornpicks.core.domain.model.Genre
 
 class GenresPreferencesImpl(
     private val sharedPreferences: SharedPreferences

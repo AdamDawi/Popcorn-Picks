@@ -7,7 +7,6 @@ import org.koin.core.context.GlobalContext.startKoin
 import timber.log.Timber
 import com.adamdawi.popcornpicks.BuildConfig
 import com.adamdawi.popcornpicks.core.data.di.coreDataModule
-import com.adamdawi.popcornpicks.feature.onboarding.data.di.onboardingDataModule
 import com.adamdawi.popcornpicks.feature.onboarding.presentation.di.onboardingViewModelModule
 import com.adamdawi.popcornpicks.feature.movie_details.data.di.movieDetailsDataModule
 import com.adamdawi.popcornpicks.feature.movie_details.presentation.di.movieDetailsViewModelModule
@@ -26,7 +25,6 @@ class MyApplication: Application() {
             androidContext(this@MyApplication)
             modules(
                 coreDataModule,
-                onboardingDataModule,
                 onboardingViewModelModule,
                 recommendationsDataModule,
                 recommendationsViewModelModule,

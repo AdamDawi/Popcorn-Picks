@@ -8,6 +8,5 @@ data class RecommendationsState(
     val isMovieScratched: Boolean = false,
     val isMovieLiked: Boolean = false,
     val error: String? = null,
-    val isLoading: Boolean = false,
-    val likedMovies: List<Movie> = emptyList()
+    val isLoading: Boolean = false
 )

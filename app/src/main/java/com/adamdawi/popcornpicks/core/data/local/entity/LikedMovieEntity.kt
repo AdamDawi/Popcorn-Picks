@@ -3,8 +3,8 @@ package com.adamdawi.popcornpicks.core.data.local.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.adamdawi.popcornpicks.core.data.mapper.mapGenreIdsToGenre
+import com.adamdawi.popcornpicks.core.domain.model.LikedMovie
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Database.LIKED_MOVIES_TABLE
-import com.adamdawi.popcornpicks.core.domain.model.Movie
 
 @Entity(tableName = LIKED_MOVIES_TABLE)
 data class LikedMovieEntity(
@@ -18,13 +18,14 @@ data class LikedMovieEntity(
     val nextPage: Int = 1
 )
 
-fun LikedMovieEntity.toMovie(): Movie {
-    return Movie(
+fun LikedMovieEntity.toLikedMovie(): LikedMovie {
+    return LikedMovie(
         id = id,
         title = title,
         poster = poster,
         releaseDate = releaseDate,
         voteAverage = voteAverage,
-        genres = mapGenreIdsToGenre(genresIds)
+        genres = mapGenreIdsToGenre(genresIds),
+        nextPage = nextPage
     )
 }

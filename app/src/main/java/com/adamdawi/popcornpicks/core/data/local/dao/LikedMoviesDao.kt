@@ -19,6 +19,9 @@ interface LikedMoviesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addLikedMovie(movie: LikedMovieEntity)
 
+    @Query("UPDATE `$LIKED_MOVIES_TABLE` SET nextPage = :nextPage WHERE id = :movieId")
+    suspend fun updatePageForLikedMovie(movieId: Int, nextPage: Int)
+
     @Delete
     suspend fun deleteLikedMovie(movie: LikedMovieEntity)
 }

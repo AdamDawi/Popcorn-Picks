@@ -1,6 +1,6 @@
 package com.adamdawi.popcornpicks.feature.onboarding.presentation.genres_choose_screen
 
-import com.adamdawi.popcornpicks.feature.onboarding.domain.model.Genre
+import com.adamdawi.popcornpicks.core.domain.model.Genre
 
 data class GenresState(
     val genres: List<Genre> = emptyList(),
