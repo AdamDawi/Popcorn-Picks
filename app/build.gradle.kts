@@ -112,6 +112,7 @@ dependencies {
     testImplementation(libs.hamcrest)
     testImplementation(libs.truth)
     testImplementation(libs.turbine)
+    testImplementation(libs.ktor.client.mock)
     //ui tests
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.ui.test.junit4)

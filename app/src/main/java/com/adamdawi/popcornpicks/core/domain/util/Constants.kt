@@ -11,7 +11,8 @@ object Constants {
 
     object Database {
         const val DB_NAME = "popcorn_picks_db"
-        const val MOVIES_TABLE = "movies_table"
+        const val LIKED_MOVIES_TABLE = "liked_movies_table"
+        const val RECOMMENDED_MOVIES_TABLE = "recommended_movies_table"
     }
 
     object Tests{

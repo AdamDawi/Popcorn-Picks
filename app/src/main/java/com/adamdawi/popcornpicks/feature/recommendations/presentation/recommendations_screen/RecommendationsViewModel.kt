@@ -6,6 +6,7 @@ import com.adamdawi.popcornpicks.core.domain.local.LikedMoviesDbRepository
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.core.domain.remote.RemoteMovieRecommendationsRepository
+import com.adamdawi.popcornpicks.feature.recommendations.domain.repository.LocalMovieRecommendationsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 
 class RecommendationsViewModel(
     private val remoteMovieRecommendationsRepository: RemoteMovieRecommendationsRepository,
+    private val localMovieRecommendationsRepository: LocalMovieRecommendationsRepository,
     private val likedMoviesDbRepository: LikedMoviesDbRepository,
     private val databaseDispatcher: CoroutineDispatcher
 ) : ViewModel() {

@@ -1,12 +1,14 @@
 package com.adamdawi.popcornpicks.core.data.local
 
+import com.adamdawi.popcornpicks.core.data.local.dao.LikedMoviesDao
 import com.adamdawi.popcornpicks.core.data.local.entity.toMovie
+import com.adamdawi.popcornpicks.core.data.mapper.toLikedMovieEntity
+import com.adamdawi.popcornpicks.core.data.utils.handleLocalError
 import com.adamdawi.popcornpicks.core.domain.local.LikedMoviesDbRepository
 import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.EmptyResult
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.domain.model.Movie
-import com.adamdawi.popcornpicks.core.domain.model.toMovieEntity
 
 class LikedLikedMoviesDbRepositoryImpl(
     private val likedMoviesDao: LikedMoviesDao
@@ -22,7 +24,7 @@ class LikedLikedMoviesDbRepositoryImpl(
 
     override suspend fun addLikedMovies(movies: List<Movie>): EmptyResult<DataError.Local> {
         return try {
-            likedMoviesDao.addLikedMovies(movies.map { it.toMovieEntity() })
+            likedMoviesDao.addLikedMovies(movies.map { it.toLikedMovieEntity() })
             Result.Success(Unit)
         } catch (e: Exception) {
             handleLocalError(e)
@@ -31,7 +33,7 @@ class LikedLikedMoviesDbRepositoryImpl(
 
     override suspend fun addLikedMovie(movie: Movie): EmptyResult<DataError.Local> {
         return try {
-            likedMoviesDao.addLikedMovie(movie.toMovieEntity())
+            likedMoviesDao.addLikedMovie(movie.toLikedMovieEntity())
             Result.Success(Unit)
         } catch (e: Exception) {
             handleLocalError(e)
@@ -40,18 +42,10 @@ class LikedLikedMoviesDbRepositoryImpl(
 
     override suspend fun deleteLikedMovie(movie: Movie): EmptyResult<DataError.Local> {
         return try {
-            likedMoviesDao.deleteLikedMovie(movie.toMovieEntity())
+            likedMoviesDao.deleteLikedMovie(movie.toLikedMovieEntity())
             Result.Success(Unit)
         } catch (e: Exception) {
             handleLocalError(e)
-        }
-    }
-
-    private fun <T> handleLocalError(e: Exception): Result<T, DataError.Local> {
-        e.printStackTrace()
-        return when (e) {
-            is java.io.IOException -> Result.Error(DataError.Local.DISK_FULL)
-            else -> Result.Error(DataError.Local.UNKNOWN)
         }
     }
 }

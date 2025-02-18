@@ -1,24 +1,23 @@
-package com.adamdawi.popcornpicks.core.data.local.entity
+package com.adamdawi.popcornpicks.feature.recommendations.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.adamdawi.popcornpicks.core.data.mapper.mapGenreIdsToGenre
-import com.adamdawi.popcornpicks.core.domain.util.Constants.Database.LIKED_MOVIES_TABLE
 import com.adamdawi.popcornpicks.core.domain.model.Movie
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Database.RECOMMENDED_MOVIES_TABLE
 
-@Entity(tableName = LIKED_MOVIES_TABLE)
-data class LikedMovieEntity(
+@Entity(tableName = RECOMMENDED_MOVIES_TABLE)
+data class RecommendedMovieEntity(
     @PrimaryKey
     val id: Int,
     val title: String,
     val poster: String?,
     val releaseDate: String,
     val voteAverage: Double,
-    val genresIds: List<Int>,
-    val nextPage: Int = 1
+    val genresIds: List<Int>
 )
 
-fun LikedMovieEntity.toMovie(): Movie {
+fun RecommendedMovieEntity.toMovie(): Movie {
     return Movie(
         id = id,
         title = title,

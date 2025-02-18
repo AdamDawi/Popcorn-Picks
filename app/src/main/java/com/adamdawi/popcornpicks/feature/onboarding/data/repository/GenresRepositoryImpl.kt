@@ -6,7 +6,7 @@ import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.domain.util.map
 import com.adamdawi.popcornpicks.feature.onboarding.data.remote.GenresResponse
 import com.adamdawi.popcornpicks.feature.onboarding.data.remote.toGenre
-import com.adamdawi.popcornpicks.feature.onboarding.domain.Genre
+import com.adamdawi.popcornpicks.feature.onboarding.domain.model.Genre
 import com.adamdawi.popcornpicks.feature.onboarding.domain.repository.GenresRepository
 import io.ktor.client.HttpClient
 

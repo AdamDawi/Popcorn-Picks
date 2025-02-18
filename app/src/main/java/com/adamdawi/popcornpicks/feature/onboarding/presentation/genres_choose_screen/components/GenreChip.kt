@@ -25,7 +25,7 @@ import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.GENRE_NOT_SELE
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.GENRE_SELECTED
 import com.adamdawi.popcornpicks.core.presentation.theme.DarkGrey
 import com.adamdawi.popcornpicks.core.presentation.theme.fontFamily
-import com.adamdawi.popcornpicks.feature.onboarding.domain.Genre
+import com.adamdawi.popcornpicks.feature.onboarding.domain.model.Genre
 import kotlin.random.Random
 
 @Composable

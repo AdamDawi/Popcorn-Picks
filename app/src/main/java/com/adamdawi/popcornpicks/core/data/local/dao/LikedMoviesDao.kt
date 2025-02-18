@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.core.data.local
+package com.adamdawi.popcornpicks.core.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,11 +6,11 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.adamdawi.popcornpicks.core.data.local.entity.LikedMovieEntity
-import com.adamdawi.popcornpicks.core.domain.util.Constants.Database.MOVIES_TABLE
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Database.LIKED_MOVIES_TABLE
 
 @Dao
 interface LikedMoviesDao {
-    @Query("SELECT * FROM `$MOVIES_TABLE`")
+    @Query("SELECT * FROM `$LIKED_MOVIES_TABLE`")
     fun getLikedMovies(): List<LikedMovieEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

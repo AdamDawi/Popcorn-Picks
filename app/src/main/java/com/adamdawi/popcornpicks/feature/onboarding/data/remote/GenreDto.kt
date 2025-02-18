@@ -1,6 +1,6 @@
 package com.adamdawi.popcornpicks.feature.onboarding.data.remote
 
-import com.adamdawi.popcornpicks.feature.onboarding.domain.Genre
+import com.adamdawi.popcornpicks.feature.onboarding.domain.model.Genre
 import kotlinx.serialization.Serializable
 
 @Serializable

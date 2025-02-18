@@ -1,9 +1,9 @@
 package com.adamdawi.popcornpicks.feature.recommendations.domain.repository
 
+import com.adamdawi.popcornpicks.core.domain.model.Movie
 import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.EmptyResult
 import com.adamdawi.popcornpicks.core.domain.util.Result
-import com.adamdawi.popcornpicks.core.domain.model.Movie
 
 interface LocalMovieRecommendationsRepository {
     suspend fun getRecommendedMovies(): Result<List<Movie>, DataError.Local>

@@ -1,6 +1,6 @@
 package com.adamdawi.popcornpicks.feature.movie_details.domain
 
-import com.adamdawi.popcornpicks.feature.onboarding.domain.Genre
+import com.adamdawi.popcornpicks.feature.onboarding.domain.model.Genre
 
 data class DetailedMovie(
     val id: Int,

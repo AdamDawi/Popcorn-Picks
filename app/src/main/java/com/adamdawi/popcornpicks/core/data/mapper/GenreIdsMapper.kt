@@ -1,6 +1,6 @@
 package com.adamdawi.popcornpicks.core.data.mapper
 
-import com.adamdawi.popcornpicks.feature.onboarding.domain.Genre
+import com.adamdawi.popcornpicks.feature.onboarding.domain.model.Genre
 
 fun mapGenreIdsToGenre(genreIds: List<Int>): List<Genre> {
     return genreIds.map { genreId ->
