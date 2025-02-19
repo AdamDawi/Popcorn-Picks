@@ -53,6 +53,15 @@ class LikedLikedMoviesDbRepositoryImpl(
         }
     }
 
+    override suspend fun updatePageForAllLikedMovies(nextPage: Int): EmptyResult<DataError.Local> {
+        return try {
+            likedMoviesDao.updatePageForAllLikedMovies(nextPage)
+            Result.Success(Unit)
+        }catch (e: Exception){
+            handleLocalError(e)
+        }
+    }
+
     override suspend fun deleteLikedMovie(movie: Movie): EmptyResult<DataError.Local> {
         return try {
             likedMoviesDao.deleteLikedMovie(movie.toLikedMovieEntity())

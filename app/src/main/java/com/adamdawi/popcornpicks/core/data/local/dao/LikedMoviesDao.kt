@@ -22,6 +22,9 @@ interface LikedMoviesDao {
     @Query("UPDATE `$LIKED_MOVIES_TABLE` SET nextPage = :nextPage WHERE id = :movieId")
     suspend fun updatePageForLikedMovie(movieId: Int, nextPage: Int)
 
+    @Query("UPDATE `$LIKED_MOVIES_TABLE` SET nextPage = :nextPage")
+    suspend fun updatePageForAllLikedMovies(nextPage: Int)
+
     @Delete
     suspend fun deleteLikedMovie(movie: LikedMovieEntity)
 }
