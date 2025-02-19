@@ -1,5 +1,6 @@
 package com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -29,12 +31,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adamdawi.popcornpicks.R
 import com.adamdawi.popcornpicks.core.data.dummy.dummyMovie
+import com.adamdawi.popcornpicks.core.domain.model.Movie
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Network.BASE_IMAGE_URL
 import com.adamdawi.popcornpicks.core.presentation.theme.Blue
 import com.adamdawi.popcornpicks.core.presentation.theme.Grey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.theme.Red
-import com.adamdawi.popcornpicks.core.domain.model.Movie
+import com.adamdawi.popcornpicks.core.presentation.ui.ErrorScreen
+import com.adamdawi.popcornpicks.core.presentation.ui.LoadingScreen
+import com.adamdawi.popcornpicks.core.presentation.ui.ObserveAsEvents
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.components.CircleIconButton
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.components.ImageScratch
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.components.RecommendationsScreenTopAppBar
@@ -49,17 +54,34 @@ fun RecommendationsScreen(
 ) {
     BackHandler {  }
     val state = viewModel.state.collectAsStateWithLifecycle()
-
-    RecommendationsContent(
-        state = state.value,
-        onAction = { action ->
-            when (action) {
-                RecommendationsAction.OnMoreInfoClicked -> onNavigateToMovieDetails()
-                RecommendationsAction.OnProfileClicked -> onNavigateToProfile()
-                else -> viewModel.onAction(action)
+    val context = LocalContext.current
+    ObserveAsEvents(viewModel.events) { event ->
+        when(event){
+            is RecommendationsEvent.Error ->{
+                Toast.makeText(
+                    context,
+                    event.error,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
-    )
+    }
+    when{
+        state.value.isLoading -> LoadingScreen()
+        state.value.error != null -> ErrorScreen(message = state.value.error)
+        else ->{
+            RecommendationsContent(
+                state = state.value,
+                onAction = { action ->
+                    when (action) {
+                        RecommendationsAction.OnMoreInfoClicked -> onNavigateToMovieDetails()
+                        RecommendationsAction.OnProfileClicked -> onNavigateToProfile()
+                        else -> viewModel.onAction(action)
+                    }
+                }
+            )
+        }
+    }
 }
 
 @Composable

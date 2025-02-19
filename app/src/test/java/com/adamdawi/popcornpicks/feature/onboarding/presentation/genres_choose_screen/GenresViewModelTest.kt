@@ -7,7 +7,7 @@ import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.core.domain.model.Genre
-import com.adamdawi.popcornpicks.core.domain.local.GenresRepository
+import com.adamdawi.popcornpicks.feature.onboarding.domain.remote.GenresRepository
 import com.adamdawi.popcornpicks.utils.ReplaceMainDispatcherRule
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -333,5 +333,33 @@ class GenresViewModelTest {
 
         // Assert
         verify(exactly = 1) { genresPreferences.saveGenres(selectedGenres) }
+    }
+
+    @Test
+    fun onAction_onContinueClick_defaultPagesForGenresSavedInPreferences() = runTest{
+        // Arrange
+        coEvery { genresRepository.getGenres() } answers {
+            Result.Success(dummyGenresList)
+        }
+        val selectedGenres = listOf(
+            Genre(id = 36, name = "History"),
+            Genre(id = 80, name = "Crime")
+        )
+        sut.state.test {
+            skipItems(1) // Initial state
+
+            sut.onAction(GenresAction.ToggleGenreSelection(selectedGenres[0]))
+            skipItems(1)
+            sut.onAction(GenresAction.ToggleGenreSelection(selectedGenres[1]))
+            skipItems(1)
+
+            //Act
+            sut.onAction(GenresAction.OnContinueClick)
+
+            ensureAllEventsConsumed()
+        }
+
+        // Assert
+        verify(exactly = 1) { genresPreferences.savePagesForGenres(listOf(1,1)) }
     }
 }

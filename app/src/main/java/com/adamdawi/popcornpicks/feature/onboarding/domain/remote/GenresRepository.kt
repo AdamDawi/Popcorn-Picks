@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.core.domain.local
+package com.adamdawi.popcornpicks.feature.onboarding.domain.remote
 
 import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.Result

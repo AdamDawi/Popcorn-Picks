@@ -6,7 +6,7 @@ import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.core.domain.model.Genre
-import com.adamdawi.popcornpicks.core.domain.local.GenresRepository
+import com.adamdawi.popcornpicks.feature.onboarding.domain.remote.GenresRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -60,6 +60,7 @@ class GenresViewModel(
 
     private fun saveGenresToPreferences() {
         genresPreferences.saveGenres(_state.value.selectedGenres)
+        genresPreferences.savePagesForGenres(List(_state.value.selectedGenres.size) { 1 }) // Save default page value
     }
 
     private fun onGenreClick(genre: Genre) {

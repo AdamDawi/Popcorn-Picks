@@ -2,14 +2,17 @@ package com.adamdawi.popcornpicks.feature.recommendations.presentation.recommend
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
 import com.adamdawi.popcornpicks.core.domain.local.LikedMoviesDbRepository
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.core.domain.remote.RemoteMovieRecommendationsRepository
-import com.adamdawi.popcornpicks.core.domain.local.GenresRepository
 import com.adamdawi.popcornpicks.core.domain.model.LikedMovie
+import com.adamdawi.popcornpicks.core.domain.model.Movie
+import com.adamdawi.popcornpicks.core.presentation.ui.mapping.toLikedMovie
 import com.adamdawi.popcornpicks.feature.recommendations.domain.repository.LocalMovieRecommendationsRepository
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +24,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class RecommendationsViewModel(
-    private val genresRepository: GenresRepository,
+    genresPreferences: GenresPreferences,
     private val remoteMovieRecommendationsRepository: RemoteMovieRecommendationsRepository,
     private val localMovieRecommendationsRepository: LocalMovieRecommendationsRepository,
     private val likedMoviesDbRepository: LikedMoviesDbRepository,
@@ -29,7 +32,8 @@ class RecommendationsViewModel(
 ) : ViewModel() {
     private val _state = MutableStateFlow(RecommendationsState())
     val state = _state.onStart {
-        getRecommendedMoviesFromDb()
+        loadCachedRecommendations()
+        loadLikedMovies()
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -39,10 +43,14 @@ class RecommendationsViewModel(
     private val eventChannel = Channel<RecommendationsEvent>()
     val events = eventChannel.receiveAsFlow()
 
-    private var likedMoviesList: MutableList<LikedMovie> = mutableListOf()
+    private var loadingLikedMoviesJob: Job = Job()
+    private var likedMoviesMap: MutableMap<Int, LikedMovie> = mutableMapOf()
+    private var recommendedMoviesList: MutableList<Movie> = mutableListOf()
+    private val likedGenres = genresPreferences.getGenres()
+    private val currentLikedGenreIndex = 0
     private var currentRecommendedMovieIndex = 0
 
-    private fun getRecommendedMoviesFromDb(){
+    private fun loadCachedRecommendations(){
         _state.update {
             it.copy(
                 isLoading = true
@@ -52,59 +60,41 @@ class RecommendationsViewModel(
             val result = localMovieRecommendationsRepository.getRecommendedMovies()
             when(result){
                 is Result.Error -> {
-                    fetchRecommendedMovies()
+                    fetchNewRecommendations()
                 }
                 is Result.Success -> {
                     if(result.data.isEmpty()){
-                        fetchRecommendedMovies()
+                        fetchNewRecommendations()
                     }else{
                         _state.update {
                             it.copy(
-                                recommendedMovies = result.data,
                                 recommendedMovie = result.data[currentRecommendedMovieIndex],
                                 isLoading = false
                             )
                         }
+                        recommendedMoviesList = result.data.toMutableList()
                     }
                 }
             }
         }
     }
 
-    private suspend fun fetchRecommendedMovies() {
-        if(likedMoviesList.isEmpty()){
-            val result = likedMoviesDbRepository.getLikedMovies()
-            when (result) {
-                is Result.Error -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false
-                        )
-                    }
-                }
-                is Result.Success -> {
-                    likedMoviesList = result.data.toMutableList()
-                    val likedMovie = likedMoviesList.find {
-                        it.nextPage == 1
-                    } ?: likedMoviesList.find {
-                        it.nextPage == 2
-                    } ?: LikedMovie(0, "", "", "", 0.0, listOf(), 0) //TODO fetch from movies based on genres
+    private suspend fun fetchNewRecommendations() {
+        if(likedMoviesMap.isEmpty() && loadingLikedMoviesJob.isActive){
+            loadingLikedMoviesJob.join()
+        }
 
-                    fetchRecommendedMoviesFromApi(likedMovie.id, likedMovie.nextPage)
-                }
-            }
-        }else{
-            val likedMovie = likedMoviesList.find {
-                it.nextPage == 1
-            } ?: likedMoviesList.find {
-                it.nextPage == 2
-            } ?: LikedMovie(0, "", "", "", 0.0, listOf(), 0) //TODO fetch from movies based on genres
+        val movieForRecommendations = likedMoviesMap.values.firstOrNull { it.nextPage == 1 }
+            ?: likedMoviesMap.values.firstOrNull { it.nextPage == 2 }
 
-            fetchRecommendedMoviesFromApi(likedMovie.id, likedMovie.nextPage)
+        if (movieForRecommendations != null) {
+            fetchRecommendedMoviesFromApiByMovie(movieForRecommendations.id, movieForRecommendations.nextPage)
+        } else {
+            fetchRecommendedMoviesFromApiByGenre(likedGenres[0], 0) //TODO change id and page
         }
     }
 
-    private suspend fun fetchRecommendedMoviesFromApi(movieId: Int, page: Int) {
+    private suspend fun fetchRecommendedMoviesFromApiByMovie(movieId: Int, page: Int) {
         val result = remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(movieId, page)
         when (result) {
             is Result.Error -> {
@@ -119,16 +109,70 @@ class RecommendationsViewModel(
             is Result.Success -> {
                 _state.update {
                     it.copy(
-                        recommendedMovies = result.data,
                         recommendedMovie = result.data[currentRecommendedMovieIndex],
                         isLoading = false
                     )
                 }
+                recommendedMoviesList = result.data.filter { item ->
+                    item.id !in likedMoviesMap.keys
+                }.toMutableList()
                 localMovieRecommendationsRepository.addRecommendedMovies(result.data)
-                likedMoviesDbRepository.updatePageForLikedMovie(movieId, page+1)
-                val index = likedMoviesList.indexOfFirst { it.id == movieId }
-                if (index != -1) {
-                    likedMoviesList[index] = likedMoviesList[index].copy(nextPage = page + 1)
+                updateLikedMoviePage(movieId, page)
+            }
+        }
+    }
+
+    private suspend fun updateLikedMoviePage(movieId: Int, page: Int) {
+        likedMoviesDbRepository.updatePageForLikedMovie(movieId, page+1)
+        likedMoviesMap[movieId]?.let {
+            likedMoviesMap[movieId] = it.copy(nextPage = page + 1)
+        }
+    }
+
+    private suspend fun fetchRecommendedMoviesFromApiByGenre(genreId: String, page: Int) {
+        val result = remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genreId, page)
+        when (result) {
+            is Result.Error -> {
+                _state.update {
+                    it.copy(
+                        error = result.error.asUiText(),
+                        isLoading = false
+                    )
+                }
+            }
+
+            is Result.Success -> {
+                _state.update {
+                    it.copy(
+                        recommendedMovie = result.data[currentRecommendedMovieIndex],
+                        isLoading = false
+                    )
+                }
+                recommendedMoviesList = result.data.filter { item ->
+                    item.id !in likedMoviesMap.keys
+                }.toMutableList()
+                localMovieRecommendationsRepository.addRecommendedMovies(result.data)
+                //TODO update genre page
+            }
+        }
+    }
+
+    private fun loadLikedMovies(){
+        if(likedMoviesMap.isEmpty()){
+            loadingLikedMoviesJob.cancel()
+            loadingLikedMoviesJob = viewModelScope.launch(ioDispatcher) {
+                val result = likedMoviesDbRepository.getLikedMovies()
+                when (result) {
+                    is Result.Error -> {
+                        _state.update {
+                            it.copy(
+                                error = result.error.asUiText()
+                            )
+                        }
+                    }
+                    is Result.Success -> {
+                        likedMoviesMap = result.data.associateBy { it.id }.toMutableMap()
+                    }
                 }
             }
         }
@@ -149,6 +193,30 @@ class RecommendationsViewModel(
 
     private fun onHeartClicked() {
         _state.value = _state.value.copy(isMovieLiked = !_state.value.isMovieLiked)
+        viewModelScope.launch(ioDispatcher) {
+            if(_state.value.isMovieLiked){
+                val result = likedMoviesDbRepository.addLikedMovie(_state.value.recommendedMovie)
+                when(result){
+                    is Result.Error -> {
+                        eventChannel.send(RecommendationsEvent.Error(result.error.asUiText()))
+                    }
+                    is Result.Success -> {
+                        likedMoviesMap[_state.value.recommendedMovie.id] = _state.value.recommendedMovie.toLikedMovie()
+
+                    }
+                }
+            }else{
+                val result = likedMoviesDbRepository.deleteLikedMovie(_state.value.recommendedMovie)
+                when(result){
+                    is Result.Error -> {
+                        eventChannel.send(RecommendationsEvent.Error(result.error.asUiText()))
+                    }
+                    is Result.Success -> {
+                        likedMoviesMap.remove(_state.value.recommendedMovie.id)
+                    }
+                }
+            }
+        }
     }
 
     private fun onRerollClicked() {
@@ -158,26 +226,33 @@ class RecommendationsViewModel(
                 isMovieScratched = false
             )
         }
-        viewModelScope.launch {
+        viewModelScope.launch(ioDispatcher) {
             delay(200)
-            if (currentRecommendedMovieIndex < _state.value.recommendedMovies.size - 1) {
+            if (currentRecommendedMovieIndex < recommendedMoviesList.size - 1) {
                 //Getting a new movie
                 currentRecommendedMovieIndex++
                 _state.update {
-                    it.copy(recommendedMovie = _state.value.recommendedMovies[currentRecommendedMovieIndex])
+                    it.copy(recommendedMovie = recommendedMoviesList[currentRecommendedMovieIndex])
                 }
 
                 // Deleting the previous movie (if there was one)
                 if (currentRecommendedMovieIndex > 0) {
-                    localMovieRecommendationsRepository.deleteRecommendedMovie(_state.value.recommendedMovies[currentRecommendedMovieIndex - 1])
+                    localMovieRecommendationsRepository.deleteRecommendedMovie(recommendedMoviesList[currentRecommendedMovieIndex - 1])
+                    recommendedMoviesList.removeAt(currentRecommendedMovieIndex - 1)
                 }
 
             } else {
                 //If the end of the list has been reached
-                localMovieRecommendationsRepository.deleteRecommendedMovie(_state.value.recommendedMovies[currentRecommendedMovieIndex])
+                localMovieRecommendationsRepository.deleteRecommendedMovie(recommendedMoviesList[currentRecommendedMovieIndex])
                 currentRecommendedMovieIndex = 0
-                fetchRecommendedMovies()
+                recommendedMoviesList.clear()
+                fetchNewRecommendations()
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        loadingLikedMoviesJob.cancel()
     }
 }

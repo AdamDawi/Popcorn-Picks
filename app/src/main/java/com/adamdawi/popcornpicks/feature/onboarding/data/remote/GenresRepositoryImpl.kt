@@ -1,13 +1,13 @@
-package com.adamdawi.popcornpicks.core.data.remote
+package com.adamdawi.popcornpicks.feature.onboarding.data.remote
 
 import com.adamdawi.popcornpicks.core.data.networking.get
 import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.domain.util.map
-import com.adamdawi.popcornpicks.core.data.remote.response.GenresResponse
-import com.adamdawi.popcornpicks.core.data.remote.response.toGenre
+import com.adamdawi.popcornpicks.feature.onboarding.data.remote.response.GenresResponse
+import com.adamdawi.popcornpicks.feature.onboarding.data.remote.response.toGenre
 import com.adamdawi.popcornpicks.core.domain.model.Genre
-import com.adamdawi.popcornpicks.core.domain.local.GenresRepository
+import com.adamdawi.popcornpicks.feature.onboarding.domain.remote.GenresRepository
 import io.ktor.client.HttpClient
 
 class GenresRepositoryImpl(
