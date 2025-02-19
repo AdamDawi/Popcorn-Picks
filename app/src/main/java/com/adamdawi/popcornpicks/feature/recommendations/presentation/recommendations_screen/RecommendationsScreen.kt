@@ -126,7 +126,8 @@ fun RecommendationsContent(
             Spacer(modifier = Modifier.height(16.dp))
             ButtonsRow(
                 areButtonsEnabled = state.isMovieScratched,
-                onAction = onAction
+                onAction = onAction,
+                isMovieLiked = state.isMovieLiked
             )
         }
     }
@@ -136,7 +137,8 @@ fun RecommendationsContent(
 fun ButtonsRow(
     modifier: Modifier = Modifier,
     areButtonsEnabled: Boolean,
-    onAction: (RecommendationsAction) -> Unit
+    onAction: (RecommendationsAction) -> Unit,
+    isMovieLiked: Boolean
 ) {
     Row(
         modifier = modifier
@@ -155,7 +157,7 @@ fun ButtonsRow(
             contentDescription = "More info"
         )
         CircleIconButton(
-            icon = painterResource(R.drawable.heart_outlined_ic),
+            icon = if(isMovieLiked) painterResource(R.drawable.heart_solid_ic) else painterResource(R.drawable.heart_outlined_ic),
             color = Red,
             onClick = {
                 onAction(RecommendationsAction.OnHeartClicked)
