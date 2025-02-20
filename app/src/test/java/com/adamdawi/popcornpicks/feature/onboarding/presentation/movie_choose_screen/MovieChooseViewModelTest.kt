@@ -121,7 +121,7 @@ class MovieChooseViewModelTest {
 
         val movieListID2 = listOf(
             Movie(
-                id = 2,
+                id = 4,
                 title = "Thor",
                 poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
                 releaseDate = "2022-11-06",
@@ -145,9 +145,119 @@ class MovieChooseViewModelTest {
                 )
             )
         )
-        val expectedMovies = movieListID1 + movieListID1 + movieListID1 +
-                movieListID2 + movieListID2 + movieListID2 +
-                movieListID3 + movieListID3 + movieListID3
+        val expectedMovies = movieListID1 + movieListID1.map { it.copy(id = 2) } + movieListID1.map { it.copy(id = 3) } +
+                movieListID2 + movieListID2.map { it.copy(id = 5) } + movieListID2.map { it.copy(id = 6) } +
+                movieListID3 + movieListID3.map { it.copy(id = 34) } + movieListID3.map { it.copy(id = 35) }
+        every { genresPreferences.getGenres() } returns genresIDs
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[0], 1) } answers {
+            Result.Success(
+                movieListID1
+            )
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[0], 2) } answers {
+            Result.Success(
+                movieListID1.map { it.copy(id = 2) }
+            )
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[0], 3) } answers {
+            Result.Success(
+                movieListID1.map { it.copy(id = 3) }
+
+            )
+        }
+
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[1], 1) } answers {
+            Result.Success(
+                movieListID2
+            )
+        }
+
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[1], 2) } answers {
+            Result.Success(
+                movieListID2.map { it.copy(id = 5) }
+            )
+        }
+
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[1], 3) } answers {
+            Result.Success(
+                movieListID2.map { it.copy(id = 6) }
+            )
+        }
+
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[2], 1) } answers {
+            Result.Success(
+                movieListID3
+            )
+        }
+
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[2], 2) } answers {
+            Result.Success(
+                movieListID3.map { it.copy(id = 34) }
+            )
+        }
+
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[2], 3) } answers {
+            Result.Success(
+                movieListID3.map { it.copy(id = 35) }
+            )
+        }
+
+        sut.state.test{
+            //Act
+            val movies = awaitItem().movies
+
+            //Assert
+            assertThat(movies).containsExactlyElementsIn(expectedMovies)
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun getMovies_successWithDuplicatedMovies_movieListStateUpdatedWithNoDuplicatedMovies() = runTest {
+        //Arrange
+        val genresIDs = listOf("3", "12", "878")
+        val movieListID1 = listOf(
+            Movie(
+                id = 1,
+                title = "Spiderman",
+                poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+                releaseDate = "2020-04-02",
+                voteAverage = 5.0,
+                genres = listOf(
+                    Genre(2, "Action"),
+                    Genre(6, "Comedy")
+                )
+            )
+        )
+
+        val movieListID2 = listOf(
+            Movie(
+                id = 2,
+                title = "Thor",
+                poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+                releaseDate = "2022-11-06",
+                voteAverage = 5.0,
+                genres = listOf(
+                    Genre(2, "Action"),
+                    Genre(6, "Comedy")
+                )
+            )
+        )
+        val movieListID3 = listOf(
+            Movie(
+                id = 3,
+                title = "Spiderman",
+                poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+                releaseDate = "2020-04-02",
+                voteAverage = 5.0,
+                genres = listOf(
+                    Genre(2, "Action"),
+                    Genre(6, "Comedy")
+                )
+            )
+        )
+        val expectedMovies = movieListID1 + movieListID2 + movieListID3
         every { genresPreferences.getGenres() } returns genresIDs
         coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(genresIDs[0], any()) } answers {
             Result.Success(

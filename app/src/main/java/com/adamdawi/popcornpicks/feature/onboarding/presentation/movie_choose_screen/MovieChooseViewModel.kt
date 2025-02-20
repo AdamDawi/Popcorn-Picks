@@ -43,6 +43,8 @@ class MovieChooseViewModel(
 
     private val getMoviesJob = Job()
 
+    private val uniqueMovies = mutableSetOf<Movie>()
+
     fun onAction(action: MovieChooseAction) {
         when (action) {
             is MovieChooseAction.ToggleMovieSelection -> onMovieClick(action.movie)
@@ -69,9 +71,7 @@ class MovieChooseViewModel(
         for (i in 1..3) {
             for (genre in genresIds) {
                 scope.launch {
-                    val result = repository.getMoviesBasedOnGenre(genre, i)
-
-                    when (result) {
+                    when (val result = repository.getMoviesBasedOnGenre(genre, i)) {
                         is Result.Error -> {
                             getMoviesJob.cancel()
 
@@ -84,9 +84,10 @@ class MovieChooseViewModel(
                         }
 
                         is Result.Success -> {
+                            uniqueMovies.addAll(result.data)
                             _state.update {
                                 it.copy(
-                                    movies = _state.value.movies + result.data,
+                                    movies = uniqueMovies.toList(),
                                     isLoading = false
                                 )
                             }
