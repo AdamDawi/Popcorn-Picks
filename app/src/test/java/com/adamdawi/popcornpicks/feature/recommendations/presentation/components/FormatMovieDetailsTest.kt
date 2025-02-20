@@ -102,4 +102,42 @@ class FormatMovieDetailsTest{
         //Assert
         assertEquals("??? · Action · 8.2/10", formattedDetails)
     }
+
+    @Test
+    fun formatMovieDetails_emptyVoteAverage_shouldReturnFormattedStringWithUnknownVoteAverage() {
+        //Arrange
+        val movie = Movie(
+            id = 1,
+            title = "No Date Movie",
+            poster = null,
+            releaseDate = "2025-12-10",
+            voteAverage = 0.0,
+            genres = listOf(Genre(1, "Action"))
+        )
+
+        //Act
+        val formattedDetails = movie.formatMovieDetails()
+
+        //Assert
+        assertEquals("2025 · Action · ???", formattedDetails)
+    }
+
+    @Test
+    fun formatMovieDetails_voteAverageWithMoreThanOneDecimalPlace_shouldReturnFormattedStringWithOneDecimalPlaces() {
+        //Arrange
+        val movie = Movie(
+            id = 1,
+            title = "No Date Movie",
+            poster = null,
+            releaseDate = "2025-12-10",
+            voteAverage = 8.2321,
+            genres = listOf(Genre(1, "Action"))
+        )
+
+        //Act
+        val formattedDetails = movie.formatMovieDetails()
+
+        //Assert
+        assertEquals("2025 · Action · 8.2/10", formattedDetails)
+    }
 }
