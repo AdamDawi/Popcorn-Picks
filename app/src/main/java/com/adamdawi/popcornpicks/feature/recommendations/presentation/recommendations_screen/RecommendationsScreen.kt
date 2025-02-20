@@ -42,7 +42,7 @@ import com.adamdawi.popcornpicks.core.presentation.ui.ObserveAsEvents
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.components.CircleIconButton
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.components.ImageScratch
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.components.RecommendationsScreenTopAppBar
-import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.components.formatMovieDetails
+import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.utils.formatMovieDetails
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.components
+package com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.utils
 
 import com.adamdawi.popcornpicks.core.domain.model.Movie
 import java.util.Locale

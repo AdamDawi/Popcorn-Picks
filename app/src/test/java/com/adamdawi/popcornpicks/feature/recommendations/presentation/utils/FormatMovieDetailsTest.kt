@@ -1,8 +1,8 @@
-package com.adamdawi.popcornpicks.feature.recommendations.presentation.components
+package com.adamdawi.popcornpicks.feature.recommendations.presentation.utils
 
 import com.adamdawi.popcornpicks.core.domain.model.Genre
 import com.adamdawi.popcornpicks.core.domain.model.Movie
-import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.components.formatMovieDetails
+import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.utils.formatMovieDetails
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 
