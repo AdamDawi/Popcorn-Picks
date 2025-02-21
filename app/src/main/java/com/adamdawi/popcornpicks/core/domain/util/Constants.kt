@@ -15,6 +15,10 @@ object Constants {
         const val RECOMMENDED_MOVIES_TABLE = "recommended_movies_table"
     }
 
+    object NavArguments {
+        const val MOVIE_ID = "movie_id"
+    }
+
     object Tests{
         const val GENRE_SELECTED = "Selected genre"
         const val GENRE_NOT_SELECTED = "Not selected genre"

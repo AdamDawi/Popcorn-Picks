@@ -49,7 +49,7 @@ import org.koin.androidx.compose.koinViewModel
 fun RecommendationsScreen(
     viewModel: RecommendationsViewModel = koinViewModel<RecommendationsViewModel>(),
     onNavigateToProfile: () -> Unit,
-    onNavigateToMovieDetails: () -> Unit
+    onNavigateToMovieDetails: (movieId: String) -> Unit
 ) {
     BackHandler {  }
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -73,8 +73,8 @@ fun RecommendationsScreen(
                 state = state.value,
                 onAction = { action ->
                     when (action) {
-                        RecommendationsAction.OnMoreInfoClicked -> onNavigateToMovieDetails()
-                        RecommendationsAction.OnProfileClicked -> onNavigateToProfile()
+                        is RecommendationsAction.OnMoreInfoClicked -> onNavigateToMovieDetails(action.movieId)
+                        is RecommendationsAction.OnProfileClicked -> onNavigateToProfile()
                         else -> viewModel.onAction(action)
                     }
                 }
@@ -127,7 +127,8 @@ fun RecommendationsContent(
             ButtonsRow(
                 areButtonsEnabled = state.isMovieScratched,
                 onAction = onAction,
-                isMovieLiked = state.isMovieLiked
+                isMovieLiked = state.isMovieLiked,
+                movieId = state.recommendedMovie.id
             )
         }
     }
@@ -138,7 +139,8 @@ fun ButtonsRow(
     modifier: Modifier = Modifier,
     areButtonsEnabled: Boolean,
     onAction: (RecommendationsAction) -> Unit,
-    isMovieLiked: Boolean
+    isMovieLiked: Boolean,
+    movieId: Int
 ) {
     Row(
         modifier = modifier
@@ -151,7 +153,7 @@ fun ButtonsRow(
             icon = painterResource(R.drawable.letter_i_ic),
             color = Blue,
             onClick = {
-                onAction(RecommendationsAction.OnMoreInfoClicked)
+                onAction(RecommendationsAction.OnMoreInfoClicked(movieId.toString()))
             },
             enabled = areButtonsEnabled,
             contentDescription = "More info"

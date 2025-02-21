@@ -3,12 +3,15 @@ package com.adamdawi.popcornpicks.app.navigation
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.adamdawi.popcornpicks.core.domain.local.OnBoardingManager
+import com.adamdawi.popcornpicks.core.domain.util.Constants.NavArguments.MOVIE_ID
+import com.adamdawi.popcornpicks.feature.movie_details.presentation.movie_details_screen.MovieDetailsScreen
 import com.adamdawi.popcornpicks.feature.onboarding.presentation.genres_choose_screen.GenresScreen
 import com.adamdawi.popcornpicks.feature.onboarding.presentation.movie_choose_screen.MovieChooseScreen
-import com.adamdawi.popcornpicks.feature.movie_details.presentation.movie_details_screen.MovieDetailsScreen
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.RecommendationsScreen
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.ProfileScreen
 import org.koin.compose.koinInject
@@ -97,7 +100,7 @@ fun Navigation(
                     navController.navigate(Screen.Profile.route)
                 },
                 onNavigateToMovieDetails = {
-                    navController.navigate(Screen.MovieDetails.route)
+                    navController.navigate(Screen.MovieDetails.passMovieId(movieId = it))
                 }
             )
         }
@@ -106,7 +109,12 @@ fun Navigation(
             ProfileScreen()
         }
         composableWithSlideToLeftTransitions(
-            route = Screen.MovieDetails.route
+            route = Screen.MovieDetails.route,
+            arguments = listOf(
+                navArgument(MOVIE_ID) {
+                    type = NavType.StringType
+                }
+            )
         ) {
             MovieDetailsScreen(
                 onNavigateBack = {
