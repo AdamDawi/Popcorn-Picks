@@ -5,12 +5,12 @@ import com.adamdawi.popcornpicks.core.domain.model.Genre
 data class DetailedMovie(
     val id: Int,
     val title: String,
-    val poster: String,
+    val poster: String?,
     val genres: List<Genre>,
-    val overview: String,
-    val backdrop: String,
-    val releaseDate: String,
-    val voteAverage: Double,
-    val runtime: Int,
-    val popularity: Double
+    val overview: String?,
+    val backdrop: String?,
+    val releaseDate: String?,
+    val voteAverage: Double?,
+    val runtime: Int?,
+    val popularity: Double?
 )

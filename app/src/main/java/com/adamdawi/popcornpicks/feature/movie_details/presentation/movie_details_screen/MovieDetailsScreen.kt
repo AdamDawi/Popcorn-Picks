@@ -52,6 +52,8 @@ import com.adamdawi.popcornpicks.core.domain.util.Constants
 import com.adamdawi.popcornpicks.core.presentation.theme.Grey
 import com.adamdawi.popcornpicks.core.presentation.theme.LightGrey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
+import com.adamdawi.popcornpicks.core.presentation.ui.ErrorScreen
+import com.adamdawi.popcornpicks.core.presentation.ui.LoadingScreen
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.formatRuntime
 import com.adamdawi.popcornpicks.core.presentation.ui.shimmerBrush
 import com.adamdawi.popcornpicks.feature.movie_details.domain.DetailedMovie
@@ -68,14 +70,19 @@ fun MovieDetailsScreen(
     onNavigateBack: () -> Unit
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-    MovieDetailsContent(
-        action = { action ->
-            when (action) {
-                is MovieDetailsAction.OnBackClick -> onNavigateBack()
-            }
-        },
-        state = state.value
-    )
+    when{
+        state.value.isLoading -> LoadingScreen()
+        state.value.error != null -> ErrorScreen(message = state.value.error)
+        else ->
+            MovieDetailsContent(
+                action = { action ->
+                    when (action) {
+                        is MovieDetailsAction.OnBackClick -> onNavigateBack()
+                    }
+                },
+                state = state.value
+            )
+    }
 }
 
 @Composable
@@ -151,7 +158,7 @@ private fun BackgroundImage(
 private fun OverviewSection(
     modifier: Modifier = Modifier,
     movieTitle: String,
-    movieOverview: String
+    movieOverview: String?
 ) {
     Column(
         modifier = modifier
@@ -165,7 +172,7 @@ private fun OverviewSection(
         )
         Text(
             modifier = Modifier.padding(top = 20.dp),
-            text = movieOverview,
+            text = movieOverview ?: "No overview",
             color = LightGrey
         )
     }
@@ -187,7 +194,7 @@ private fun PosterWithInfoSection(
             horizontalArrangement = Arrangement.Center
         ) {
             PosterImage(
-                posterUrl = movie.poster
+                posterUrl = movie.poster.toString()
             )
             Spacer(
                 modifier = Modifier
@@ -234,20 +241,20 @@ private fun MovieInfoColumn(
     ) {
        TextValueRow(
            text = "Rating",
-           value = movie.voteAverage.toString() + "/10"
+           value = if(movie.voteAverage != null) movie.voteAverage.toString() + "/10" else "???"
        )
         TextValueRow(
             text = "Released",
-            value = movie.releaseDate.take(7)
+            value = movie.releaseDate?.take(7) ?: "???"
         )
         TextValueRow(
             text = "Genre",
-            value = movie.genres[0].name
+            value = movie.genres.getOrNull(0)?.name ?: "???"
 
         )
         TextValueRow(
             text = "Runtime",
-            value = formatRuntime(movie.runtime)
+            value = movie.runtime?.let { formatRuntime(it) } ?: "???"
         )
     }
 }
