@@ -74,6 +74,15 @@ class RecommendationsViewModel(
 
     private suspend fun fetchNewRecommendations() {
         waitForLikedMoviesIfLoading()
+        if(likedMoviesMap.isEmpty() && likedGenresWithPageMap.isEmpty()){
+            _state.update {
+                it.copy(
+                    error = "Something went wrong",
+                    isLoading = false
+                )
+            }
+            return
+        }
 
         // 1. Try to get recommendations based on liked movies
         val movieForRecommendations = findMovieForRecommendations()

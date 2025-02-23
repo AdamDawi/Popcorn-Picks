@@ -36,9 +36,7 @@ class RecommendationsViewModelTest {
     private lateinit var likedMoviesDbRepository: LikedMoviesDbRepository
 
     private val mapOfGenresWithPage = mapOf(
-        "28" to 1,
-        "12" to 1,
-        "878" to 1
+        "28" to 1
     )
 
     val listOfRecommendedMovies = listOf(
@@ -79,21 +77,115 @@ class RecommendationsViewModelTest {
             likedMoviesDbRepository = likedMoviesDbRepository,
             ioDispatcher = replaceMainDispatcherRule.testDispatcher
         )
+
+        every { genresPreferences.getGenresWithPage() } answers { emptyMap() }
+        every { genresPreferences.savePagesForGenres(any()) } answers { }
+        coEvery {
+            remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(
+                any(),
+                any()
+            )
+        } answers {
+            Result.Success(emptyList())
+        }
+        coEvery {
+            remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(
+                any(),
+                any()
+            )
+        } answers {
+            Result.Success(emptyList())
+        }
+        coEvery { localMovieRecommendationsRepository.getRecommendedMovies() } answers {
+            Result.Success(
+                emptyList()
+            )
+        }
+        coEvery { localMovieRecommendationsRepository.addRecommendedMovies(any()) } answers {
+            Result.Success(
+                Unit
+            )
+        }
+        coEvery { likedMoviesDbRepository.updatePageForLikedMovie(any(), any()) } answers {
+            Result.Success(Unit)
+        }
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(
+                emptyList()
+            )
+        }
+        coEvery { likedMoviesDbRepository.updatePageForLikedMovie(any(), any()) } answers {
+            Result.Success(Unit)
+        }
+        coEvery { likedMoviesDbRepository.updatePageForAllLikedMovies(any()) } answers {
+            Result.Success(Unit)
+        }
+    }
+
+    // INIT
+    @Test
+    fun init_getLikedMoviesInvokedOnce() = runTest {
+        // Arrange
+        coEvery { localMovieRecommendationsRepository.getRecommendedMovies() } answers {
+            Result.Success(
+                listOfRecommendedMovies
+            )
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){ likedMoviesDbRepository.getLikedMovies()}
+    }
+
+
+    @Test
+    fun init_getGenresWithPageInvokedOnce() = runTest {
+        // Arrange
+        coEvery { localMovieRecommendationsRepository.getRecommendedMovies() } answers {
+            Result.Success(
+                listOfRecommendedMovies
+            )
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){ genresPreferences.getGenresWithPage()}
     }
 
     @Test
-    fun loadCachedRecommendations_successAndRecommendationsAvailableInLocalDb_recommendedMovieUpdatedWithCorrectMovie() =
+    fun init_getRecommendedMoviesInvokedOnce() = runTest {
+        // Arrange
+        coEvery { localMovieRecommendationsRepository.getRecommendedMovies() } answers {
+            Result.Success(
+                listOfRecommendedMovies
+            )
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){ localMovieRecommendationsRepository.getRecommendedMovies()}
+    }
+
+    // LOAD CACHED RECOMMENDATIONS
+    @Test
+    fun loadCachedRecommendations_successAndRecommendationsNotEmptyInLocalDb_recommendedMovieUpdatedWithCorrectMovie() =
         runTest {
             // Arrange
             coEvery { localMovieRecommendationsRepository.getRecommendedMovies() } answers {
                 Result.Success(
                     listOfRecommendedMovies
-                )
-            }
-            every { genresPreferences.getGenresWithPage() } answers { emptyMap() }
-            coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
-                Result.Success(
-                    listOfLikedMovies
                 )
             }
 
@@ -108,62 +200,50 @@ class RecommendationsViewModelTest {
         }
 
     @Test
-    fun loadCachedRecommendations_successAndRecommendationsAreEmptyInLocalDb_remoteMovieRecommendationsRepositoryFunctionInvokedOnce() = runTest{
-        // Arrange
-        coEvery { localMovieRecommendationsRepository.getRecommendedMovies() } answers {
-            Result.Success(
-                emptyList()
-            )
-        }
-        coEvery { localMovieRecommendationsRepository.addRecommendedMovies(any()) } answers { Result.Success(Unit) }
-        every { genresPreferences.getGenresWithPage() } answers { emptyMap() }
-        coEvery { likedMoviesDbRepository.updatePageForLikedMovie(any(), any()) } answers {
-            Result.Success(Unit)
-        }
-        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
-            Result.Success(
-                listOfLikedMovies
-            )
-        }
-        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
-            Result.Success(listOfRecommendedMovies)
-        }
+    fun loadCachedRecommendations_successAndRecommendationsAreEmptyInLocalDb_remoteMovieRecommendationsRepositoryFunctionInvokedOnce() =
+        runTest {
+            // Arrange
+            coEvery { localMovieRecommendationsRepository.getRecommendedMovies() } answers {
+                Result.Success(
+                    emptyList()
+                )
+            }
 
-        sut.state.test{
-            // Act
-            skipItems(1)
-            ensureAllEventsConsumed()
+            coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+                Result.Success(
+                    listOfLikedMovies
+                )
+            }
+            coEvery {
+                remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(
+                    any(),
+                    any()
+                )
+            } answers {
+                Result.Success(listOfRecommendedMovies)
+            }
+
+            sut.state.test {
+                // Act
+                cancelAndIgnoreRemainingEvents()
+            }
+            // Assert
+            coVerify(exactly = 1) {
+                remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any())
+            }
         }
-        // Assert
-        coVerify(exactly = 1) {
-            remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any())
-        }
-    }
 
     @Test
-    fun loadCachedRecommendations_success_loadingStateChangesCorrectly() = runTest{
+    fun loadCachedRecommendations_success_loadingStateChangesCorrectly() = runTest {
         // Arrange
         coEvery { localMovieRecommendationsRepository.getRecommendedMovies() } coAnswers {
             delay(500)
             Result.Success(
-                emptyList()
+                listOfRecommendedMovies
             )
-        }
-        coEvery { localMovieRecommendationsRepository.addRecommendedMovies(any()) } answers { Result.Success(Unit) }
-        every { genresPreferences.getGenresWithPage() } answers { emptyMap() }
-        coEvery { likedMoviesDbRepository.updatePageForLikedMovie(any(), any()) } answers {
-            Result.Success(Unit)
-        }
-        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
-            Result.Success(
-                listOfLikedMovies
-            )
-        }
-        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
-            Result.Success(listOfRecommendedMovies)
         }
 
-        sut.state.test{
+        sut.state.test {
             // Act
             val updatedState = awaitItem()
             MatcherAssert.assertThat(updatedState.isLoading, `is`(true))
@@ -176,22 +256,61 @@ class RecommendationsViewModelTest {
     }
 
     @Test
-    fun loadCachedRecommendations_error_remoteMovieRecommendationsRepositoryFunctionInvokedOnce() = runTest{
+    fun loadCachedRecommendations_error_remoteMovieRecommendationsRepositoryFunctionInvokedOnce() =
+        runTest {
+            // Arrange
+            coEvery { localMovieRecommendationsRepository.getRecommendedMovies() } answers {
+                Result.Error(
+                    DataError.Local.UNKNOWN
+                )
+            }
+
+            coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+                Result.Success(listOfLikedMovies)
+            }
+
+            coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+                Result.Success(listOfRecommendedMovies)
+            }
+
+            sut.state.test {
+                // Act
+                cancelAndIgnoreRemainingEvents()
+            }
+            // Assert
+            coVerify(exactly = 1) {
+                remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any())
+            }
+        }
+
+
+    // FETCH NEW RECOMMENDATIONS
+    @Test
+    fun fetchNewRecommendations_likedMoviesAndLikedGenresAreEmpty_errorStateUpdated() = runTest{
+        sut.state.test{
+            // Act
+            val updatedState = awaitItem()
+
+            // Assert
+            assertThat(updatedState.error).isNotNull()
+        }
+    }
+
+    @Test
+    fun fetchNewRecommendations_likedMoviesAndLikedGenresAreEmpty_loadingStateUpdatedWithFalse() = runTest{
+        sut.state.test{
+            // Act
+            val updatedState = awaitItem()
+
+            // Assert
+            assertThat(updatedState.isLoading).isFalse()
+        }
+    }
+    @Test
+    fun fetchNewRecommendations_likedMoviesHaveNextPageEqualsTo1_getMoviesBasedOnMovieInvokedOnceWithCorrectParameters() = runTest{
         // Arrange
-        coEvery { localMovieRecommendationsRepository.getRecommendedMovies() } answers {
-            Result.Error(
-                DataError.Local.UNKNOWN
-            )
-        }
-        coEvery { localMovieRecommendationsRepository.addRecommendedMovies(any()) } answers { Result.Success(Unit) }
-        every { genresPreferences.getGenresWithPage() } answers { emptyMap() }
-        coEvery { likedMoviesDbRepository.updatePageForLikedMovie(any(), any()) } answers {
-            Result.Success(Unit)
-        }
         coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
-            Result.Success(
-                listOfLikedMovies
-            )
+            Result.Success(listOfLikedMovies)
         }
         coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
             Result.Success(listOfRecommendedMovies)
@@ -199,12 +318,255 @@ class RecommendationsViewModelTest {
 
         sut.state.test{
             // Act
-            skipItems(1)
-            ensureAllEventsConsumed()
+            cancelAndIgnoreRemainingEvents()
         }
+
         // Assert
-        coVerify(exactly = 1) {
-            remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any())
+        coVerify(exactly = 1){ remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(listOfLikedMovies[0].id, 1)}
+    }
+
+
+    @Test
+    fun fetchNewRecommendations_likedMoviesHaveNextPageEqualsTo2_getMoviesBasedOnMovieInvokedOnceWithCorrectParameters() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies.map { it.copy(nextPage = 2) })
         }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){ remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(listOfLikedMovies[0].id, 2)}
+    }
+
+    @Test
+    fun fetchNewRecommendations_likedMoviesHaveNextPageEqualsTo3_getMoviesBasedOnMovieNotInvoked() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies.map { it.copy(nextPage = 3) })
+        }
+        every { genresPreferences.getGenresWithPage() } answers {
+            mapOfGenresWithPage
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 0){ remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(listOfLikedMovies[0].id, 3)}
+        coVerify(exactly = 0){ remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any())}
+    }
+
+    @Test
+    fun fetchNewRecommendations_likedMoviesHaveNextPageEqualsTo3_getMoviesBasedOnGenreInvokedWithCorrectParameters() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies.map { it.copy(nextPage = 3) })
+        }
+        every { genresPreferences.getGenresWithPage() } answers {
+            mapOfGenresWithPage
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){ remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any())}
+    }
+
+    @Test
+    fun fetchNewRecommendations_likedGenresHaveNextPageEqualsTo1_getMoviesBasedOnGenreInvokedWithCorrectParameters() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies.map { it.copy(nextPage = 3) })
+        }
+        every { genresPreferences.getGenresWithPage() } answers {
+            mapOfGenresWithPage
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){ remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(mapOfGenresWithPage.keys.first(), 1)}
+    }
+
+    @Test
+    fun fetchNewRecommendations_likedGenresHaveNextPageEqualsTo2_getMoviesBasedOnGenreInvokedWithCorrectParameters() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies.map { it.copy(nextPage = 3) })
+        }
+        every { genresPreferences.getGenresWithPage() } answers {
+           mapOf(mapOfGenresWithPage.keys.first() to 2 )
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){ remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(mapOfGenresWithPage.keys.first(), 2)}
+    }
+
+    @Test
+    fun fetchNewRecommendations_likedGenresHaveNextPageEqualsTo14_getMoviesBasedOnGenreInvokedWithCorrectParameters() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies.map { it.copy(nextPage = 3) })
+        }
+        every { genresPreferences.getGenresWithPage() } answers {
+            mapOf(mapOfGenresWithPage.keys.first() to 14 )
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){ remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(mapOfGenresWithPage.keys.first(), 14)}
+    }
+
+    @Test
+    fun fetchNewRecommendations_likedGenresHaveNextPageEqualsMoreThan14_getMoviesBasedOnGenreNotInvoked() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies.map { it.copy(nextPage = 3) })
+        }
+        every { genresPreferences.getGenresWithPage() } answers {
+            mapOf(mapOfGenresWithPage.keys.first() to 15 )
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 0){ remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(mapOfGenresWithPage.keys.first(), 15)}
+        coVerify(exactly = 0){ remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any())}
+    }
+
+    @Test
+    fun fetchNewRecommendations_firstLikeGenreHaveNextPageEqualsTo3AndSecondEqualsTo2_getMoviesBasedOnGenreInvokedWithSecondGenre() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies.map { it.copy(nextPage = 3) })
+        }
+        every { genresPreferences.getGenresWithPage() } answers {
+            mapOf(
+                mapOfGenresWithPage.keys.first() to 3,
+                "3" to 2,
+            )
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){ remoteMovieRecommendationsRepository.getMoviesBasedOnGenre("3", 2)}
+    }
+
+    @Test
+    fun fetchNewRecommendations_likedMoviesAndGenresDoNotHaveAvailablePages_resetLikedMoviesPagesInvokedOnceWithCorrectPage() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies.map { it.copy(nextPage = 3) })
+        }
+        every { genresPreferences.getGenresWithPage() } answers {
+            mapOf(mapOfGenresWithPage.keys.first() to 15 )
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){ likedMoviesDbRepository.updatePageForAllLikedMovies(1)}
+    }
+
+    @Test
+    fun fetchNewRecommendations_likedMoviesAndGenresDoNotHaveAvailablePages_savePagesForGenresInvokedOnceWithCorrectPages() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies.map { it.copy(nextPage = 3) })
+        }
+        every { genresPreferences.getGenresWithPage() } answers {
+            mapOf(mapOfGenresWithPage.keys.first() to 15 )
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){ genresPreferences.savePagesForGenres(List(listOfLikedMovies.size) { 1 })}
+    }
+
+    @Test
+    fun fetchNewRecommendations_likedMoviesAndGenresDoNotHaveAvailablePages_getMoviesBasedOnMovieInvokedOnceWithCorrectParameters() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies.map { it.copy(nextPage = 3) })
+        }
+        every { genresPreferences.getGenresWithPage() } answers {
+            mapOf(mapOfGenresWithPage.keys.first() to 15 )
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){ remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(listOfLikedMovies.first().id, 1)}
     }
 }
