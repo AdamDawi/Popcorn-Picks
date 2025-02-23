@@ -63,6 +63,7 @@ import com.adamdawi.popcornpicks.feature.movie_details.presentation.movie_detail
 import com.adamdawi.popcornpicks.feature.movie_details.presentation.movie_details_screen.components.TextValueRow
 import com.adamdawi.popcornpicks.feature.movie_details.presentation.movie_details_screen.components.rememberScrollConnection
 import org.koin.androidx.compose.koinViewModel
+import java.util.Locale
 
 @Composable
 fun MovieDetailsScreen(
@@ -241,7 +242,7 @@ private fun MovieInfoColumn(
     ) {
        TextValueRow(
            text = "Rating",
-           value = if(movie.voteAverage != null) movie.voteAverage.toString() + "/10" else "???"
+           value = if(movie.voteAverage != null) "%.2f".format(Locale.US, movie.voteAverage).toString() + "/10" else "???"
        )
         TextValueRow(
             text = "Released",

@@ -34,6 +34,7 @@ class RecommendationsViewModel(
     val state = _state.onStart {
         loadCachedRecommendations()
         loadLikedMovies()
+        loadLikedGenres()
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -46,7 +47,7 @@ class RecommendationsViewModel(
     private var loadingLikedMoviesJob: Job = Job()
     private var likedMoviesMap: MutableMap<Int, LikedMovie> = mutableMapOf()
     private var recommendedMoviesList: MutableList<Movie> = mutableListOf()
-    private val likedGenresWithPageMap = genresPreferences.getGenresWithPage().toMutableMap()
+    private val likedGenresWithPageMap = mutableMapOf<String, Int>()
     // Flag to prevent multiple rapid clicks on the reroll button,
     // ensuring that the reroll process is not triggered simultaneously multiple times.
     private var isProcessingOnReroll = false
@@ -222,6 +223,10 @@ class RecommendationsViewModel(
         if (loadingLikedMoviesJob.isActive) {
             loadingLikedMoviesJob.cancel()
         }
+    }
+
+    private fun loadLikedGenres(){
+        likedGenresWithPageMap.putAll(genresPreferences.getGenresWithPage())
     }
 
     fun onAction(action: RecommendationsAction) {
