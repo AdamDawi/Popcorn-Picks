@@ -157,7 +157,7 @@ class RecommendationsViewModel(
                     updateLikedMoviePage(movieId, page)
                 } else {
                     // Skip entire likedMovie recommendation because it doesn't give recommendations
-                    updateLikedMoviePage(movieId, 3)
+                    updateLikedMoviePage(movieId, 2)
                     fetchNewRecommendations()
                 }
 
@@ -248,11 +248,15 @@ class RecommendationsViewModel(
     }
 
     private fun setIsMovieScratchedStateToTrue() {
-        _state.value = _state.value.copy(isMovieScratched = true)
+        _state.update {
+            it.copy(isMovieScratched = true)
+        }
     }
 
     private fun onHeartClicked() {
-        _state.value = _state.value.copy(isMovieLiked = !_state.value.isMovieLiked)
+        _state.update {
+            it.copy(isMovieLiked = !_state.value.isMovieLiked)
+        }
         viewModelScope.launch(ioDispatcher) {
             if (_state.value.isMovieLiked) {
                 val result = likedMoviesDbRepository.addLikedMovie(_state.value.recommendedMovie)

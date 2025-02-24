@@ -9,6 +9,7 @@ import com.adamdawi.popcornpicks.core.domain.model.Movie
 import com.adamdawi.popcornpicks.core.domain.remote.RemoteMovieRecommendationsRepository
 import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.Result
+import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.feature.recommendations.domain.repository.LocalMovieRecommendationsRepository
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.RecommendationsViewModel
 import com.adamdawi.popcornpicks.utils.ReplaceMainDispatcherRule
@@ -549,7 +550,7 @@ class RecommendationsViewModelTest {
     }
 
     @Test
-    fun fetchNewRecommendations_likedMoviesAndGenresDoNotHaveAvailablePages_getMoviesBasedOnMovieInvokedOnceWithCorrectParameters() = runTest{
+    fun fetchNewRecommendations_likedMoviesAndGenresDoNotHaveAvailablePages_resetPagesAndGetMoviesBasedOnMovieInvokedOnceWithCorrectParameters() = runTest{
         // Arrange
         coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
             Result.Success(listOfLikedMovies.map { it.copy(nextPage = 3) })
@@ -568,5 +569,199 @@ class RecommendationsViewModelTest {
 
         // Assert
         coVerify(exactly = 1){ remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(listOfLikedMovies.first().id, 1)}
+    }
+
+    // FETCH RECOMMENDED MOVIES FROM API BY MOVIE
+    @Test
+    fun fetchRecommendedMoviesFromApiByMovie_successAndResultListIsNotEmpty_recommendedMovieStateUpdatedWithCorrectMovie() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            // Act
+            val updatedState = awaitItem()
+
+            // Assert
+            assertThat(updatedState.recommendedMovie).isEqualTo(listOfRecommendedMovies.first())
+        }
+    }
+
+
+    @Test
+    fun fetchRecommendedMoviesFromApiByMovie_successAndResultListIsNotEmpty_addRecommendedMoviesToDbInvokedOnceWithCorrectMovies() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){localMovieRecommendationsRepository.addRecommendedMovies(listOfRecommendedMovies)}
+    }
+
+    @Test
+    fun fetchRecommendedMoviesFromApiByMovie_successAndResultListIsNotEmptyWithDuplicatedMoviesFromLikedMovies_addRecommendedMoviesToDbInvokedOnceWithCorrectFilteredMovies() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies + listOfLikedMovies.map { Movie(
+                id = it.id,
+                title = it.title,
+                poster = it.poster,
+                releaseDate = it.releaseDate,
+                voteAverage = it.voteAverage,
+                genres = it.genres
+            ) })
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){localMovieRecommendationsRepository.addRecommendedMovies(listOfRecommendedMovies)}
+    }
+
+
+    @Test
+    fun fetchRecommendedMoviesFromApiByMovie_successAndResultListIsNotEmpty_updatePageForLikedMovieInvokedOnceWithCorrectParameters() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies + listOfLikedMovies.map { Movie(
+                id = it.id,
+                title = it.title,
+                poster = it.poster,
+                releaseDate = it.releaseDate,
+                voteAverage = it.voteAverage,
+                genres = it.genres
+            ) })
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){likedMoviesDbRepository.updatePageForLikedMovie(listOfLikedMovies.first().id, listOfLikedMovies.first().nextPage+1)}
+    }
+
+    @Test
+    fun fetchRecommendedMoviesFromApiByMovie_successAndResultListIsNotEmpty_isLoadingStateUpdatedWithFalse() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies + listOfLikedMovies.map { Movie(
+                id = it.id,
+                title = it.title,
+                poster = it.poster,
+                releaseDate = it.releaseDate,
+                voteAverage = it.voteAverage,
+                genres = it.genres
+            ) })
+        }
+
+        sut.state.test{
+            // Act
+            val updatedState = awaitItem()
+
+            // Assert
+            assertThat(updatedState.isLoading).isEqualTo(false)
+        }
+    }
+
+    @Test
+    fun fetchRecommendedMoviesFromApiByMovie_successAndResultListIsEmpty_updatePageForLikedMovieInvokedOnceWithCorrectPage() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        every { genresPreferences.getGenresWithPage() } answers {
+            mapOfGenresWithPage
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+        // Assert
+        coVerify(exactly = 1){likedMoviesDbRepository.updatePageForLikedMovie(any(), 3)}
+    }
+
+    @Test
+    fun fetchRecommendedMoviesFromApiByMovie_error_errorStateUpdatedWithCorrectMessage() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Error(DataError.Network.UNKNOWN)
+        }
+
+        sut.state.test{
+            // Act
+            val updatedState = awaitItem()
+
+            // Assert
+            assertThat(updatedState.error).isEqualTo(DataError.Local.UNKNOWN.asUiText())
+        }
+    }
+
+    @Test
+    fun fetchRecommendedMoviesFromApiByMovie_error_isLoadingStateUpdatedWithFalse() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Error(DataError.Local.UNKNOWN)
+        }
+
+        sut.state.test{
+            // Act
+            val updatedState = awaitItem()
+
+            // Assert
+            assertThat(updatedState.isLoading).isEqualTo(false)
+        }
+    }
+
+
+    @Test
+    fun fetchRecommendedMoviesFromApiByMovie_error_fetchingNotInvoked() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Error(DataError.Local.UNKNOWN)
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 0){remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any())}
+        coVerify(exactly = 0){remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any())}
     }
 }
