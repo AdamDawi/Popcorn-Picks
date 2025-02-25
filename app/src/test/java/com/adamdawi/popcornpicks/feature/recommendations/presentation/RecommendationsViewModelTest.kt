@@ -1,5 +1,6 @@
 package com.adamdawi.popcornpicks.feature.recommendations.presentation
 
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.adamdawi.popcornpicks.core.data.dummy.dummyGenresList
 import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
@@ -42,7 +43,7 @@ class RecommendationsViewModelTest {
 
     val listOfRecommendedMovies = listOf(
         Movie(
-            id = 1,
+            id = 54,
             title = "Spiderman",
             poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
             releaseDate = "2020-04-02",
@@ -72,6 +73,7 @@ class RecommendationsViewModelTest {
         localMovieRecommendationsRepository = mockk()
         likedMoviesDbRepository = mockk()
         sut = RecommendationsViewModel(
+            savedStateHandle = SavedStateHandle(),
             genresPreferences = genresPreferences,
             remoteMovieRecommendationsRepository = remoteMovieRecommendationsRepository,
             localMovieRecommendationsRepository = localMovieRecommendationsRepository,
@@ -609,6 +611,33 @@ class RecommendationsViewModelTest {
 
         // Assert
         coVerify(exactly = 1){localMovieRecommendationsRepository.addRecommendedMovies(listOfRecommendedMovies)}
+    }
+
+    @Test
+    fun fetchRecommendedMoviesFromApiByMovie_successAndResultListIsNotEmpty_addRecommendedMoviesToDbInvokedOnceWithCorrectMoviesOrderById() = runTest{
+        // Arrange
+        val movieWithSmallId = Movie(
+            id = 5,
+            title = "Batman",
+            poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+            releaseDate = "2022-04-02",
+            voteAverage = 8.0,
+            genres = dummyGenresList
+        )
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies + movieWithSmallId)
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){localMovieRecommendationsRepository.addRecommendedMovies(listOf(movieWithSmallId) + listOfRecommendedMovies)}
     }
 
     @Test

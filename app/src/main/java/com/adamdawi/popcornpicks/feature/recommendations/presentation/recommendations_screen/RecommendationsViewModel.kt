@@ -1,5 +1,6 @@
 package com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
@@ -7,6 +8,7 @@ import com.adamdawi.popcornpicks.core.domain.local.LikedMoviesDbRepository
 import com.adamdawi.popcornpicks.core.domain.model.LikedMovie
 import com.adamdawi.popcornpicks.core.domain.model.Movie
 import com.adamdawi.popcornpicks.core.domain.remote.RemoteMovieRecommendationsRepository
+import com.adamdawi.popcornpicks.core.domain.util.Constants.SavedStateHandleArguments.IS_MOVIE_SCRATCHED
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.toLikedMovie
@@ -24,13 +26,16 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class RecommendationsViewModel(
+    private val savedStateHandle: SavedStateHandle,
     private val genresPreferences: GenresPreferences,
     private val remoteMovieRecommendationsRepository: RemoteMovieRecommendationsRepository,
     private val localMovieRecommendationsRepository: LocalMovieRecommendationsRepository,
     private val likedMoviesDbRepository: LikedMoviesDbRepository,
     private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
-    private val _state = MutableStateFlow(RecommendationsState())
+    private val _state = MutableStateFlow(RecommendationsState(
+        isMovieScratched = savedStateHandle.get<Boolean>(IS_MOVIE_SCRATCHED) == true
+    ))
     val state = _state.onStart {
         loadCachedRecommendations()
         loadLikedMovies()
@@ -146,13 +151,13 @@ class RecommendationsViewModel(
 
             is Result.Success -> {
                 if (result.data.isNotEmpty()) {
+                    recommendedMoviesList = filterOutLikedAndSortMovies(result.data)
                     _state.update {
                         it.copy(
-                            recommendedMovie = result.data.first(),
+                            recommendedMovie = recommendedMoviesList.first(),
                             isLoading = false
                         )
                     }
-                    recommendedMoviesList = filterOutLikedMovies(result.data)
                     localMovieRecommendationsRepository.addRecommendedMovies(recommendedMoviesList)
                     updateLikedMoviePage(movieId, page)
                 } else {
@@ -165,8 +170,10 @@ class RecommendationsViewModel(
         }
     }
 
-    private fun filterOutLikedMovies(movies: List<Movie>): MutableList<Movie> {
-        return movies.filterNot { it.id in likedMoviesMap.keys }.toMutableList()
+    private fun filterOutLikedAndSortMovies(movies: List<Movie>): MutableList<Movie> {
+        return movies.filterNot { it.id in likedMoviesMap.keys }.sortedBy {
+            it.id
+        }.toMutableList()
     }
 
     private suspend fun updateLikedMoviePage(movieId: Int, page: Int) {
@@ -189,13 +196,13 @@ class RecommendationsViewModel(
             }
 
             is Result.Success -> {
+                recommendedMoviesList = filterOutLikedAndSortMovies(result.data)
                 _state.update {
                     it.copy(
-                        recommendedMovie = result.data.first(),
+                        recommendedMovie = recommendedMoviesList.first(),
                         isLoading = false
                     )
                 }
-                recommendedMoviesList = filterOutLikedMovies(result.data)
                 localMovieRecommendationsRepository.addRecommendedMovies(recommendedMoviesList)
                 updateGenrePage(genreId)
             }
@@ -251,6 +258,7 @@ class RecommendationsViewModel(
         _state.update {
             it.copy(isMovieScratched = true)
         }
+        savedStateHandle[IS_MOVIE_SCRATCHED] = true
     }
 
     private fun onHeartClicked() {
@@ -296,6 +304,8 @@ class RecommendationsViewModel(
                 isMovieScratched = false
             )
         }
+
+        savedStateHandle[IS_MOVIE_SCRATCHED] = false
 
         viewModelScope.launch(ioDispatcher) {
             delay(100)

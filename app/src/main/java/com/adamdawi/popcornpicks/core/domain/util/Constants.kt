@@ -19,6 +19,10 @@ object Constants {
         const val MOVIE_ID = "movie_id"
     }
 
+    object SavedStateHandleArguments{
+        const val IS_MOVIE_SCRATCHED = "is_movie_scratched"
+    }
+
     object Tests{
         const val GENRE_SELECTED = "Selected genre"
         const val GENRE_NOT_SELECTED = "Not selected genre"
