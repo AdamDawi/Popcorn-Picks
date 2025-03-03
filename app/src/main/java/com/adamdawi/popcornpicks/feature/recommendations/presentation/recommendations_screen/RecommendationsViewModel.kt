@@ -274,7 +274,7 @@ class RecommendationsViewModel(
                     }
 
                     is Result.Success -> {
-                        likedMoviesMap[_state.value.recommendedMovie.id] =
+                         likedMoviesMap[_state.value.recommendedMovie.id] =
                             _state.value.recommendedMovie.toLikedMovie()
 
                     }

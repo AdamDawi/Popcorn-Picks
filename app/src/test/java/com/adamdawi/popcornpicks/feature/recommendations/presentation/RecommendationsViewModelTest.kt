@@ -14,6 +14,7 @@ import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.feature.recommendations.domain.repository.LocalMovieRecommendationsRepository
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.RecommendationsAction
+import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.RecommendationsEvent
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.RecommendationsViewModel
 import com.adamdawi.popcornpicks.utils.ReplaceMainDispatcherRule
 import com.google.common.truth.Truth.assertThat
@@ -26,6 +27,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -125,6 +127,12 @@ class RecommendationsViewModelTest {
             Result.Success(Unit)
         }
         coEvery { likedMoviesDbRepository.updatePageForAllLikedMovies(any()) } answers {
+            Result.Success(Unit)
+        }
+        coEvery { likedMoviesDbRepository.addLikedMovie(any()) } answers {
+            Result.Success(Unit)
+        }
+        coEvery { likedMoviesDbRepository.deleteLikedMovie(any()) } answers {
             Result.Success(Unit)
         }
     }
@@ -1041,5 +1049,163 @@ class RecommendationsViewModelTest {
 
         // Assert
         assertThat(savedStateHandle[IS_MOVIE_SCRATCHED]!! as Boolean).isEqualTo(true)
+    }
+
+    // ON HEARTH CLICKED
+    @Test
+    fun onHeartClicked_movieIsNotLiked_isMovieLikedUpdatedWithTrue() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            skipItems(1)
+
+            // Act
+            sut.onAction(RecommendationsAction.OnHeartClicked)
+            val updatedState = awaitItem()
+
+            // Assert
+            assertThat(updatedState.isMovieLiked).isEqualTo(true)
+
+            ensureAllEventsConsumed()
+        }
+    }
+
+    @Test
+    fun onHeartClicked_movieIsLiked_isMovieLikedUpdatedWithFalse() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            skipItems(1)
+            sut.onAction(RecommendationsAction.OnHeartClicked)
+            skipItems(1)
+
+            // Act
+            sut.onAction(RecommendationsAction.OnHeartClicked)
+            val updatedState = awaitItem()
+
+            // Assert
+            assertThat(updatedState.isMovieLiked).isEqualTo(false)
+
+            ensureAllEventsConsumed()
+        }
+    }
+
+    @Test
+    fun onHeartClicked_movieIsLiked_deleteLikedMovieFromLocalDbInvokedOnceWithCorrectMovie() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            skipItems(1)
+            sut.onAction(RecommendationsAction.OnHeartClicked)
+            skipItems(1)
+
+            // Act
+            sut.onAction(RecommendationsAction.OnHeartClicked)
+            skipItems(1)
+
+            ensureAllEventsConsumed()
+        }
+        // Assert
+        coVerify(exactly = 1){likedMoviesDbRepository.deleteLikedMovie(listOfRecommendedMovies.first())}
+    }
+
+    @Test
+    fun onHeartClicked_movieIsNotLiked_addLikedMovieToLocalDbInvokedOnceWithCorrectMovie() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            skipItems(1)
+            // Act
+            sut.onAction(RecommendationsAction.OnHeartClicked)
+            skipItems(1)
+
+            ensureAllEventsConsumed()
+        }
+        // Assert
+        coVerify(exactly = 1){likedMoviesDbRepository.addLikedMovie(listOfRecommendedMovies.first())}
+    }
+
+    @Test
+    fun onHeartClicked_movieIsLikedAndError_eventChannelUpdatedWithCorrectError() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+        coEvery { likedMoviesDbRepository.deleteLikedMovie(any()) } answers {
+            Result.Error(DataError.Local.UNKNOWN)
+        }
+
+        sut.state.test{
+            skipItems(1)
+            sut.onAction(RecommendationsAction.OnHeartClicked)
+            skipItems(1)
+            ensureAllEventsConsumed()
+        }
+
+        sut.events.test{
+            // Act
+            sut.onAction(RecommendationsAction.OnHeartClicked)
+
+            val emission = awaitItem()
+
+            // Assert
+            assertTrue(emission is RecommendationsEvent.Error && emission.error == DataError.Local.UNKNOWN.asUiText())
+        }
+    }
+
+    @Test
+    fun onHeartClicked_movieIsNotLikedAndError_eventChannelUpdatedWithCorrectError() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+        coEvery { likedMoviesDbRepository.addLikedMovie(any()) } answers {
+            Result.Error(DataError.Local.UNKNOWN)
+        }
+
+        sut.state.test{
+            skipItems(1)
+            ensureAllEventsConsumed()
+        }
+
+        sut.events.test{
+            // Act
+            sut.onAction(RecommendationsAction.OnHeartClicked)
+
+            val emission = awaitItem()
+
+            // Assert
+            assertTrue(emission is RecommendationsEvent.Error && emission.error == DataError.Local.UNKNOWN.asUiText())
+        }
     }
 }
