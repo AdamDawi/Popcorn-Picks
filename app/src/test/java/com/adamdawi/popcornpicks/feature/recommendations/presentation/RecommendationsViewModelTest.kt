@@ -8,10 +8,12 @@ import com.adamdawi.popcornpicks.core.domain.local.LikedMoviesDbRepository
 import com.adamdawi.popcornpicks.core.domain.model.LikedMovie
 import com.adamdawi.popcornpicks.core.domain.model.Movie
 import com.adamdawi.popcornpicks.core.domain.remote.RemoteMovieRecommendationsRepository
+import com.adamdawi.popcornpicks.core.domain.util.Constants.SavedStateHandleArguments.IS_MOVIE_SCRATCHED
 import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.feature.recommendations.domain.repository.LocalMovieRecommendationsRepository
+import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.RecommendationsAction
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.RecommendationsViewModel
 import com.adamdawi.popcornpicks.utils.ReplaceMainDispatcherRule
 import com.google.common.truth.Truth.assertThat
@@ -36,6 +38,7 @@ class RecommendationsViewModelTest {
     private lateinit var remoteMovieRecommendationsRepository: RemoteMovieRecommendationsRepository
     private lateinit var localMovieRecommendationsRepository: LocalMovieRecommendationsRepository
     private lateinit var likedMoviesDbRepository: LikedMoviesDbRepository
+    private lateinit var savedStateHandle: SavedStateHandle
 
     private val mapOfGenresWithPage = mapOf(
         "28" to 1
@@ -72,8 +75,9 @@ class RecommendationsViewModelTest {
         remoteMovieRecommendationsRepository = mockk()
         localMovieRecommendationsRepository = mockk()
         likedMoviesDbRepository = mockk()
+        savedStateHandle = SavedStateHandle()
         sut = RecommendationsViewModel(
-            savedStateHandle = SavedStateHandle(),
+            savedStateHandle = savedStateHandle,
             genresPreferences = genresPreferences,
             remoteMovieRecommendationsRepository = remoteMovieRecommendationsRepository,
             localMovieRecommendationsRepository = localMovieRecommendationsRepository,
@@ -964,6 +968,24 @@ class RecommendationsViewModelTest {
 
     // GET LIKED MOVIES
     @Test
+    fun getLikedMovies_success_fetchRecommendedMoviesFromApiByMovieInvokedOnceWithCorrectParameters() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(listOfLikedMovies.first().id, listOfLikedMovies.first().nextPage)}
+    }
+    @Test
     fun getLikedMovies_error_fetchingNotInvoked() = runTest{
         // Arrange
         coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
@@ -978,5 +1000,46 @@ class RecommendationsViewModelTest {
         // Assert
         coVerify(exactly = 0){remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any())}
         coVerify(exactly = 0){remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any())}
+    }
+
+    // SET IS MOVIE SCRATCHED STATE TO TRUE
+    @Test
+    fun setIsMovieScratchedStateToTrue_isMovieScratchedStateUpdatedWithTrue() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            cancelAndIgnoreRemainingEvents()
+        }
+        // Act
+        sut.onAction(RecommendationsAction.OnImageScratched)
+
+        // Assert
+        assertThat(sut.state.value.isMovieScratched).isEqualTo(true)
+    }
+
+    @Test
+    fun setIsMovieScratchedStateToTrue_isMovieScratchedSaveStateHandleUpdatedWithTrue() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            cancelAndIgnoreRemainingEvents()
+        }
+        // Act
+        sut.onAction(RecommendationsAction.OnImageScratched)
+
+        // Assert
+        assertThat(savedStateHandle[IS_MOVIE_SCRATCHED]!! as Boolean).isEqualTo(true)
     }
 }
