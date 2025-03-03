@@ -1,6 +1,6 @@
 # <img src="https://github.com/user-attachments/assets/934d01cd-4b34-4bf4-baab-ef2bba1dc73f" width="60" height="60" align="center" /> Popcorn Picks
 
-**Popcorn Picks** is a movie recommendation app that turns discovery into a game. Pick your favorite genres, scratch to reveal tailored film suggestions, and save the ones you love. Built with **Kotlin**, **Jetpack Compose**, and the **TMDB API**, it features smooth animations, interactive UI effects, and a personalized recommendation loop.
+**Popcorn Picks** is a movie recommendation app that turns discovery into a game. Pick your favorite genres, scratch to reveal tailored film suggestions, and save the ones you love. Built with **Kotlin**, **Jetpack Compose**, and the [TMBD API](https://developer.themoviedb.org/reference/intro/getting-started), it features smooth animations, interactive UI effects, and a personalized recommendation loop.
 
 ## ⭐️Features
 ### 🎬 Movie Discovery & Recommendations
