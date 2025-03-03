@@ -590,6 +590,7 @@ class RecommendationsViewModelTest {
 
             // Assert
             assertThat(updatedState.recommendedMovie).isEqualTo(listOfRecommendedMovies.first())
+            ensureAllEventsConsumed()
         }
     }
 
@@ -668,7 +669,7 @@ class RecommendationsViewModelTest {
 
 
     @Test
-    fun fetchRecommendedMoviesFromApiByMovie_successAndResultListIsNotEmpty_updatePageForLikedMovieInvokedOnceWithCorrectParameters() = runTest{
+    fun fetchRecommendedMoviesFromApiByMovie_successAndResultListIsNotEmptyWithDuplicatedMoviesFromLikedMovies_updatePageForLikedMovieInvokedOnceWithCorrectParameters() = runTest{
         // Arrange
         coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
             Result.Success(listOfLikedMovies)
@@ -776,9 +777,194 @@ class RecommendationsViewModelTest {
         }
     }
 
+    //FETCH RECOMMENDED MOVIES FROM API BY GENRE
+    @Test
+    fun fetchRecommendedMoviesFromApiByGenre_success_recommendedMovieStateUpdatedWithCorrectMovie() = runTest{
+        // Arrange
+        every { genresPreferences.getGenresWithPage() } answers {
+            mapOfGenresWithPage
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            // Act
+            val updatedState = awaitItem()
+
+            // Assert
+            assertThat(updatedState.recommendedMovie).isEqualTo(listOfRecommendedMovies.first())
+            ensureAllEventsConsumed()
+        }
+    }
 
     @Test
-    fun fetchRecommendedMoviesFromApiByMovie_error_fetchingNotInvoked() = runTest{
+    fun fetchRecommendedMoviesFromApiByGenre_success_addRecommendedMoviesToDbInvokedOnceWithCorrectMovies() = runTest{
+        // Arrange
+        every { genresPreferences.getGenresWithPage() } answers {
+            mapOfGenresWithPage
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){localMovieRecommendationsRepository.addRecommendedMovies(listOfRecommendedMovies)}
+    }
+
+    @Test
+    fun fetchRecommendedMoviesFromApiByGenre_success_isLoadingStateUpdatedWithFalse() = runTest{
+        // Arrange
+        every { genresPreferences.getGenresWithPage() } answers {
+            mapOfGenresWithPage
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            // Act
+            val updatedState = awaitItem()
+
+            // Assert
+            assertThat(updatedState.isLoading).isEqualTo(false)
+        }
+    }
+
+    @Test
+    fun fetchRecommendedMoviesFromApiByGenre_success_addRecommendedMoviesToDbInvokedOnceWithCorrectMoviesOrderById() = runTest{
+        // Arrange
+        val movieWithSmallId = Movie(
+            id = 5,
+            title = "Batman",
+            poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+            releaseDate = "2022-04-02",
+            voteAverage = 8.0,
+            genres = dummyGenresList
+        )
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        every { genresPreferences.getGenresWithPage() } answers {
+            mapOfGenresWithPage
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies + movieWithSmallId)
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){localMovieRecommendationsRepository.addRecommendedMovies(listOf(movieWithSmallId) + listOfRecommendedMovies)}
+    }
+
+    @Test
+    fun fetchRecommendedMoviesFromApiByGenre_successAndResultListWithDuplicatedMoviesFromLikedMovies_addRecommendedMoviesToDbInvokedOnceWithCorrectFilteredMovies() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        every { genresPreferences.getGenresWithPage() } answers {
+            mapOfGenresWithPage
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies + listOfLikedMovies.map { Movie(
+                id = it.id,
+                title = it.title,
+                poster = it.poster,
+                releaseDate = it.releaseDate,
+                voteAverage = it.voteAverage,
+                genres = it.genres
+            ) })
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){localMovieRecommendationsRepository.addRecommendedMovies(listOfRecommendedMovies)}
+    }
+
+    @Test
+    fun fetchRecommendedMoviesFromApiByGenre_successAndResultListWithDuplicatedMoviesFromLikedMovies_savePagesForGenresInvokedOnceWithCorrectParameters() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        every { genresPreferences.getGenresWithPage() } answers {
+            mapOfGenresWithPage
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies + listOfLikedMovies.map { Movie(
+                id = it.id,
+                title = it.title,
+                poster = it.poster,
+                releaseDate = it.releaseDate,
+                voteAverage = it.voteAverage,
+                genres = it.genres
+            ) })
+        }
+
+        sut.state.test{
+            // Act
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Assert
+        coVerify(exactly = 1){genresPreferences.savePagesForGenres(listOf(2))}
+    }
+
+    @Test
+    fun fetchRecommendedMoviesFromApiByGenre_error_errorStateUpdatedWithCorrectMessage() = runTest{
+        // Arrange
+        every { genresPreferences.getGenresWithPage() } answers {
+            mapOfGenresWithPage
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+            Result.Error(DataError.Network.UNKNOWN)
+        }
+
+        sut.state.test{
+            // Act
+            val updatedState = awaitItem()
+
+            // Assert
+            assertThat(updatedState.error).isEqualTo(DataError.Local.UNKNOWN.asUiText())
+        }
+    }
+
+    @Test
+    fun fetchRecommendedMoviesFromApiByGenre_error_isLoadingStateUpdatedWithFalse() = runTest{
+        // Arrange
+        every { genresPreferences.getGenresWithPage() } answers {
+            mapOfGenresWithPage
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnGenre(any(), any()) } answers {
+            Result.Error(DataError.Network.UNKNOWN)
+        }
+
+        sut.state.test{
+            // Act
+            val updatedState = awaitItem()
+
+            // Assert
+            assertThat(updatedState.isLoading).isEqualTo(false)
+        }
+    }
+
+    // GET LIKED MOVIES
+    @Test
+    fun getLikedMovies_error_fetchingNotInvoked() = runTest{
         // Arrange
         coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
             Result.Error(DataError.Local.UNKNOWN)
