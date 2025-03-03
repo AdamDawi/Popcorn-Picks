@@ -54,6 +54,14 @@ class RecommendationsViewModelTest {
             releaseDate = "2020-04-02",
             voteAverage = 7.6,
             genres = dummyGenresList
+        ),
+        Movie(
+            id = 88,
+            title = "Thor",
+            poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+            releaseDate = "2024-04-28",
+            voteAverage = 8.3,
+            genres = dummyGenresList
         )
     )
     private val listOfLikedMovies = listOf(
@@ -111,9 +119,10 @@ class RecommendationsViewModelTest {
             )
         }
         coEvery { localMovieRecommendationsRepository.addRecommendedMovies(any()) } answers {
-            Result.Success(
-                Unit
-            )
+            Result.Success(Unit)
+        }
+        coEvery { localMovieRecommendationsRepository.deleteRecommendedMovie(any()) } answers {
+            Result.Success(Unit)
         }
         coEvery { likedMoviesDbRepository.updatePageForLikedMovie(any(), any()) } answers {
             Result.Success(Unit)
@@ -1206,6 +1215,226 @@ class RecommendationsViewModelTest {
 
             // Assert
             assertTrue(emission is RecommendationsEvent.Error && emission.error == DataError.Local.UNKNOWN.asUiText())
+        }
+    }
+
+    // ON REROLL CLICKED
+    @Test
+    fun onRerollClicked_movieIsLiked_isMovieLikedStateUpdatedWithFalse() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            skipItems(1)
+            sut.onAction(RecommendationsAction.OnHeartClicked)
+            skipItems(1)
+
+            // Act
+            sut.onAction(RecommendationsAction.OnRerollClicked)
+            val updatedState = awaitItem()
+
+            // Assert
+            assertThat(updatedState.isMovieLiked).isEqualTo(false)
+            ensureAllEventsConsumed()
+        }
+    }
+
+    @Test
+    fun onRerollClicked_movieIsScratched_isMovieScratchedStateUpdatedWithFalse() = runTest{
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test{
+            skipItems(1)
+            sut.onAction(RecommendationsAction.OnImageScratched)
+            skipItems(1)
+
+            // Act
+            sut.onAction(RecommendationsAction.OnRerollClicked)
+            val updatedState = awaitItem()
+
+            // Assert
+            assertThat(updatedState.isMovieScratched).isEqualTo(false)
+            ensureAllEventsConsumed()
+        }
+    }
+
+    @Test
+    fun onRerollClicked_movieIsScratched_isMovieScratchedSaveStateHandleUpdatedWithFalse() = runTest {
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery {
+            remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(
+                any(),
+                any()
+            )
+        } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test {
+            skipItems(1)
+            sut.onAction(RecommendationsAction.OnImageScratched)
+            skipItems(1)
+
+            // Act
+            sut.onAction(RecommendationsAction.OnRerollClicked)
+            skipItems(1)
+
+            ensureAllEventsConsumed()
+        }
+        // Assert
+        assertThat(savedStateHandle[IS_MOVIE_SCRATCHED]!! as Boolean).isEqualTo(false)
+    }
+
+    @Test
+    fun onRerollClicked_recommendedMoviesListIsNotEmpty_deleteRecommendedMovieFromDbInvokedOnceWithCorrectMovie() = runTest {
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery {
+            remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(
+                any(),
+                any()
+            )
+        } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test {
+            skipItems(1)
+
+            // Act
+            sut.onAction(RecommendationsAction.OnRerollClicked)
+            skipItems(1)
+
+            ensureAllEventsConsumed()
+        }
+        // Assert
+        coVerify(exactly = 1){localMovieRecommendationsRepository.deleteRecommendedMovie(listOfRecommendedMovies.first())}
+    }
+
+
+    @Test
+    fun onRerollClicked_recommendedMoviesListIsEmptyAfterDeletingMovie_fetchingRecommendedMoviesInvoked() = runTest {
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery {
+            remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(
+                any(),
+                any()
+            )
+        } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test {
+            skipItems(1)
+            sut.onAction(RecommendationsAction.OnRerollClicked)
+            skipItems(1)
+
+            // Act
+            sut.onAction(RecommendationsAction.OnRerollClicked)
+            skipItems(1)
+
+            ensureAllEventsConsumed()
+        }
+        // Assert
+        coVerify(exactly = 2){remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any())} // two - because of first initial fetching
+    }
+
+    @Test
+    fun onRerollClicked_recommendedMoviesListIsNotEmptyAfterDeletingMovie_fetchingRecommendedMoviesNotInvoked() = runTest {
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery {
+            remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(
+                any(),
+                any()
+            )
+        } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test {
+            skipItems(1)
+            // Act
+            sut.onAction(RecommendationsAction.OnRerollClicked)
+            skipItems(1)
+
+            ensureAllEventsConsumed()
+        }
+        // Assert
+        coVerify(exactly = 1){remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any())} // one - because of first initial fetching
+    }
+
+    @Test
+    fun onRerollClicked_recommendedMoviesListIsNotEmptyAfterDeletingMovie_recommendedMovieStateUpdatedWithCorrectMovie() = runTest {
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery {
+            remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(
+                any(),
+                any()
+            )
+        } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test {
+            skipItems(1)
+            // Act
+            sut.onAction(RecommendationsAction.OnRerollClicked)
+            val updatedState = awaitItem()
+
+            // Assert
+            assertThat(updatedState.recommendedMovie).isEqualTo(listOfRecommendedMovies[1])
+            ensureAllEventsConsumed()
+        }
+    }
+    @Test
+    fun onRerollClicked_recommendedMoviesListIsNotEmptyAfterDeletingMovie_isLoadingStateUpdatedWithFalse() = runTest {
+        // Arrange
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(listOfLikedMovies)
+        }
+        coEvery {
+            remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(
+                any(),
+                any()
+            )
+        } answers {
+            Result.Success(listOfRecommendedMovies)
+        }
+
+        sut.state.test {
+            skipItems(1)
+            // Act
+            sut.onAction(RecommendationsAction.OnRerollClicked)
+            val updatedState = awaitItem()
+
+            // Assert
+            assertThat(updatedState.isLoading).isEqualTo(false)
+            ensureAllEventsConsumed()
         }
     }
 }
