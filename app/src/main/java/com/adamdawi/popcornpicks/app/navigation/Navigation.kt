@@ -13,7 +13,7 @@ import com.adamdawi.popcornpicks.feature.movie_details.presentation.movie_detail
 import com.adamdawi.popcornpicks.feature.onboarding.presentation.genres_choose_screen.GenresScreen
 import com.adamdawi.popcornpicks.feature.onboarding.presentation.movie_choose_screen.MovieChooseScreen
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.RecommendationsScreen
-import com.adamdawi.popcornpicks.feature.user_profile.presentation.ProfileScreen
+import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.ProfileScreen
 import org.koin.compose.koinInject
 
 @Composable
@@ -106,7 +106,11 @@ fun Navigation(
         }
 
         composable(Screen.Profile.route) {
-            ProfileScreen()
+            ProfileScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                }
+            )
         }
         composableWithSlideToLeftTransitions(
             route = Screen.MovieDetails.route,
