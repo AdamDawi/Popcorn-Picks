@@ -63,8 +63,16 @@
 ## Here are some overview pictures:
 🚧 Work in Progress...
 
+![Image](https://github.com/user-attachments/assets/1676f730-e62d-4e93-9aee-60265e04f7ed)
+![Image](https://github.com/user-attachments/assets/2486c92b-f68a-4efa-b51b-59301c730805)
+![Image](https://github.com/user-attachments/assets/c9afd63e-6b73-4b3d-9429-61e5a0d8ca4f)
+![Image](https://github.com/user-attachments/assets/e736c823-5d32-41a1-93de-cc54fa15a4e2)
+![Image](https://github.com/user-attachments/assets/9a44335a-48d9-49e4-a62e-27a178e737ca)
+
 ## Animations:
 🚧 Work in Progress...
+
+![Image](https://github.com/user-attachments/assets/371136cb-db7e-4363-b293-69936e5ebda2)
 
 ## 📈 Recommendation System Diagram
 Below is a visual representation of how the recommendation system works. The diagram is divided into three main sections: Onboarding, Recommendations, and User Interactions. To make it easier to follow, the full diagram is shown first, followed by a closer look at each section.
