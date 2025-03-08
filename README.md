@@ -86,7 +86,7 @@ _An overview of the entire recommendation system, highlighting the interactions 
 _This section covers the onboarding process, where users are introduced to the system and initial preferences are set._
 
 ### 3. **Recommendations Section**
-![Image](https://github.com/user-attachments/assets/55ab471f-7f95-44a2-832d-dbfc89f31490)
+![Image](https://github.com/user-attachments/assets/4dcd911b-1013-415c-9c7b-d6765b6f265b)
 _This part explains how the recommendation system generates personalized suggestions for users based on their preferences._
 
 ### 4. **User Interactions Section**
