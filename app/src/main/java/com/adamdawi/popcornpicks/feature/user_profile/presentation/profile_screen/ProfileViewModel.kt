@@ -16,4 +16,10 @@ class ProfileViewModel: ViewModel() {
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = _state.value
     )
+
+    fun onAction(action: ProfileAction){
+        when(action){
+            else -> {}
+        }
+    }
 }
