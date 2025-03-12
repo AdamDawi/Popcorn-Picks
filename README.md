@@ -2,6 +2,8 @@
 
 **Popcorn Picks** is a movie recommendation app that turns discovery into a game. Pick your favorite genres, scratch to reveal tailored film suggestions, and save the ones you love. Built with **Kotlin**, **Jetpack Compose**, and the [TMBD API](https://developer.themoviedb.org/reference/intro/getting-started), it features smooth animations, interactive UI effects, and a personalized recommendation loop.
 
+[![Android Unit Tests](https://github.com/AdamDawi/Popcorn-Picks/actions/workflows/android-unit-tests.yml/badge.svg)](https://github.com/AdamDawi/Popcorn-Picks/actions/workflows/android-unit-tests.yml) [![Android Instrumentation Tests](https://github.com/AdamDawi/Popcorn-Picks/actions/workflows/android_instrumentation_tests.yml/badge.svg)](https://github.com/AdamDawi/Popcorn-Picks/actions/workflows/android_instrumentation_tests.yml)
+
 ## ⭐️Features
 ### 🎬 Movie Discovery & Recommendations
 - **Scratch Card System:** Reveal movie recommendations one at a time by scratching off the interactive card.
