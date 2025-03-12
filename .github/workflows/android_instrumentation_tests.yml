@@ -33,14 +33,14 @@ jobs:
       - name: Install dependencies
         run: ./gradlew dependencies
 
-#      - name: Start Android Emulator
-#        run: |
-#          echo "Starting Android Emulator"
-#          $ANDROID_HOME/emulator/emulator -avd Pixel_3_API_30 -no-snapshot -no-window -gpu off &
-#          timeout 60 sh -c 'while ! adb shell getprop sys.boot_completed | grep -m 1 "1"; do sleep 5; done;'
+      - name: Install required system images and emulator
+        run: |
+          sdkmanager --update
+          sdkmanager --install 'emulator'
+          sdkmanager --install 'system-images;android-34;default;x86_64'
 
       - name: Run Instrumentation Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-            api-level: 34
-            script: ./gradlew connectedDebugAndroidTest
+          api-level: 34
+          script: ./gradlew connectedDebugAndroidTest
