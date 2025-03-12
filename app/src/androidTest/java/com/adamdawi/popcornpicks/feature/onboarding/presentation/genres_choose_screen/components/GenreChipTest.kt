@@ -28,7 +28,7 @@ class GenreChipTest {
                 onClick = {}
             )
         }
-
+        assertTrue(false)
         composeTestRule.onNodeWithTag(GENRE_CHIP).assertExists().assertIsDisplayed()
     }
 
