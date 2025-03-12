@@ -1407,8 +1407,8 @@ class RecommendationsViewModelTest {
             val updatedState = awaitItem()
 
             // Assert
+            assertTrue(false)
             assertThat(updatedState.recommendedMovie).isEqualTo(listOfRecommendedMovies[1])
-            assertThat(1==2)
             ensureAllEventsConsumed()
         }
     }
