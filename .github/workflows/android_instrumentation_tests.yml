@@ -27,6 +27,12 @@ jobs:
           build-tools: '34.0.0'
           cache: 'gradle'
 
+      - name: Clean Android SDK cache
+        run: rm -rf $ANDROID_HOME/.android
+
+      - name: Update Android SDK
+        run: sdkmanager --update
+
       - name: Grant execute permission for Gradle
         run: chmod +x gradlew
 
@@ -35,9 +41,14 @@ jobs:
 
       - name: Install required system images and emulator
         run: |
-          sdkmanager --update
           sdkmanager --install 'emulator'
           sdkmanager --install 'system-images;android-34;default;x86_64'
+
+      - name: Create and start AVD
+        run: |
+          echo "no" | avdmanager create avd -n Pixel_3_API_34 -k "system-images;android-34;default;x86_64"
+          $ANDROID_HOME/emulator/emulator -avd Pixel_3_API_34 -no-snapshot -no-window -gpu off &
+          timeout 60 sh -c 'while ! adb shell getprop sys.boot_completed | grep -m 1 "1"; do sleep 5; done;'
 
       - name: Run Instrumentation Tests
         uses: reactivecircus/android-emulator-runner@v2
