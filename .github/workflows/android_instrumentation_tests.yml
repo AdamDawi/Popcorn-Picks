@@ -7,7 +7,7 @@ on:
 jobs:
   test:
     name: Run Instrumentation Tests
-    runs-on: ubuntu-latest
+    runs-on: macos-12
 
     steps:
       - name: Checkout repository
@@ -33,11 +33,14 @@ jobs:
       - name: Install dependencies
         run: ./gradlew dependencies
 
-      - name: Start Android Emulator
-        run: |
-          echo "Starting Android Emulator"
-          $ANDROID_HOME/emulator/emulator -avd Pixel_3_API_30 -no-snapshot -no-window -gpu off &
-          timeout 60 sh -c 'while ! adb shell getprop sys.boot_completed | grep -m 1 "1"; do sleep 5; done;'
+#      - name: Start Android Emulator
+#        run: |
+#          echo "Starting Android Emulator"
+#          $ANDROID_HOME/emulator/emulator -avd Pixel_3_API_30 -no-snapshot -no-window -gpu off &
+#          timeout 60 sh -c 'while ! adb shell getprop sys.boot_completed | grep -m 1 "1"; do sleep 5; done;'
 
       - name: Run Instrumentation Tests
-        run: ./gradlew connectedDebugAndroidTest
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+            api-level: 34
+            script: ./gradlew connectedDebugAndroidTest
