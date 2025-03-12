@@ -1,0 +1,40 @@
+name: Android Instrumentation Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Run Instrumentation Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17 with Gradle cache
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          sdk-version: '34'
+          build-tools: '34.0.0'
+          cache: 'gradle'
+
+      - name: Install dependencies
+        run: ./gradlew dependencies
+
+      - name: Start Android Emulator
+        run: |
+          echo "Starting Android Emulator"
+          $ANDROID_HOME/emulator/emulator -avd Pixel_3_API_30 -no-snapshot -no-window -gpu off &
+          timeout 60 sh -c 'while ! adb shell getprop sys.boot_completed | grep -m 1 "1"; do sleep 5; done;'
+
+      - name: Run Instrumentation Tests
+        run: ./gradlew connectedDebugAndroidTest
