@@ -13,12 +13,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up JDK 17 with Gradle cache
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'gradle'
+#      - name: Set up JDK 17 with Gradle cache
+#        uses: actions/setup-java@v4
+#        with:
+#          distribution: 'temurin'
+#          java-version: '17'
+#          cache: 'gradle'
 
 #      - name: Set up Android SDK
 #        uses: android-actions/setup-android@v2
@@ -51,7 +51,7 @@ jobs:
 #          timeout 60 sh -c 'while ! adb shell getprop sys.boot_completed | grep -m 1 "1"; do sleep 5; done;'
 
       - name: Run Instrumentation Tests
-        uses: ReactiveCircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
 #          target: google_apis
