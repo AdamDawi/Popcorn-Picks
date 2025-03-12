@@ -7,18 +7,18 @@ on:
 jobs:
   test:
     name: Run Instrumentation Tests
-    runs-on: macos-latest
+    runs-on: macos-13
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-#      - name: Set up JDK 17 with Gradle cache
-#        uses: actions/setup-java@v4
-#        with:
-#          distribution: 'temurin'
-#          java-version: '17'
-#          cache: 'gradle'
+      - name: Set up JDK 17 with Gradle cache
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
 
 #      - name: Set up Android SDK
 #        uses: android-actions/setup-android@v2
