@@ -1408,6 +1408,7 @@ class RecommendationsViewModelTest {
 
             // Assert
             assertThat(updatedState.recommendedMovie).isEqualTo(listOfRecommendedMovies[1])
+            assertThat(1==2)
             ensureAllEventsConsumed()
         }
     }
