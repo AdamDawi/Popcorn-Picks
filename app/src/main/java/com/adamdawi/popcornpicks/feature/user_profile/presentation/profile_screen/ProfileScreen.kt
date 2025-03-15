@@ -21,8 +21,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adamdawi.popcornpicks.core.data.dummy.dummyGenresList
 import com.adamdawi.popcornpicks.core.presentation.theme.DividerGrey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
+import com.adamdawi.popcornpicks.core.presentation.ui.PopcornPicksTopAppBar
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.ProfileImage
 import org.koin.androidx.compose.koinViewModel
 
@@ -67,10 +66,8 @@ private fun ProfileScreenContent(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-
-                },
+            PopcornPicksTopAppBar(
+                titleText = "Profile",
                 navigationIcon = {
                     Icon(
                         modifier = Modifier
@@ -84,10 +81,7 @@ private fun ProfileScreenContent(
                         contentDescription = "Arrow back",
                         tint = Color.White
                     )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black
-                )
+                }
             )
         }
     ) { innerPadding ->
@@ -99,7 +93,9 @@ private fun ProfileScreenContent(
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(14.dp))
             ProfileImage(
+                modifier = Modifier.size(150.dp),
                 onClick = {
 
                 }
@@ -119,6 +115,7 @@ private fun ProfileScreenContent(
                 thickness = 2.dp,
                 color = DividerGrey.copy(alpha = .6f)
             )
+            Spacer(modifier = Modifier.height(20.dp))
             Text(
                 modifier = Modifier.padding(14.dp),
                 text = "Genres",

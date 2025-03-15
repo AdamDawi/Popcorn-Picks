@@ -34,5 +34,7 @@ object Constants {
         const val IMAGE_WITH_ANIMATED_BORDER = "image_with_animated_border"
         const val CARD_WITH_ANIMATED_BORDER = "card_with_animated_border"
         const val PROFILE_IMAGE = "profile_image_box"
+        const val TOP_APP_BAR_ACTIONS = "top_app_bar_actions"
+        const val TOP_APP_BAR_NAVIGATION_ICON = "top_app_bar_navigation_icon"
     }
 }

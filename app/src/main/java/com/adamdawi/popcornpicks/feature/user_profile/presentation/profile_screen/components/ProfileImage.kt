@@ -36,7 +36,6 @@ fun ProfileImage(
         modifier = modifier
             .clip(RoundedCornerShape(2.dp))
             .background(ImageRed)
-            .size(150.dp)
             .clickable {
                 onClick()
             }
@@ -74,6 +73,7 @@ fun ProfileImage(
 private fun ProfileImagePreview() {
     PopcornPicksTheme {
         ProfileImage(
+            modifier = Modifier.size(150.dp),
             onClick = {}
         )
     }

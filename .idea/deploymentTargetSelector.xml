@@ -13,7 +13,19 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="genreChip_isDisplayed()">
+      <SelectionState runConfigName="popcornPicksTopAppBarTest_titleTextIsNull_titleTextIsNotDisplayed()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="popcornPicksTopAppBar_titleTextIsNull_titleTextIsNotDisplayed()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="PopcornPicksTopAppBarTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="popcornPicksTopAppBar_actionsIsNotNull_actionsIsDisplayed()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="popcornPicksTopAppBar_navigationIconIsNotNull_navigationIconIsDisplayed()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

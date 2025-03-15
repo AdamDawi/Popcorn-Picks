@@ -13,12 +13,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
@@ -39,9 +46,9 @@ import com.adamdawi.popcornpicks.core.presentation.theme.Red
 import com.adamdawi.popcornpicks.core.presentation.ui.ErrorScreen
 import com.adamdawi.popcornpicks.core.presentation.ui.LoadingScreen
 import com.adamdawi.popcornpicks.core.presentation.ui.ObserveAsEvents
+import com.adamdawi.popcornpicks.core.presentation.ui.PopcornPicksTopAppBar
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.components.CircleIconButton
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.components.ImageScratch
-import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.components.RecommendationsScreenTopAppBar
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.utils.formatMovieDetails
 import org.koin.androidx.compose.koinViewModel
 
@@ -94,8 +101,22 @@ fun RecommendationsContent(
     )
     Scaffold(
         topBar = {
-            RecommendationsScreenTopAppBar(
-                onProfileClicked = { onAction(RecommendationsAction.OnProfileClicked) }
+            PopcornPicksTopAppBar(
+                actions = {
+                    IconButton(
+                        modifier = Modifier
+                            .size(54.dp)
+                            .clip(CircleShape),
+                        onClick = { onAction(RecommendationsAction.OnProfileClicked) }
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(28.dp),
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Profile Icon",
+                            tint = Color.White
+                        )
+                    }
+                }
             )
         }
     ) { scaffoldPadding ->
