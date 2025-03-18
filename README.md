@@ -74,6 +74,8 @@
 ## Animations:
 🚧 Work in Progress...
 
+![Image](https://github.com/user-attachments/assets/6fce77d2-aa49-468e-9e38-f8fc0cdba9b4)
+![Image](https://github.com/user-attachments/assets/00bdc138-5788-4269-8a4d-646e365f02b6)
 ![Image](https://github.com/user-attachments/assets/371136cb-db7e-4363-b293-69936e5ebda2)
 ![Image](https://github.com/user-attachments/assets/544948c1-1072-4d5f-831d-06751336f8d4)
 
