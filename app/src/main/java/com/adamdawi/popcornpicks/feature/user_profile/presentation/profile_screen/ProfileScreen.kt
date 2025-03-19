@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,11 +31,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.adamdawi.popcornpicks.R
 import com.adamdawi.popcornpicks.core.data.dummy.dummyGenresList
 import com.adamdawi.popcornpicks.core.presentation.theme.DividerGrey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.ui.PopcornPicksTopAppBar
+import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.IconLabelChip
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.ProfileImage
+import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.SmartFlowRow
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -123,12 +125,33 @@ private fun ProfileScreenContent(
                 maxLines = 1,
                 color = Color.White
             )
-            FlowRow {
+            SmartFlowRow(itemSpacing = 8.dp) {
+                IconLabelChip(
+                    modifier = Modifier,
+                    icon = R.drawable.heart_solid_ic,
+                    label = "Action"
+                )
 
+                IconLabelChip(
+                    modifier = Modifier,
+                    icon = R.drawable.heart_solid_ic,
+                    label = "Comedy"
+                )
+
+                IconLabelChip(
+                    modifier = Modifier,
+                    icon = R.drawable.heart_solid_ic,
+                    label = "Documentary"
+                )
             }
         }
     }
 }
+
+
+
+
+
 
 
 @Preview

@@ -136,6 +136,19 @@
             </AndroidTestResultsTableState>
           </value>
         </entry>
+        <entry key="-1005245353">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung SM-S918B" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="-993140546">
           <value>
             <AndroidTestResultsTableState>
@@ -163,6 +176,19 @@
           </value>
         </entry>
         <entry key="-31042510">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung SM-S918B" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="40776039">
           <value>
             <AndroidTestResultsTableState>
               <option name="preferredColumnWidths">
@@ -228,6 +254,19 @@
           </value>
         </entry>
         <entry key="843528286">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung SM-S918B" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1018070458">
           <value>
             <AndroidTestResultsTableState>
               <option name="preferredColumnWidths">

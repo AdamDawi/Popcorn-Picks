@@ -13,19 +13,19 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="popcornPicksTopAppBarTest_titleTextIsNull_titleTextIsNotDisplayed()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="popcornPicksTopAppBar_titleTextIsNull_titleTextIsNotDisplayed()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="PopcornPicksTopAppBarTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="popcornPicksTopAppBar_actionsIsNotNull_actionsIsDisplayed()">
+      <SelectionState runConfigName="popcornPicksTopAppBar_navigationIconIsNotNull_navigationIconIsDisplayed()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="popcornPicksTopAppBar_navigationIconIsNotNull_navigationIconIsDisplayed()">
+      <SelectionState runConfigName="SmartFlowRowTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="testSmartFlowRow_elementsArePlacedInRows()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="testSmartFlowRow_spacingBetweenItems()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

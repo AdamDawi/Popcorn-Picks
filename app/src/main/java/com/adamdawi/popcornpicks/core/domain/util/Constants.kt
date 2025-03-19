@@ -36,5 +36,7 @@ object Constants {
         const val PROFILE_IMAGE = "profile_image_box"
         const val TOP_APP_BAR_ACTIONS = "top_app_bar_actions"
         const val TOP_APP_BAR_NAVIGATION_ICON = "top_app_bar_navigation_icon"
+        const val ICON_LABEL_CHIP = "icon_label_chip"
+        const val SMART_FLOW_ROW = "smart_flow_row"
     }
 }
