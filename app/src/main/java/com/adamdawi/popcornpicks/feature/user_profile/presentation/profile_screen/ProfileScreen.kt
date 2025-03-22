@@ -2,6 +2,7 @@
 
 package com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -26,7 +27,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -36,16 +41,21 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adamdawi.popcornpicks.R
 import com.adamdawi.popcornpicks.core.data.dummy.dummyGenresList
 import com.adamdawi.popcornpicks.core.data.dummy.genreToDrawableMap
 import com.adamdawi.popcornpicks.core.domain.model.Genre
 import com.adamdawi.popcornpicks.core.presentation.theme.DividerGrey
+import com.adamdawi.popcornpicks.core.presentation.theme.ImageRed
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.ui.PopcornPicksTopAppBar
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.ImageLabelChip
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.ProfileImage
+import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.ProfileImageEditContent
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.SmartFlowRow
 import org.koin.androidx.compose.koinViewModel
 
@@ -54,6 +64,7 @@ fun ProfileScreen(
     onNavigateBack: () -> Unit,
     viewModel: ProfileViewModel = koinViewModel<ProfileViewModel>()
 ) {
+    BackHandler { }
     val state = viewModel.state.collectAsStateWithLifecycle()
     ProfileScreenContent(
         state = state.value,
@@ -69,13 +80,14 @@ fun ProfileScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 private fun ProfileScreenContent(
     state: ProfileState,
     onAction: (ProfileAction) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val showPopup = remember { mutableStateOf(false) }
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -108,12 +120,23 @@ private fun ProfileScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
-
+                PopupBox(
+                    showPopup = showPopup.value
+                ) {
+                    ProfileImageEditContent(
+                        modifier = Modifier.fillMaxSize(),
+                        onSaveClick = {},
+                        onCancelClick = {
+                            showPopup.value = false
+                        }
+                    )
+                }
                 Spacer(modifier = Modifier.height(14.dp))
                 ProfileImage(
                     modifier = Modifier.size(150.dp),
+                    backgroundColor = ImageRed,
                     onClick = {
-
+                        showPopup.value = true
                     }
                 )
                 Spacer(modifier = Modifier.height(14.dp))
@@ -147,6 +170,28 @@ private fun ProfileScreenContent(
 }
 
 @Composable
+fun PopupBox(showPopup: Boolean, content: @Composable() () -> Unit) {
+    if (showPopup) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Green)
+                .zIndex(10F),
+            contentAlignment = Alignment.Center
+        ) {
+            Popup(
+                alignment = Alignment.Center,
+                properties = PopupProperties(
+                    excludeFromSystemGesture = true,
+                )
+            ) {
+                content()
+            }
+        }
+    }
+}
+
+@Composable
 private fun GenresSection(
     genres: List<Genre>
 ) {
@@ -160,12 +205,13 @@ private fun GenresSection(
     Spacer(modifier = Modifier.height(8.dp))
     SmartFlowRow(itemSpacing = 8.dp) {
         genres.forEach { genre ->
-            ImageLabelChip(
-                modifier = Modifier,
-                imageId = genreToDrawableMap[genre.name]
-                    ?: R.drawable.not_found,
-                label = genre.name
-            )
+            key(genre.name) {
+                ImageLabelChip(
+                    modifier = Modifier,
+                    imageId = genreToDrawableMap[genre.name] ?: R.drawable.not_found,
+                    label = genre.name
+                )
+            }
         }
     }
 }
@@ -177,7 +223,7 @@ private fun MoviesSection() {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clip(RoundedCornerShape(16.dp))
-            .clickable{
+            .clickable {
 
             }
             .padding(horizontal = 8.dp)
@@ -191,13 +237,13 @@ private fun MoviesSection() {
             maxLines = 1,
             color = Color.White
         )
-            Icon(
-                modifier = Modifier
-                    .size(30.dp)
-                    .align(Alignment.CenterEnd),
-                imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
-                contentDescription = "Go to movies"
-            )
+        Icon(
+            modifier = Modifier
+                .size(30.dp)
+                .align(Alignment.CenterEnd),
+            imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
+            contentDescription = "Go to movies"
+        )
     }
     Row(
         modifier = Modifier.fillMaxWidth()

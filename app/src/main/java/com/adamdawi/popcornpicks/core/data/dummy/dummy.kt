@@ -49,6 +49,19 @@ val genreToDrawableMap = mapOf(
     "Western" to R.drawable.western
 )
 
+val profileImages = listOf(
+    R.drawable.happy_guard,
+    R.drawable.sunglasses_guard,
+    R.drawable.policeman,
+    R.drawable.check_in,
+    R.drawable.guard_forbidding_to_pass,
+    R.drawable.character_in_armor,
+    R.drawable.monster_security_shield,
+    R.drawable.security,
+    R.drawable.security_with_micro,
+    R.drawable.security_without_face,
+)
+
 val selectedGenres: List<Genre> = listOf(
     Genre(id = 36, name = "History"),
     Genre(id = 27, name = "Horror"),

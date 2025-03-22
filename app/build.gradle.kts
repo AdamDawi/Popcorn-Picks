@@ -104,6 +104,8 @@ dependencies {
     implementation(libs.gson)
     //slf4j - to fix issue about logging
     testImplementation(libs.slf4j.simple)
+    //color picker
+    implementation(libs.mhssn.colorpicker)
 
     //unit tests
     testImplementation(libs.androidx.core)

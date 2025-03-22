@@ -38,5 +38,6 @@ object Constants {
         const val TOP_APP_BAR_NAVIGATION_ICON = "top_app_bar_navigation_icon"
         const val ICON_LABEL_CHIP = "icon_label_chip"
         const val SMART_FLOW_ROW = "smart_flow_row"
+        const val EDIT_ICON = "edit_icon"
     }
 }

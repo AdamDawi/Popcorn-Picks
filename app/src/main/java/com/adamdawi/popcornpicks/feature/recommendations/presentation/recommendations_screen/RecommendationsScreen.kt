@@ -133,7 +133,7 @@ fun RecommendationsContent(
             Spacer(modifier = Modifier.height(8.dp))
             ImageScratch(
                 modifier = Modifier
-                    .height(470.dp)
+                    .fillMaxHeight(0.75f)
                     .fillMaxWidth(0.9f),
                 overlayImage = ImageBitmap.imageResource(R.drawable.popcorn_overlay),
                 baseImageUrl = BASE_IMAGE_URL + state.recommendedMovie.poster,
