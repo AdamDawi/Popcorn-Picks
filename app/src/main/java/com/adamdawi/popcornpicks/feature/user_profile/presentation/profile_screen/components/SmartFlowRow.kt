@@ -59,7 +59,11 @@ fun SmartFlowRow(
             }
         }
 
-        val totalHeight = rows.sumOf { row -> row.maxOf { it.height } } + (rows.size - 1) * itemSpacingPx
+        val totalHeight = if (rows.isNotEmpty()) {
+            rows.sumOf { row -> row.maxOfOrNull { it.height } ?: 0 } + (rows.size - 1) * itemSpacingPx
+        } else {
+            0
+        }
 
         layout(maxWidth, totalHeight) {
             var yOffset = 0

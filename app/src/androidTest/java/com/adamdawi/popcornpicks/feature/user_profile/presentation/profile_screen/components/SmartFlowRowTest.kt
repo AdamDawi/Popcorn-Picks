@@ -2,6 +2,7 @@ package com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_scre
 
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
@@ -19,13 +20,25 @@ class SmartFlowRowTest {
 
 
     @Test
-    fun smartFlowRow_isDisplayed(){
+    fun smartFlowRow_notEmptySmartFlowRowContent_smartFlowRowIsDisplayed(){
+        composeTestRule.setContent {
+            PopcornPicksTheme {
+                SmartFlowRow {
+                    ImageLabelChip(imageId = R.drawable.heart_solid_ic, label = "Action")
+                }
+            }
+        }
+        composeTestRule.onNodeWithTag(SMART_FLOW_ROW).assertExists().assertIsDisplayed()
+    }
+
+    @Test
+    fun smartFlowRow_emptySmartFlowRowContent_smartFlowRowIsNotDisplayed(){
         composeTestRule.setContent {
             PopcornPicksTheme {
                 SmartFlowRow {  }
             }
         }
-        composeTestRule.onNodeWithTag(SMART_FLOW_ROW).assertExists().assertIsDisplayed()
+        composeTestRule.onNodeWithTag(SMART_FLOW_ROW).assertIsNotDisplayed()
     }
 
     @Test
