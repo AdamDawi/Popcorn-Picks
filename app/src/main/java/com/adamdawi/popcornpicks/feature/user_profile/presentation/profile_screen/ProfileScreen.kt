@@ -4,27 +4,33 @@ package com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_scre
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,10 +39,12 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adamdawi.popcornpicks.R
 import com.adamdawi.popcornpicks.core.data.dummy.dummyGenresList
+import com.adamdawi.popcornpicks.core.data.dummy.genreToDrawableMap
+import com.adamdawi.popcornpicks.core.domain.model.Genre
 import com.adamdawi.popcornpicks.core.presentation.theme.DividerGrey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.ui.PopcornPicksTopAppBar
-import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.IconLabelChip
+import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.ImageLabelChip
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.ProfileImage
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.SmartFlowRow
 import org.koin.androidx.compose.koinViewModel
@@ -54,6 +62,7 @@ fun ProfileScreen(
                 ProfileAction.OnBackClicked -> {
                     onNavigateBack()
                 }
+
                 else -> viewModel.onAction(action = action)
             }
         }
@@ -66,7 +75,9 @@ private fun ProfileScreenContent(
     state: ProfileState,
     onAction: (ProfileAction) -> Unit
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             PopcornPicksTopAppBar(
                 titleText = "Profile",
@@ -83,11 +94,12 @@ private fun ProfileScreenContent(
                         contentDescription = "Arrow back",
                         tint = Color.White
                     )
-                }
+                },
+                scrollBehavior = scrollBehavior
             )
         }
     ) { innerPadding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Black)
@@ -95,64 +107,108 @@ private fun ProfileScreenContent(
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(14.dp))
-            ProfileImage(
-                modifier = Modifier.size(150.dp),
-                onClick = {
+            item {
 
-                }
-            )
-            Spacer(modifier = Modifier.height(14.dp))
-            Text(
-                text = "YOU",
-                color = Color.White,
-                fontWeight = FontWeight.Medium,
-                fontSize = 20.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Spacer(modifier = Modifier.height(40.dp))
-            HorizontalDivider(
-                modifier = Modifier.fillMaxWidth(),
-                thickness = 2.dp,
-                color = DividerGrey.copy(alpha = .6f)
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                modifier = Modifier.padding(14.dp),
-                text = "Genres",
-                fontSize = 24.sp,
-                maxLines = 1,
-                color = Color.White
-            )
-            SmartFlowRow(itemSpacing = 8.dp) {
-                IconLabelChip(
-                    modifier = Modifier,
-                    icon = R.drawable.heart_solid_ic,
-                    label = "Action"
-                )
+                Spacer(modifier = Modifier.height(14.dp))
+                ProfileImage(
+                    modifier = Modifier.size(150.dp),
+                    onClick = {
 
-                IconLabelChip(
-                    modifier = Modifier,
-                    icon = R.drawable.heart_solid_ic,
-                    label = "Comedy"
+                    }
                 )
-
-                IconLabelChip(
-                    modifier = Modifier,
-                    icon = R.drawable.heart_solid_ic,
-                    label = "Documentary"
+                Spacer(modifier = Modifier.height(14.dp))
+                Text(
+                    text = "YOU",
+                    color = Color.White,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 20.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
+                Spacer(modifier = Modifier.height(40.dp))
+                HorizontalDivider(
+                    modifier = Modifier.fillMaxWidth(),
+                    thickness = 2.dp,
+                    color = DividerGrey.copy(alpha = .6f)
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                GenresSection(genres = state.genres)
+                Spacer(modifier = Modifier.height(40.dp))
+                HorizontalDivider(
+                    modifier = Modifier.fillMaxWidth(),
+                    thickness = 2.dp,
+                    color = DividerGrey.copy(alpha = .6f)
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                MoviesSection()
             }
         }
     }
 }
 
+@Composable
+private fun GenresSection(
+    genres: List<Genre>
+) {
+    Text(
+        modifier = Modifier.padding(14.dp),
+        text = "Genres",
+        fontSize = 24.sp,
+        maxLines = 1,
+        color = Color.White
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    SmartFlowRow(itemSpacing = 8.dp) {
+        genres.forEach { genre ->
+            ImageLabelChip(
+                modifier = Modifier,
+                imageId = genreToDrawableMap[genre.name]
+                    ?: R.drawable.not_found,
+                label = genre.name
+            )
+        }
+    }
+}
 
+@Composable
+private fun MoviesSection() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .clickable{
 
-
-
-
+            }
+            .padding(horizontal = 8.dp)
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(14.dp)
+                .align(Alignment.Center),
+            text = "Movies",
+            fontSize = 24.sp,
+            maxLines = 1,
+            color = Color.White
+        )
+            Icon(
+                modifier = Modifier
+                    .size(30.dp)
+                    .align(Alignment.CenterEnd),
+                imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                contentDescription = "Go to movies"
+            )
+    }
+    Row(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        ImageLabelChip(
+            imageId = R.drawable.heart,
+            contentDescription = "Liked movies",
+            label = "28"
+        )
+    }
+}
 
 @Preview
 @Composable

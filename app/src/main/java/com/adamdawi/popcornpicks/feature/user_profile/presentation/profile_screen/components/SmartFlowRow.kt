@@ -11,6 +11,8 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.adamdawi.popcornpicks.R
+import com.adamdawi.popcornpicks.core.data.dummy.dummyGenresList
+import com.adamdawi.popcornpicks.core.data.dummy.genreToDrawableMap
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.SMART_FLOW_ROW
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 
@@ -57,8 +59,10 @@ fun SmartFlowRow(
             }
         }
 
-        var yOffset = 0
-        layout(maxWidth, constraints.maxHeight) {
+        val totalHeight = rows.sumOf { row -> row.maxOf { it.height } } + (rows.size - 1) * itemSpacingPx
+
+        layout(maxWidth, totalHeight) {
+            var yOffset = 0
             for (row in rows) {
                 var xOffset = 0
                 for (placeable in row) {
@@ -76,18 +80,14 @@ fun SmartFlowRow(
 private fun SmartFlowRowPreview() {
     PopcornPicksTheme {
         SmartFlowRow {
-            IconLabelChip(icon = R.drawable.heart_solid_ic, label = "Action")
-            IconLabelChip(icon = R.drawable.heart_solid_ic, label = "Action")
-            IconLabelChip(icon = R.drawable.heart_solid_ic, label = "Comedy")
-            IconLabelChip(icon = R.drawable.heart_solid_ic, label = "Comedy")
-            IconLabelChip(icon = R.drawable.heart_solid_ic, label = "Documentary")
-            IconLabelChip(icon = R.drawable.heart_solid_ic, label = "Documentary")
-            IconLabelChip(icon = R.drawable.heart_solid_ic, label = "Documentary")
-            IconLabelChip(icon = R.drawable.heart_solid_ic, label = "Thriller")
-            IconLabelChip(icon = R.drawable.heart_solid_ic, label = "Horror")
-            IconLabelChip(icon = R.drawable.heart_solid_ic, label = "Thriller")
-            IconLabelChip(icon = R.drawable.heart_solid_ic, label = "Sci-Fi")
-            IconLabelChip(icon = R.drawable.heart_solid_ic, label = "Sci-Fi")
+            dummyGenresList.forEach { genre ->
+                ImageLabelChip(
+                    modifier = Modifier,
+                    imageId = genreToDrawableMap[genre.name]
+                        ?: R.drawable.horror,
+                    label = genre.name
+                )
+            }
         }
     }
 }

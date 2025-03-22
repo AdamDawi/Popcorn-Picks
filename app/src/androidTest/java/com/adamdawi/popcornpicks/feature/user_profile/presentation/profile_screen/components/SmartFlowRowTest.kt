@@ -33,11 +33,11 @@ class SmartFlowRowTest {
         composeTestRule.setContent {
             PopcornPicksTheme {
                 SmartFlowRow {
-                    IconLabelChip(icon = R.drawable.heart_solid_ic, label = "Action")
-                    IconLabelChip(icon = R.drawable.heart_solid_ic, label = "Comedy")
-                    IconLabelChip(icon = R.drawable.heart_solid_ic, label = "Thriller")
-                    IconLabelChip(icon = R.drawable.heart_solid_ic, label = "Drama")
-                    IconLabelChip(icon = R.drawable.heart_solid_ic, label = "Horror")
+                    ImageLabelChip(imageId = R.drawable.heart_solid_ic, label = "Action")
+                    ImageLabelChip(imageId = R.drawable.heart_solid_ic, label = "Comedy")
+                    ImageLabelChip(imageId = R.drawable.heart_solid_ic, label = "Thriller")
+                    ImageLabelChip(imageId = R.drawable.heart_solid_ic, label = "Drama")
+                    ImageLabelChip(imageId = R.drawable.heart_solid_ic, label = "Horror")
                 }
             }
         }

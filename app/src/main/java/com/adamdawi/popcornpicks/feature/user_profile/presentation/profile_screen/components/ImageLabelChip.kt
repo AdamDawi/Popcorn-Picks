@@ -1,6 +1,7 @@
 package com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -11,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,9 +32,9 @@ import com.adamdawi.popcornpicks.core.presentation.theme.Blue
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 
 @Composable
-fun IconLabelChip(
+fun ImageLabelChip(
     modifier: Modifier = Modifier,
-    @DrawableRes icon: Int,
+    @DrawableRes imageId: Int,
     contentDescription: String? = null,
     label: String
 ) {
@@ -48,12 +49,11 @@ fun IconLabelChip(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
+        Image(
             modifier = Modifier
                 .size(25.dp),
-            painter = painterResource(icon),
-            contentDescription = contentDescription,
-            tint = Color.White
+            painter = painterResource(imageId),
+            contentDescription = contentDescription
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
@@ -62,7 +62,8 @@ fun IconLabelChip(
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
             fontSize = 12.sp,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            textAlign = TextAlign.Center
         )
     }
 }
@@ -72,12 +73,12 @@ fun IconLabelChip(
 @Composable
 private fun IconLabelChipPreview() {
     PopcornPicksTheme {
-        IconLabelChip(
+        ImageLabelChip(
             modifier = Modifier
                 .width(150.dp)
                 .height(50.dp),
-            icon = R.drawable.pen_ic,
-            label = "Documentary"
+            imageId = R.drawable.horror,
+            label = "Horror"
         )
     }
 }

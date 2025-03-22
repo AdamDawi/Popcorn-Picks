@@ -3,6 +3,7 @@ package com.adamdawi.popcornpicks.core.data.dummy
 import com.adamdawi.popcornpicks.core.domain.model.Genre
 import com.adamdawi.popcornpicks.core.domain.model.Movie
 import com.adamdawi.popcornpicks.feature.movie_details.domain.DetailedMovie
+import com.adamdawi.popcornpicks.R
 
 val dummyGenresList = listOf(
     Genre(id = 28, name = "Action"),
@@ -24,6 +25,28 @@ val dummyGenresList = listOf(
     Genre(id = 53, name = "Thriller"),
     Genre(id = 10752, name = "War"),
     Genre(id = 37, name = "Western")
+)
+
+val genreToDrawableMap = mapOf(
+    "Action" to R.drawable.action,
+    "Adventure" to R.drawable.adventure,
+    "Animation" to R.drawable.animation,
+    "Comedy" to R.drawable.comedy,
+    "Crime" to R.drawable.crime,
+    "Documentary" to R.drawable.documentary,
+    "Drama" to R.drawable.drama,
+    "Family" to R.drawable.family,
+    "Fantasy" to R.drawable.fantasy,
+    "History" to R.drawable.history,
+    "Horror" to R.drawable.horror,
+    "Music" to R.drawable.music,
+    "Mystery" to R.drawable.mystery,
+    "Romance" to R.drawable.romance,
+    "Science Fiction" to R.drawable.science_fiction,
+    "TV Movie" to R.drawable.tv_movie,
+    "Thriller" to R.drawable.thriller,
+    "War" to R.drawable.war,
+    "Western" to R.drawable.western
 )
 
 val selectedGenres: List<Genre> = listOf(
