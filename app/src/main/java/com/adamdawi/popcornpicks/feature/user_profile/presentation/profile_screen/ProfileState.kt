@@ -4,7 +4,7 @@ import com.adamdawi.popcornpicks.core.data.dummy.dummyGenresList
 import com.adamdawi.popcornpicks.core.domain.model.Genre
 
 data class ProfileState(
-    val genres: List<Genre> = dummyGenresList,
+    val genres: List<Genre> = dummyGenresList.take(4),
     val error: String? = null,
     val isLoading: Boolean = false
 )

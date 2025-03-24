@@ -39,13 +39,14 @@ fun ProfileImage(
     backgroundColor: Color,
     @DrawableRes imageId: Int = R.drawable.happy_guard,
     showEditIcon: Boolean = true,
-    isSelected: Boolean = false
+    isSelected: Boolean = false,
+    clickable: Boolean = true
 ) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(2.dp))
             .background(backgroundColor)
-            .clickable {
+            .clickable(enabled = clickable) {
                 onClick()
             }
             .padding(12.dp)

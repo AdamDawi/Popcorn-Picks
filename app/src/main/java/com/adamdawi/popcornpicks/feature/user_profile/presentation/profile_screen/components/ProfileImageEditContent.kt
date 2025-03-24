@@ -1,5 +1,12 @@
 package com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -30,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.adamdawi.popcornpicks.core.data.dummy.profileImages
 import com.adamdawi.popcornpicks.core.presentation.PopcornPicksButton
-import com.adamdawi.popcornpicks.core.presentation.theme.ImageRed
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import io.mhssn.colorpicker.ColorPicker
 import io.mhssn.colorpicker.ColorPickerType
@@ -43,7 +48,7 @@ fun ProfileImageEditContent(
     onCancelClick: () -> Unit
 ) {
     //TODO make tests for this composable
-    val pickedColor = remember { mutableStateOf(ImageRed) }
+    val pickedColor = remember { mutableStateOf(Color.White) }
     val selectedProfileImageId = remember { mutableIntStateOf(profileImages[0]) }
 
     Column(
@@ -92,16 +97,34 @@ fun ProfileImageEditContent(
                     pickedColor.value = color
                 }
             )
+
             Spacer(modifier = Modifier.width(8.dp))
-            ProfileImage(
+            AnimatedContent(
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1f),
-                onClick = {},
-                imageId = selectedProfileImageId.intValue,
-                backgroundColor = pickedColor.value,
-                showEditIcon = false
-            )
+                targetState = selectedProfileImageId.intValue,
+                transitionSpec = {
+                    val enterAnimation = fadeIn(animationSpec = tween(300, delayMillis = 100)) +
+                            scaleIn(initialScale = 0.8f, animationSpec = tween(300, delayMillis = 100))
+
+                    val exitAnimation = fadeOut(animationSpec = tween(200, delayMillis = 50)) +
+                            scaleOut(targetScale = 0.8f, animationSpec = tween(200, delayMillis = 50))
+
+                    enterAnimation.togetherWith(exitAnimation)
+                }
+            ) { targetProfileImageId ->
+                ProfileImage(
+                    modifier = Modifier
+                        .weight(1f)
+                        .aspectRatio(1f),
+                    onClick = {},
+                    imageId = targetProfileImageId,
+                    backgroundColor = pickedColor.value,
+                    showEditIcon = false,
+                    clickable = false
+                )
+            }
         }
         Spacer(modifier = Modifier.height(20.dp))
         Text(
@@ -121,7 +144,9 @@ fun ProfileImageEditContent(
         ) {
             items(profileImages, key = { it }) { profileImageId ->
                 ProfileImage(
-                    modifier = Modifier.size(150.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .aspectRatio(1f),
                     backgroundColor = Color.White,
                     onClick = {
                         selectedProfileImageId.intValue = profileImageId
