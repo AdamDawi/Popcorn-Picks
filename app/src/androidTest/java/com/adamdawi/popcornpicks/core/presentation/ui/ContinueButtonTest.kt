@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.feature.onboarding.presentation.genres_choose_screen.components
+package com.adamdawi.popcornpicks.core.presentation.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CircleShape
@@ -10,22 +10,24 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.adamdawi.popcornpicks.core.presentation.PopcornPicksButton
 import com.adamdawi.popcornpicks.core.presentation.theme.Red
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import org.junit.Rule
 import org.junit.Test
 
-class ContinueButtonTest {
+class PopcornPicksButtonTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
     @Test
-    fun continueButton_visibility_displayed() {
+    fun popcornPicksButton_visibility_displayed() {
         composeTestRule.setContent {
-            ContinueButton(
+            PopcornPicksButton(
                 onClick = {},
-                enabled = true
+                enabled = true,
+                text = "Continue"
             )
         }
 
@@ -33,12 +35,13 @@ class ContinueButtonTest {
     }
 
     @Test
-    fun continueButton_enabled_performsClickAction() {
+    fun popcornPicksButton_enabled_performsClickAction() {
         var clicked = false
         composeTestRule.setContent {
-            ContinueButton(
+            PopcornPicksButton(
                 onClick = { clicked = true },
-                enabled = true
+                enabled = true,
+                text = "Continue"
             )
         }
 
@@ -47,12 +50,13 @@ class ContinueButtonTest {
     }
 
     @Test
-    fun continueButton_disabled_doesNotPerformClickAction() {
+    fun popcornPicksButton_disabled_doesNotPerformClickAction() {
         var clicked = false
         composeTestRule.setContent {
-            ContinueButton(
+            PopcornPicksButton(
                 onClick = { clicked = true },
-                enabled = false
+                enabled = false,
+                text = "Continue"
             )
         }
 
@@ -62,11 +66,12 @@ class ContinueButtonTest {
 
     //Visual tests should be verified by screenshot tests
     @Test
-    fun continueButton_enabled_hasCorrectBackgroundColor() {
+    fun popcornPicksButton_enabled_hasCorrectBackgroundColor() {
         composeTestRule.setContent {
-            ContinueButton(
+            PopcornPicksButton(
                 onClick = {},
-                enabled = true
+                enabled = true,
+                text = "Continue"
             )
         }
 
@@ -75,11 +80,12 @@ class ContinueButtonTest {
     }
 
     @Test
-    fun continueButton_disabled_hasCorrectBackgroundColor() {
+    fun popcornPicksButton_disabled_hasCorrectBackgroundColor() {
         composeTestRule.setContent {
-            ContinueButton(
+            PopcornPicksButton(
                 onClick = {},
-                enabled = false
+                enabled = false,
+                text = "Continue"
             )
         }
 

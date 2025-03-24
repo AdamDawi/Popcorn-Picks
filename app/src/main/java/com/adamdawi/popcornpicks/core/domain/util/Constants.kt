@@ -39,5 +39,7 @@ object Constants {
         const val ICON_LABEL_CHIP = "icon_label_chip"
         const val SMART_FLOW_ROW = "smart_flow_row"
         const val EDIT_ICON = "edit_icon"
+        const val POPUP_BOX = "popup_box"
+        const val POPUP_BOX_CONTENT = "popup_box_content"
     }
 }

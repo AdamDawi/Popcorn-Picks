@@ -19,13 +19,13 @@
       <SelectionState runConfigName="SmartFlowRowTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testSmartFlowRow_elementsArePlacedInRows()">
+      <SelectionState runConfigName="ContinueButtonTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testSmartFlowRow_spacingBetweenItems()">
+      <SelectionState runConfigName="PopcornPicksButtonTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ProfileImageTest">
+      <SelectionState runConfigName="PopupBoxTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

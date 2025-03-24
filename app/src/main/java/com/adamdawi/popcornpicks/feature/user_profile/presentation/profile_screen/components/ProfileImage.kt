@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,6 +28,7 @@ import com.adamdawi.popcornpicks.R
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.EDIT_ICON
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.PROFILE_IMAGE
 import com.adamdawi.popcornpicks.core.presentation.theme.BorderGrey
+import com.adamdawi.popcornpicks.core.presentation.theme.Green
 import com.adamdawi.popcornpicks.core.presentation.theme.ImageRed
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 
@@ -35,7 +38,8 @@ fun ProfileImage(
     onClick: () -> Unit,
     backgroundColor: Color,
     @DrawableRes imageId: Int = R.drawable.happy_guard,
-    showEditIcon: Boolean = true
+    showEditIcon: Boolean = true,
+    isSelected: Boolean = false
 ) {
     Box(
         modifier = modifier
@@ -55,6 +59,14 @@ fun ProfileImage(
             contentDescription = "profile image",
             contentScale = ContentScale.FillBounds
         )
+        if(isSelected){
+            Icon(
+                modifier = Modifier.align(Alignment.TopEnd),
+                imageVector = Icons.Default.Done,
+                tint = Green,
+                contentDescription = "Selected"
+            )
+        }
         if(showEditIcon){
             Box(
                 modifier = Modifier
@@ -84,6 +96,19 @@ private fun ProfileImagePreview() {
             modifier = Modifier.size(150.dp),
             backgroundColor = ImageRed,
             onClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ProfileImageSelectedPreview() {
+    PopcornPicksTheme {
+        ProfileImage(
+            modifier = Modifier.size(150.dp),
+            backgroundColor = ImageRed,
+            onClick = {},
+            isSelected = true
         )
     }
 }

@@ -32,7 +32,7 @@ import com.adamdawi.popcornpicks.core.presentation.theme.fontFamily
 import com.adamdawi.popcornpicks.core.presentation.ui.ErrorScreen
 import com.adamdawi.popcornpicks.core.presentation.ui.LoadingScreen
 import com.adamdawi.popcornpicks.core.domain.model.Genre
-import com.adamdawi.popcornpicks.feature.onboarding.presentation.genres_choose_screen.components.ContinueButton
+import com.adamdawi.popcornpicks.core.presentation.PopcornPicksButton
 import com.adamdawi.popcornpicks.feature.onboarding.presentation.genres_choose_screen.components.GenreChip
 import org.koin.androidx.compose.koinViewModel
 
@@ -88,12 +88,13 @@ private fun GenresContent(
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        ContinueButton(
+        PopcornPicksButton(
             modifier = Modifier
                 .height(50.dp)
                 .fillMaxWidth(0.7f),
             enabled = state.continueButtonEnabled,
-            onClick = { onAction(GenresAction.OnContinueClick) }
+            onClick = { onAction(GenresAction.OnContinueClick) },
+            text = "Continue"
         )
 
         Spacer(modifier = Modifier.height(8.dp))

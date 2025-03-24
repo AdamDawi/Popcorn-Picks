@@ -1,7 +1,8 @@
-package com.adamdawi.popcornpicks.feature.onboarding.presentation.genres_choose_screen.components
+package com.adamdawi.popcornpicks.core.presentation
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,16 +15,17 @@ import com.adamdawi.popcornpicks.core.presentation.theme.Red
 import com.adamdawi.popcornpicks.core.presentation.theme.fontFamily
 
 @Composable
-fun ContinueButton(
+fun PopcornPicksButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    enabled: Boolean
+    enabled: Boolean = true,
+    text: String
 ) {
     Button(
         modifier = modifier,
         onClick = onClick,
         shape = CircleShape,
-        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+        colors = ButtonDefaults.buttonColors(
             containerColor = Red,
             disabledContainerColor = Red.copy(alpha = 0.3f),
             disabledContentColor = Color.White.copy(alpha = 0.3f),
@@ -32,7 +34,7 @@ fun ContinueButton(
         enabled = enabled
     ) {
         Text(
-            text = "Continue",
+            text = text,
             fontFamily = fontFamily,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold
@@ -44,9 +46,10 @@ fun ContinueButton(
 @Composable
 private fun ContinueButtonEnablePreview() {
     PopcornPicksTheme {
-        ContinueButton(
+        PopcornPicksButton(
             onClick = {},
-            enabled = true
+            enabled = true,
+            text = "Continue"
         )
     }
 }
@@ -55,9 +58,10 @@ private fun ContinueButtonEnablePreview() {
 @Composable
 private fun ContinueButtonDisablePreview() {
     PopcornPicksTheme {
-        ContinueButton(
+        PopcornPicksButton(
             onClick = {},
-            enabled = false
+            enabled = false,
+            text = "Continue"
         )
     }
 }

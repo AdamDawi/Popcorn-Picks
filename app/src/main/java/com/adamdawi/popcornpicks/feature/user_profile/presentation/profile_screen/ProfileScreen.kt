@@ -31,7 +31,6 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -41,9 +40,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
-import androidx.compose.ui.window.PopupProperties
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adamdawi.popcornpicks.R
 import com.adamdawi.popcornpicks.core.data.dummy.dummyGenresList
@@ -54,6 +50,7 @@ import com.adamdawi.popcornpicks.core.presentation.theme.ImageRed
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.ui.PopcornPicksTopAppBar
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.ImageLabelChip
+import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.PopupBox
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.ProfileImage
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.ProfileImageEditContent
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.SmartFlowRow
@@ -80,7 +77,8 @@ fun ProfileScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ProfileScreenContent(
     state: ProfileState,
@@ -125,7 +123,9 @@ private fun ProfileScreenContent(
                 ) {
                     ProfileImageEditContent(
                         modifier = Modifier.fillMaxSize(),
-                        onSaveClick = {},
+                        onSaveClick = {
+                            showPopup.value = false
+                        },
                         onCancelClick = {
                             showPopup.value = false
                         }
@@ -169,27 +169,7 @@ private fun ProfileScreenContent(
     }
 }
 
-@Composable
-fun PopupBox(showPopup: Boolean, content: @Composable() () -> Unit) {
-    if (showPopup) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Green)
-                .zIndex(10F),
-            contentAlignment = Alignment.Center
-        ) {
-            Popup(
-                alignment = Alignment.Center,
-                properties = PopupProperties(
-                    excludeFromSystemGesture = true,
-                )
-            ) {
-                content()
-            }
-        }
-    }
-}
+
 
 @Composable
 private fun GenresSection(
