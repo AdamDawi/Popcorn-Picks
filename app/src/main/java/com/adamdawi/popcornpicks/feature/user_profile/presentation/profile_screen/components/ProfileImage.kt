@@ -1,6 +1,12 @@
 package com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -60,7 +66,12 @@ fun ProfileImage(
             contentDescription = "profile image",
             contentScale = ContentScale.FillBounds
         )
-        if(isSelected){
+        AnimatedVisibility(
+            modifier = Modifier.align(Alignment.TopEnd),
+            visible = isSelected,
+            enter = fadeIn(animationSpec = tween(durationMillis = 250)) + slideInVertically(initialOffsetY = { -40 }, animationSpec = tween(durationMillis = 250)),
+            exit = fadeOut(animationSpec = tween(durationMillis = 150)) + slideOutVertically(targetOffsetY = { -40 }, animationSpec = tween(durationMillis = 150))
+        ) {
             Icon(
                 modifier = Modifier.align(Alignment.TopEnd),
                 imageVector = Icons.Default.Done,
