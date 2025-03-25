@@ -123,7 +123,7 @@ private fun ProfileScreenContent(
                 ) {
                     ProfileImageEditContent(
                         modifier = Modifier.fillMaxSize(),
-                        onSaveClick = {
+                        onSaveClick = { pickedColor, pickedImageId ->
                             showPopup.value = false
                         },
                         onCancelClick = {
@@ -154,7 +154,6 @@ private fun ProfileScreenContent(
                     thickness = 2.dp,
                     color = DividerGrey.copy(alpha = .6f)
                 )
-                Spacer(modifier = Modifier.height(20.dp))
                 GenresSection(genres = state.genres)
                 Spacer(modifier = Modifier.height(40.dp))
                 HorizontalDivider(
@@ -162,7 +161,6 @@ private fun ProfileScreenContent(
                     thickness = 2.dp,
                     color = DividerGrey.copy(alpha = .6f)
                 )
-                Spacer(modifier = Modifier.height(20.dp))
                 MoviesSection()
             }
         }
@@ -221,6 +219,7 @@ private fun MoviesSection() {
             modifier = Modifier
                 .size(30.dp)
                 .align(Alignment.CenterEnd),
+            tint = Color.White,
             imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
             contentDescription = "Go to movies"
         )
@@ -242,7 +241,7 @@ private fun ProfileScreenPreview() {
     PopcornPicksTheme {
         ProfileScreenContent(
             state = ProfileState(
-                genres = dummyGenresList
+                genres = dummyGenresList.take(5)
             ),
             onAction = {}
         )

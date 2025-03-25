@@ -48,7 +48,7 @@ import io.mhssn.colorpicker.ColorPickerType
 @Composable
 fun ProfileImageEditContent(
     modifier: Modifier = Modifier,
-    onSaveClick: () -> Unit,
+    onSaveClick: (Color, Int) -> Unit,
     onCancelClick: () -> Unit
 ) {
     //TODO make tests for this composable
@@ -70,7 +70,9 @@ fun ProfileImageEditContent(
         ) {
             PopcornPicksButton(
                 modifier = Modifier,
-                onClick = onSaveClick,
+                onClick = {
+                    onSaveClick(pickedColor.value, selectedProfileImageId.intValue)
+                },
                 text = "Save"
             )
             PopcornPicksButton(
@@ -168,7 +170,7 @@ fun ProfileImageEditContent(
 private fun ProfileImageEditContentPreview() {
     PopcornPicksTheme {
         ProfileImageEditContent(
-            onSaveClick = {},
+            onSaveClick = {_, _ ->},
             onCancelClick = {}
         )
     }
