@@ -4,7 +4,9 @@ import app.cash.turbine.test
 import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
 import com.adamdawi.popcornpicks.core.domain.local.LikedMoviesDbRepository
 import com.adamdawi.popcornpicks.core.domain.model.Genre
+import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.utils.ReplaceMainDispatcherRule
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertTrue
@@ -49,6 +51,7 @@ class ProfileViewModelTest {
             Genre(id = 36, name = "History")
         )
         every { genresPreferences.getGenres() } answers { genresIds }
+        coEvery { likedMoviesDbRepository.getLikedMoviesCount() } answers { Result.Success(0)}
 
         sut.state.test{
             // Act
@@ -63,6 +66,7 @@ class ProfileViewModelTest {
     fun getGenres_genresNotExistInPreferences_genresStateUpdatedWithEmptyList() = runTest{
         // Arrange
         every { genresPreferences.getGenres() } answers { emptyList() }
+        coEvery { likedMoviesDbRepository.getLikedMoviesCount() } answers { Result.Success(0)}
 
         sut.state.test{
             // Act
