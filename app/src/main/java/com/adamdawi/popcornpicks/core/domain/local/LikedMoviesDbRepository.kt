@@ -13,4 +13,5 @@ interface LikedMoviesDbRepository {
     suspend fun updatePageForLikedMovie(movieId: Int, nextPage: Int): EmptyResult<DataError.Local>
     suspend fun updatePageForAllLikedMovies(nextPage: Int): EmptyResult<DataError.Local>
     suspend fun deleteLikedMovie(movie: Movie): EmptyResult<DataError.Local>
+    suspend fun getLikedMoviesCount(): Result<Int, DataError.Local>
 }

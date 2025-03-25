@@ -27,4 +27,7 @@ interface LikedMoviesDao {
 
     @Delete
     suspend fun deleteLikedMovie(movie: LikedMovieEntity)
+
+    @Query("SELECT COUNT(*) FROM `$LIKED_MOVIES_TABLE`")
+    suspend fun getLikedMoviesCount(): Int
 }

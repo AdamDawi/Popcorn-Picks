@@ -63,6 +63,7 @@ fun ProfileScreen(
 ) {
     BackHandler { }
     val state = viewModel.state.collectAsStateWithLifecycle()
+    //TODO make loading screen here
     ProfileScreenContent(
         state = state.value,
         onAction = { action ->
@@ -161,7 +162,9 @@ private fun ProfileScreenContent(
                     thickness = 2.dp,
                     color = DividerGrey.copy(alpha = .6f)
                 )
-                MoviesSection()
+                MoviesSection(
+                    likedMoviesCount = state.likedMoviesCount
+                )
             }
         }
     }
@@ -181,21 +184,31 @@ private fun GenresSection(
         color = Color.White
     )
     Spacer(modifier = Modifier.height(8.dp))
-    SmartFlowRow(itemSpacing = 8.dp) {
-        genres.forEach { genre ->
-            key(genre.name) {
-                ImageLabelChip(
-                    modifier = Modifier,
-                    imageId = genreToDrawableMap[genre.name] ?: R.drawable.not_found,
-                    label = genre.name
-                )
+    if(genres.isNotEmpty()){
+        SmartFlowRow(itemSpacing = 8.dp) {
+            genres.forEach { genre ->
+                key(genre.name) {
+                    ImageLabelChip(
+                        modifier = Modifier,
+                        imageId = genreToDrawableMap[genre.name] ?: R.drawable.not_found,
+                        label = genre.name
+                    )
+                }
             }
         }
+    }else{
+        Text(
+            "No genres available",
+            color = Color.White.copy(alpha = .6f),
+            fontSize = 14.sp
+        )
     }
 }
 
 @Composable
-private fun MoviesSection() {
+private fun MoviesSection(
+    likedMoviesCount: Int
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -230,7 +243,7 @@ private fun MoviesSection() {
         ImageLabelChip(
             imageId = R.drawable.heart,
             contentDescription = "Liked movies",
-            label = "28"
+            label = likedMoviesCount.toString()
         )
     }
 }
@@ -242,6 +255,20 @@ private fun ProfileScreenPreview() {
         ProfileScreenContent(
             state = ProfileState(
                 genres = dummyGenresList.take(5)
+            ),
+            onAction = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ProfileScreenNoGenresPreview() {
+    PopcornPicksTheme {
+        ProfileScreenContent(
+            state = ProfileState(
+                genres = emptyList(),
+                likedMoviesCount = 282
             ),
             onAction = {}
         )

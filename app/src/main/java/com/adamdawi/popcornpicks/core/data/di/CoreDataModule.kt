@@ -3,7 +3,7 @@ package com.adamdawi.popcornpicks.core.data.di
 import android.content.SharedPreferences
 import androidx.room.Room
 import com.adamdawi.popcornpicks.core.data.local.GenresPreferencesImpl
-import com.adamdawi.popcornpicks.core.data.local.LikedLikedMoviesDbRepositoryImpl
+import com.adamdawi.popcornpicks.core.data.local.LikedMoviesDbRepositoryImpl
 import com.adamdawi.popcornpicks.core.data.local.OnBoardingManagerImpl
 import com.adamdawi.popcornpicks.core.data.local.dao.LikedMoviesDao
 import com.adamdawi.popcornpicks.core.data.local.db.PopcornPicksDatabase
@@ -44,7 +44,7 @@ val coreDataModule = module {
     single<LikedMoviesDao>{
         get<PopcornPicksDatabase>().likedMoviesDao
     }
-    singleOf(::LikedLikedMoviesDbRepositoryImpl) { bind<LikedMoviesDbRepository>() }
+    singleOf(::LikedMoviesDbRepositoryImpl) { bind<LikedMoviesDbRepository>() }
     singleOf(::RemoteMovieRecommendationsRepositoryImpl) { bind<RemoteMovieRecommendationsRepository>() }
     singleOf(::GenresRepositoryImpl){ bind<GenresRepository>() }
 }

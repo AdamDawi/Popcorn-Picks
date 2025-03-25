@@ -11,7 +11,7 @@ import com.adamdawi.popcornpicks.core.domain.util.EmptyResult
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.domain.model.Movie
 
-class LikedLikedMoviesDbRepositoryImpl(
+class LikedMoviesDbRepositoryImpl(
     private val likedMoviesDao: LikedMoviesDao
 ): LikedMoviesDbRepository {
     override suspend fun getLikedMovies(): Result<List<LikedMovie>, DataError.Local> {
@@ -66,6 +66,15 @@ class LikedLikedMoviesDbRepositoryImpl(
         return try {
             likedMoviesDao.deleteLikedMovie(movie.toLikedMovieEntity())
             Result.Success(Unit)
+        } catch (e: Exception) {
+            handleLocalError(e)
+        }
+    }
+
+    override suspend fun getLikedMoviesCount(): Result<Int, DataError.Local> {
+        return try {
+            val likedMoviesCount = likedMoviesDao.getLikedMoviesCount()
+            Result.Success(likedMoviesCount)
         } catch (e: Exception) {
             handleLocalError(e)
         }

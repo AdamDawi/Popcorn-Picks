@@ -5,6 +5,6 @@ import com.adamdawi.popcornpicks.core.domain.model.Genre
 
 data class ProfileState(
     val genres: List<Genre> = dummyGenresList.take(4),
-    val error: String? = null,
+    val likedMoviesCount: Int = 0,
     val isLoading: Boolean = false
 )
