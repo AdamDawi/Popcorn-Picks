@@ -1,12 +1,6 @@
 package com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components
 
 import androidx.annotation.DrawableRes
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,7 +26,6 @@ import com.adamdawi.popcornpicks.R
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.EDIT_ICON
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.PROFILE_IMAGE
 import com.adamdawi.popcornpicks.core.presentation.theme.BorderGrey
-import com.adamdawi.popcornpicks.core.presentation.theme.Green
 import com.adamdawi.popcornpicks.core.presentation.theme.ImageRed
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 
@@ -45,7 +36,6 @@ fun ProfileImage(
     backgroundColor: Color,
     @DrawableRes imageId: Int = R.drawable.happy_guard,
     showEditIcon: Boolean = true,
-    isSelected: Boolean = false,
     clickable: Boolean = true
 ) {
     Box(
@@ -66,19 +56,6 @@ fun ProfileImage(
             contentDescription = "profile image",
             contentScale = ContentScale.FillBounds
         )
-        AnimatedVisibility(
-            modifier = Modifier.align(Alignment.TopEnd),
-            visible = isSelected,
-            enter = fadeIn(animationSpec = tween(durationMillis = 250)) + slideInVertically(initialOffsetY = { -40 }, animationSpec = tween(durationMillis = 250)),
-            exit = fadeOut(animationSpec = tween(durationMillis = 150)) + slideOutVertically(targetOffsetY = { -40 }, animationSpec = tween(durationMillis = 150))
-        ) {
-            Icon(
-                modifier = Modifier.align(Alignment.TopEnd),
-                imageVector = Icons.Default.Done,
-                tint = Green,
-                contentDescription = "Selected"
-            )
-        }
         if(showEditIcon){
             Box(
                 modifier = Modifier
@@ -108,19 +85,6 @@ private fun ProfileImagePreview() {
             modifier = Modifier.size(150.dp),
             backgroundColor = ImageRed,
             onClick = {}
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun ProfileImageSelectedPreview() {
-    PopcornPicksTheme {
-        ProfileImage(
-            modifier = Modifier.size(150.dp),
-            backgroundColor = ImageRed,
-            onClick = {},
-            isSelected = true
         )
     }
 }

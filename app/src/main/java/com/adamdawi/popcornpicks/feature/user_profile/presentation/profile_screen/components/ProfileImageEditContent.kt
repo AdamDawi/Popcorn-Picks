@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
@@ -36,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.adamdawi.popcornpicks.core.data.dummy.profileImages
 import com.adamdawi.popcornpicks.core.presentation.PopcornPicksButton
+import com.adamdawi.popcornpicks.core.presentation.theme.Blue
+import com.adamdawi.popcornpicks.core.presentation.theme.Grey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import io.mhssn.colorpicker.ColorPicker
 import io.mhssn.colorpicker.ColorPickerType
@@ -57,7 +61,7 @@ fun ProfileImageEditContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Spacer(modifier = Modifier.padding(top = 16.dp))
+        Spacer(modifier = Modifier.padding(top = 24.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -97,7 +101,6 @@ fun ProfileImageEditContent(
                     pickedColor.value = color
                 }
             )
-
             Spacer(modifier = Modifier.width(8.dp))
             AnimatedContent(
                 modifier = Modifier
@@ -146,14 +149,14 @@ fun ProfileImageEditContent(
                 ProfileImage(
                     modifier = Modifier
                         .weight(1f)
-                        .aspectRatio(1f),
-                    backgroundColor = Color.White,
+                        .aspectRatio(1f)
+                        .border(2.dp, color = if(profileImageId == selectedProfileImageId.intValue) Blue.copy(alpha = .5f) else Grey.copy(alpha = .5f), shape = RoundedCornerShape(2.dp)),
+                    backgroundColor = if(profileImageId == selectedProfileImageId.intValue) Blue.copy(alpha = 0.4f) else Grey.copy(alpha = .4f),
                     onClick = {
                         selectedProfileImageId.intValue = profileImageId
                     },
                     imageId = profileImageId,
-                    showEditIcon = false,
-                    isSelected = selectedProfileImageId.intValue == profileImageId
+                    showEditIcon = false
                 )
             }
         }
