@@ -51,7 +51,7 @@ class ProfileViewModel(
             it.copy(genres = mapGenreIdsToGenre(listOfGenresIds))
         }
     }
-    //TODO make tests for this function
+
     private fun getLikedMoviesCount(){
         _state.update { it.copy(isLoading = true) }
         viewModelScope.launch(ioDispatcher){

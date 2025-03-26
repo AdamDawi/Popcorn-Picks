@@ -254,7 +254,7 @@ private fun MoviesSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                "No movie information available",
+                "No movies information available",
                 color = Color.White.copy(alpha = .6f),
                 fontSize = 14.sp
             )
