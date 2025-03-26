@@ -64,7 +64,6 @@ class ProfileViewModel(
                     }
                 }
                 is Result.Success -> {
-
                     _state.update {
                         it.copy(likedMoviesCount = result.data, isLoading = false)
                     }

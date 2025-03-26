@@ -5,6 +5,7 @@ package com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_scre
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
@@ -48,6 +49,7 @@ import com.adamdawi.popcornpicks.core.domain.model.Genre
 import com.adamdawi.popcornpicks.core.presentation.theme.DividerGrey
 import com.adamdawi.popcornpicks.core.presentation.theme.ImageRed
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
+import com.adamdawi.popcornpicks.core.presentation.ui.LoadingScreen
 import com.adamdawi.popcornpicks.core.presentation.ui.PopcornPicksTopAppBar
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.ImageLabelChip
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.PopupBox
@@ -61,21 +63,23 @@ fun ProfileScreen(
     onNavigateBack: () -> Unit,
     viewModel: ProfileViewModel = koinViewModel<ProfileViewModel>()
 ) {
-    BackHandler { }
     val state = viewModel.state.collectAsStateWithLifecycle()
-    //TODO make loading screen here
-    ProfileScreenContent(
-        state = state.value,
-        onAction = { action ->
-            when (action) {
-                ProfileAction.OnBackClicked -> {
-                    onNavigateBack()
+    when {
+        state.value.isLoading -> LoadingScreen()
+        else -> {
+            ProfileScreenContent(
+                state = state.value,
+                onAction = { action ->
+                    when (action) {
+                        ProfileAction.OnBackClicked -> {
+                            onNavigateBack()
+                        }
+                        else -> viewModel.onAction(action = action)
+                    }
                 }
-
-                else -> viewModel.onAction(action = action)
-            }
+            )
         }
-    )
+    }
 }
 
 
@@ -87,6 +91,13 @@ private fun ProfileScreenContent(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val showPopup = remember { mutableStateOf(false) }
+    BackHandler {
+        if(showPopup.value){
+            showPopup.value = false
+        }else{
+            onAction(ProfileAction.OnBackClicked)
+        }
+    }
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -171,7 +182,6 @@ private fun ProfileScreenContent(
 }
 
 
-
 @Composable
 private fun GenresSection(
     genres: List<Genre>
@@ -184,7 +194,7 @@ private fun GenresSection(
         color = Color.White
     )
     Spacer(modifier = Modifier.height(8.dp))
-    if(genres.isNotEmpty()){
+    if (genres.isNotEmpty()) {
         SmartFlowRow(itemSpacing = 8.dp) {
             genres.forEach { genre ->
                 key(genre.name) {
@@ -196,7 +206,7 @@ private fun GenresSection(
                 }
             }
         }
-    }else{
+    } else {
         Text(
             "No genres available",
             color = Color.White.copy(alpha = .6f),
@@ -207,7 +217,7 @@ private fun GenresSection(
 
 @Composable
 private fun MoviesSection(
-    likedMoviesCount: Int
+    likedMoviesCount: Int?
 ) {
     Box(
         modifier = Modifier
@@ -237,14 +247,28 @@ private fun MoviesSection(
             contentDescription = "Go to movies"
         )
     }
-    Row(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        ImageLabelChip(
-            imageId = R.drawable.heart,
-            contentDescription = "Liked movies",
-            label = likedMoviesCount.toString()
-        )
+    if(likedMoviesCount == null){
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                "No movie information available",
+                color = Color.White.copy(alpha = .6f),
+                fontSize = 14.sp
+            )
+        }
+    }else{
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            ImageLabelChip(
+                imageId = R.drawable.heart,
+                contentDescription = "Liked movies",
+                label = likedMoviesCount.toString()
+            )
+        }
     }
 }
 
@@ -254,7 +278,8 @@ private fun ProfileScreenPreview() {
     PopcornPicksTheme {
         ProfileScreenContent(
             state = ProfileState(
-                genres = dummyGenresList.take(5)
+                genres = dummyGenresList.take(5),
+                likedMoviesCount = 282
             ),
             onAction = {}
         )
@@ -263,12 +288,12 @@ private fun ProfileScreenPreview() {
 
 @Preview
 @Composable
-private fun ProfileScreenNoGenresPreview() {
+private fun ProfileScreenNoGenresAndNoCountPreview() {
     PopcornPicksTheme {
         ProfileScreenContent(
             state = ProfileState(
                 genres = emptyList(),
-                likedMoviesCount = 282
+                likedMoviesCount = null
             ),
             onAction = {}
         )
