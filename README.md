@@ -57,6 +57,8 @@
 
 - **MockK** - Mocking framework for unit tests.
 
+- **Turbine** - Used for testing Kotlin Flow emissions.
+
 - **Ktor Client Mock** - Mock API responses.
 
 - **Compose UI testing** - Used to UI testing and end-to-end testing.
