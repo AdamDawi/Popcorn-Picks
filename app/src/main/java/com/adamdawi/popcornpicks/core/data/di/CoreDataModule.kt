@@ -8,14 +8,12 @@ import com.adamdawi.popcornpicks.core.data.local.OnBoardingManagerImpl
 import com.adamdawi.popcornpicks.core.data.local.dao.LikedMoviesDao
 import com.adamdawi.popcornpicks.core.data.local.db.PopcornPicksDatabase
 import com.adamdawi.popcornpicks.core.data.networking.HttpClientFactory
-import com.adamdawi.popcornpicks.feature.onboarding.data.remote.GenresRepositoryImpl
 import com.adamdawi.popcornpicks.core.data.remote.RemoteMovieRecommendationsRepositoryImpl
 import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
 import com.adamdawi.popcornpicks.core.domain.local.LikedMoviesDbRepository
 import com.adamdawi.popcornpicks.core.domain.local.OnBoardingManager
 import com.adamdawi.popcornpicks.core.domain.remote.RemoteMovieRecommendationsRepository
 import com.adamdawi.popcornpicks.core.domain.util.Constants
-import com.adamdawi.popcornpicks.feature.onboarding.domain.remote.GenresRepository
 import io.ktor.client.HttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.bind
@@ -46,5 +44,4 @@ val coreDataModule = module {
     }
     singleOf(::LikedMoviesDbRepositoryImpl) { bind<LikedMoviesDbRepository>() }
     singleOf(::RemoteMovieRecommendationsRepositoryImpl) { bind<RemoteMovieRecommendationsRepository>() }
-    singleOf(::GenresRepositoryImpl){ bind<GenresRepository>() }
 }

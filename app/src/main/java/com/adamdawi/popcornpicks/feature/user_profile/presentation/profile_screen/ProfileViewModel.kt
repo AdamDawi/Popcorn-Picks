@@ -7,6 +7,8 @@ import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
 import com.adamdawi.popcornpicks.core.domain.local.LikedMoviesDbRepository
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
+import com.adamdawi.popcornpicks.feature.user_profile.domain.ProfileImageStyle
+import com.adamdawi.popcornpicks.feature.user_profile.domain.local.UserProfilePreferences
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,13 +20,16 @@ import timber.log.Timber
 
 class ProfileViewModel(
     private val genresPreferences: GenresPreferences,
+    private val userProfilePreferences: UserProfilePreferences,
     private val likedMoviesDbRepository: LikedMoviesDbRepository,
     private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _state = MutableStateFlow(ProfileState())
     val state = _state.onStart {
-        getGenres()
+        getProfileImageStyle()
+
         getLikedMoviesCount()
+        getGenres()
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -33,22 +38,27 @@ class ProfileViewModel(
 
     fun onAction(action: ProfileAction) {
         when (action) {
+            is ProfileAction.OnSaveProfileImageStyle -> {
+                saveProfileImageStyle(action.profileImageId, action.profileImageBg)
+            }
             else -> {}
         }
     }
 
     private fun getGenres() {
-        var listOfGenresIds: List<Int> = emptyList()
-        //mapping to ints can throw exception
-        try {
-            listOfGenresIds = genresPreferences.getGenres().map {
-                it.toInt()
+        viewModelScope.launch(ioDispatcher) {
+            var listOfGenresIds: List<Int> = emptyList()
+            //mapping to ints can throw exception
+            try {
+                listOfGenresIds = genresPreferences.getGenres().map {
+                    it.toInt()
+                }
+            } catch (e: Exception) {
+                Timber.e(e)
             }
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
-        _state.update {
-            it.copy(genres = mapGenreIdsToGenre(listOfGenresIds))
+            _state.update {
+                it.copy(genres = mapGenreIdsToGenre(listOfGenresIds))
+            }
         }
     }
 
@@ -69,6 +79,29 @@ class ProfileViewModel(
                     }
                 }
             }
+        }
+    }
+
+    private fun getProfileImageStyle(){
+        viewModelScope.launch(ioDispatcher) {
+            val newProfileImageStyle = userProfilePreferences.getProfileImageStyle()
+            _state.update {
+                it.copy(profileImageStyle = newProfileImageStyle)
+            }
+        }
+    }
+
+    private fun saveProfileImageStyle(profileImageId: Int, profileImageBg: Int){
+        viewModelScope.launch(ioDispatcher) {
+            _state.update {
+                it.copy(profileImageStyle = ProfileImageStyle(profileImageId, profileImageBg))
+            }
+            userProfilePreferences.saveProfileImageStyle(
+                profileImageStyle = ProfileImageStyle(
+                    profileImageId,
+                    profileImageBg
+                )
+            )
         }
     }
 }

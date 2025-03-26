@@ -10,8 +10,10 @@ import com.adamdawi.popcornpicks.core.data.di.coreDataModule
 import com.adamdawi.popcornpicks.feature.onboarding.presentation.di.onboardingViewModelModule
 import com.adamdawi.popcornpicks.feature.movie_details.data.di.movieDetailsDataModule
 import com.adamdawi.popcornpicks.feature.movie_details.presentation.di.movieDetailsViewModelModule
+import com.adamdawi.popcornpicks.feature.onboarding.data.di.onboardingDataModule
 import com.adamdawi.popcornpicks.feature.recommendations.data.di.recommendationsDataModule
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.di.recommendationsViewModelModule
+import com.adamdawi.popcornpicks.feature.user_profile.data.di.profileDataModule
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.di.profileViewModelModule
 
 class MyApplication: Application() {
@@ -26,11 +28,13 @@ class MyApplication: Application() {
             androidContext(this@MyApplication)
             modules(
                 coreDataModule,
+                onboardingDataModule,
                 onboardingViewModelModule,
                 recommendationsDataModule,
                 recommendationsViewModelModule,
                 movieDetailsDataModule,
                 movieDetailsViewModelModule,
+                profileDataModule,
                 profileViewModelModule
             )
         }

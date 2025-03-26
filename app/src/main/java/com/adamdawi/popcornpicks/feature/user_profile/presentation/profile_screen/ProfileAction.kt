@@ -2,4 +2,5 @@ package com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_scre
 
 sealed interface ProfileAction {
     data object OnBackClicked: ProfileAction
+    data class OnSaveProfileImageStyle(val profileImageId: Int, val profileImageBg: Int): ProfileAction
 }

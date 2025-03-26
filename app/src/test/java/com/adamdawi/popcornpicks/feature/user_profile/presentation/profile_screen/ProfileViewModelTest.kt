@@ -6,11 +6,14 @@ import com.adamdawi.popcornpicks.core.domain.local.LikedMoviesDbRepository
 import com.adamdawi.popcornpicks.core.domain.model.Genre
 import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.Result
+import com.adamdawi.popcornpicks.feature.user_profile.domain.ProfileImageStyle
+import com.adamdawi.popcornpicks.feature.user_profile.domain.local.UserProfilePreferences
 import com.adamdawi.popcornpicks.utils.ReplaceMainDispatcherRule
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -22,6 +25,7 @@ import org.junit.Test
 class ProfileViewModelTest {
 
     private lateinit var genresPreferences: GenresPreferences
+    private lateinit var userProfilePreferences: UserProfilePreferences
     private lateinit var likedMoviesDbRepository: LikedMoviesDbRepository
     private lateinit var sut: ProfileViewModel
 
@@ -33,12 +37,18 @@ class ProfileViewModelTest {
     @Before
     fun setUp() {
         genresPreferences = mockk()
+        userProfilePreferences = mockk()
         likedMoviesDbRepository = mockk()
         sut = ProfileViewModel(
             genresPreferences,
+            userProfilePreferences,
             likedMoviesDbRepository,
             replaceMainDispatcherRule.testDispatcher
         )
+        every { genresPreferences.getGenres() } answers { emptyList() }
+        coEvery { likedMoviesDbRepository.getLikedMoviesCount() } answers { Result.Success(0)}
+        every { userProfilePreferences.getProfileImageStyle() } answers { ProfileImageStyle(0, 0) }
+        every { userProfilePreferences.saveProfileImageStyle(any()) } answers {}
     }
     // INITIAL
     @Test
@@ -48,7 +58,6 @@ class ProfileViewModelTest {
             delay(500)
             emptyList()
         }
-        coEvery { likedMoviesDbRepository.getLikedMoviesCount() } answers { Result.Success(0)}
 
         sut.state.test{
             // Act
@@ -56,13 +65,13 @@ class ProfileViewModelTest {
 
             // Assert
             assertTrue(state.genres.isEmpty())
+            ensureAllEventsConsumed()
         }
     }
 
     @Test
     fun init_likedMoviesCount_likedMoviesCountStateEqualsToNull() = runTest{
         // Arrange
-        every { genresPreferences.getGenres() } answers { emptyList() }
         coEvery { likedMoviesDbRepository.getLikedMoviesCount() } coAnswers {
             delay(500)
             Result.Success(0)
@@ -74,6 +83,7 @@ class ProfileViewModelTest {
 
             // Assert
             assertThat(state.likedMoviesCount).isEqualTo(null)
+            ensureAllEventsConsumed()
         }
     }
 
@@ -92,6 +102,7 @@ class ProfileViewModelTest {
 
             // Assert
             assertThat(state.likedMoviesCount).isEqualTo(null)
+            ensureAllEventsConsumed()
         }
     }
 
@@ -108,7 +119,6 @@ class ProfileViewModelTest {
             Genre(id = 36, name = "History")
         )
         every { genresPreferences.getGenres() } answers { genresIds }
-        coEvery { likedMoviesDbRepository.getLikedMoviesCount() } answers { Result.Success(0)}
 
         sut.state.test{
             // Act
@@ -124,7 +134,6 @@ class ProfileViewModelTest {
     fun getGenres_genresNotExistInPreferences_genresStateUpdatedWithEmptyList() = runTest{
         // Arrange
         every { genresPreferences.getGenres() } answers { emptyList() }
-        coEvery { likedMoviesDbRepository.getLikedMoviesCount() } answers { Result.Success(0)}
 
         sut.state.test{
             // Act
@@ -140,7 +149,6 @@ class ProfileViewModelTest {
     @Test
     fun getLikedMoviesCount_success_likedMoviesCountStateUpdatedWithCorrectValue() = runTest{
         // Arrange
-        every { genresPreferences.getGenres() } answers { emptyList() }
         coEvery { likedMoviesDbRepository.getLikedMoviesCount() } answers { Result.Success(12)}
 
 
@@ -157,7 +165,6 @@ class ProfileViewModelTest {
     @Test
     fun getLikedMoviesCount_error_likedMoviesCountStateEqualsToNull() = runTest{
         // Arrange
-        every { genresPreferences.getGenres() } answers { emptyList() }
         coEvery { likedMoviesDbRepository.getLikedMoviesCount() } answers { Result.Error(DataError.Local.UNKNOWN)}
 
 
@@ -174,7 +181,6 @@ class ProfileViewModelTest {
     @Test
     fun getLikedMoviesCount_loadingStateIsSetToTrueWhileFetching() = runTest{
         // Arrange
-        every { genresPreferences.getGenres() } answers { emptyList() }
         coEvery { likedMoviesDbRepository.getLikedMoviesCount() } coAnswers {
             delay(500)
             Result.Success(0)
@@ -193,7 +199,6 @@ class ProfileViewModelTest {
     @Test
     fun getLikedMoviesCount_success_loadingStateIsSetToFalseAfterFetching() = runTest{
         // Arrange
-        every { genresPreferences.getGenres() } answers { emptyList() }
         coEvery { likedMoviesDbRepository.getLikedMoviesCount() } answers { Result.Success(0) }
 
         sut.state.test{
@@ -209,7 +214,6 @@ class ProfileViewModelTest {
     @Test
     fun getLikedMoviesCount_error_loadingStateIsSetToFalseAfterFetching() = runTest{
         // Arrange
-        every { genresPreferences.getGenres() } answers { emptyList() }
         coEvery { likedMoviesDbRepository.getLikedMoviesCount() } answers { Result.Error(DataError.Local.UNKNOWN) }
 
         sut.state.test{
@@ -218,6 +222,61 @@ class ProfileViewModelTest {
 
             // Assert
             assertThat(updatedState.isLoading).isEqualTo(false)
+            ensureAllEventsConsumed()
+        }
+    }
+
+    // GET PROFILE IMAGE STYLE
+    @Test
+    fun getProfileImageStyle_profileImageStyleExistInPreferences_profileImageStyleStateUpdatedWithCorrectProfileImageStyle() = runTest{
+        // Arrange
+        val profileImageStyle = ProfileImageStyle(23, 11)
+        every { userProfilePreferences.getProfileImageStyle() } answers { profileImageStyle }
+
+        sut.state.test{
+            // Act
+            val updatedState = awaitItem()
+
+            // Assert
+            assertThat(updatedState.profileImageStyle).isEqualTo(profileImageStyle)
+            ensureAllEventsConsumed()
+        }
+    }
+    // SAVE PROFILE IMAGE STYLE
+    @Test
+    fun saveProfileImageStyle_saveProfileImageStyleInvokedWithCorrectParams() = runTest{
+        // Arrange
+        val profileImageStyle = ProfileImageStyle(23, 11)
+
+        sut.state.test{
+            awaitItem()
+
+            ensureAllEventsConsumed()
+        }
+
+        // Act
+        sut.onAction(ProfileAction.OnSaveProfileImageStyle(profileImageStyle.imageId, profileImageStyle.backgroundColor))
+
+        verify(exactly = 1){
+            userProfilePreferences.saveProfileImageStyle(profileImageStyle)
+        }
+    }
+
+    @Test
+    fun saveProfileImageStyle_profileImageStyleStateUpdatedWithCorrectValues() = runTest{
+        // Arrange
+        val profileImageStyle = ProfileImageStyle(23, 11)
+
+        sut.state.test{
+            // Act
+            awaitItem()
+
+            // Act
+            sut.onAction(ProfileAction.OnSaveProfileImageStyle(profileImageStyle.imageId, profileImageStyle.backgroundColor))
+
+            // Assert
+            val updatedState = awaitItem()
+            assertThat(updatedState.profileImageStyle).isEqualTo(profileImageStyle)
             ensureAllEventsConsumed()
         }
     }

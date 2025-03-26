@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,6 +46,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adamdawi.popcornpicks.R
 import com.adamdawi.popcornpicks.core.data.dummy.dummyGenresList
 import com.adamdawi.popcornpicks.core.data.dummy.genreToDrawableMap
+import com.adamdawi.popcornpicks.core.data.dummy.profileImages
 import com.adamdawi.popcornpicks.core.domain.model.Genre
 import com.adamdawi.popcornpicks.core.presentation.theme.DividerGrey
 import com.adamdawi.popcornpicks.core.presentation.theme.ImageRed
@@ -136,6 +138,7 @@ private fun ProfileScreenContent(
                     ProfileImageEditContent(
                         modifier = Modifier.fillMaxSize(),
                         onSaveClick = { pickedColor, pickedImageId ->
+                            onAction(ProfileAction.OnSaveProfileImageStyle(pickedImageId, pickedColor.toArgb()))
                             showPopup.value = false
                         },
                         onCancelClick = {
@@ -146,10 +149,11 @@ private fun ProfileScreenContent(
                 Spacer(modifier = Modifier.height(14.dp))
                 ProfileImage(
                     modifier = Modifier.size(150.dp),
-                    backgroundColor = ImageRed,
+                    backgroundColor = Color(state.profileImageStyle?.backgroundColor ?: ImageRed.toArgb()),
                     onClick = {
                         showPopup.value = true
-                    }
+                    },
+                    imageId = state.profileImageStyle?.imageId ?: profileImages[0]
                 )
                 Spacer(modifier = Modifier.height(14.dp))
                 Text(
