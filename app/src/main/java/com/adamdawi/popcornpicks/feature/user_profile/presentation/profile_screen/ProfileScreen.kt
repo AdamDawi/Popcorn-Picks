@@ -62,6 +62,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ProfileScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToLikedMoviesScreen: () -> Unit,
     viewModel: ProfileViewModel = koinViewModel<ProfileViewModel>()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -74,6 +75,9 @@ fun ProfileScreen(
                     when (action) {
                         ProfileAction.OnBackClicked -> {
                             onNavigateBack()
+                        }
+                        ProfileAction.OnNavigateToLikedMovies -> {
+                            onNavigateToLikedMoviesScreen()
                         }
                         else -> viewModel.onAction(action = action)
                     }
@@ -172,7 +176,8 @@ private fun ProfileScreenContent(
                     color = DividerGrey.copy(alpha = .6f)
                 )
                 MoviesSection(
-                    likedMoviesCount = state.likedMoviesCount
+                    likedMoviesCount = state.likedMoviesCount,
+                    onAction = onAction
                 )
             }
         }
@@ -215,7 +220,8 @@ private fun GenresSection(
 
 @Composable
 private fun MoviesSection(
-    likedMoviesCount: Int?
+    likedMoviesCount: Int?,
+    onAction: (ProfileAction) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -223,7 +229,7 @@ private fun MoviesSection(
             .padding(vertical = 8.dp)
             .clip(RoundedCornerShape(16.dp))
             .clickable {
-
+                onAction(ProfileAction.OnNavigateToLikedMovies)
             }
             .padding(horizontal = 8.dp)
     ) {

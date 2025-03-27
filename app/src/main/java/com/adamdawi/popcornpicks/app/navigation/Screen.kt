@@ -10,4 +10,5 @@ sealed class Screen(val route: String) {
     data object MovieDetails: Screen("movie_details_screen/{$MOVIE_ID}"){
         fun passMovieId(movieId: String) = "movie_details_screen/$movieId"
     }
+    data object LikedMoviesScreen: Screen("liked_movies_screen")
 }

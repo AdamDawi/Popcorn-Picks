@@ -27,7 +27,6 @@ class ProfileViewModel(
     private val _state = MutableStateFlow(ProfileState())
     val state = _state.onStart {
         getProfileImageStyle()
-
         getLikedMoviesCount()
         getGenres()
     }.stateIn(

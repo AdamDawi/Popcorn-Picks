@@ -13,6 +13,7 @@ import com.adamdawi.popcornpicks.feature.movie_details.presentation.di.movieDeta
 import com.adamdawi.popcornpicks.feature.onboarding.data.di.onboardingDataModule
 import com.adamdawi.popcornpicks.feature.recommendations.data.di.recommendationsDataModule
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.di.recommendationsViewModelModule
+import com.adamdawi.popcornpicks.feature.user_liked_movies.presentation.di.likedMoviesViewModelModule
 import com.adamdawi.popcornpicks.feature.user_profile.data.di.profileDataModule
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.di.profileViewModelModule
 
@@ -35,7 +36,8 @@ class MyApplication: Application() {
                 movieDetailsDataModule,
                 movieDetailsViewModelModule,
                 profileDataModule,
-                profileViewModelModule
+                profileViewModelModule,
+                likedMoviesViewModelModule
             )
         }
 

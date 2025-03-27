@@ -13,6 +13,7 @@ import com.adamdawi.popcornpicks.feature.movie_details.presentation.movie_detail
 import com.adamdawi.popcornpicks.feature.onboarding.presentation.genres_choose_screen.GenresScreen
 import com.adamdawi.popcornpicks.feature.onboarding.presentation.movie_choose_screen.MovieChooseScreen
 import com.adamdawi.popcornpicks.feature.recommendations.presentation.recommendations_screen.RecommendationsScreen
+import com.adamdawi.popcornpicks.feature.user_liked_movies.presentation.liked_movies_screen.LikedMoviesScreen
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.ProfileScreen
 import org.koin.compose.koinInject
 
@@ -109,6 +110,9 @@ fun Navigation(
             ProfileScreen(
                 onNavigateBack = {
                     navController.navigateUp()
+                },
+                onNavigateToLikedMoviesScreen = {
+                    navController.navigate(Screen.LikedMoviesScreen.route)
                 }
             )
         }
@@ -125,6 +129,9 @@ fun Navigation(
                     navController.navigateUp()
                 }
             )
+        }
+        composable(Screen.LikedMoviesScreen.route){
+            LikedMoviesScreen()
         }
     }
 }
