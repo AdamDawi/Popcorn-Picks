@@ -18,10 +18,11 @@ class PopupBoxTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun popupBox_showPopupIsTrue_popupBoxIsDisplayed() {
+    fun popupDialog_showPopupIsTrue_popupDialogIsDisplayed() {
         composeTestRule.setContent {
-            PopupBox(
-                showPopup = true
+            PopupDialog(
+                showPopup = true,
+                onDismiss = {}
             ){}
         }
 
@@ -29,10 +30,11 @@ class PopupBoxTest {
     }
 
     @Test
-    fun popupBox_showPopupIsFalse_popupBoxIsNotDisplayed() {
+    fun popupDialog_showPopupIsFalse_popupDialogIsNotDisplayed() {
         composeTestRule.setContent {
-            PopupBox(
-                showPopup = false
+            PopupDialog(
+                showPopup = false,
+                onDismiss = {}
             ){}
         }
 
@@ -41,10 +43,11 @@ class PopupBoxTest {
 
 
     @Test
-    fun popupBox_popupBoxContentIsNotEmpty_popupBoxContentDisplayedCorrectly() {
+    fun popupDialog_popupDialogContentIsNotEmpty_popupDialogContentDisplayedCorrectly() {
         composeTestRule.setContent {
-            PopupBox(
-                showPopup = true
+            PopupDialog(
+                showPopup = true,
+                onDismiss = {}
             ){
                 Text(
                     modifier = Modifier.testTag(POPUP_BOX_CONTENT),

@@ -2,7 +2,6 @@
 
 package com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -54,7 +53,7 @@ import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.ui.LoadingScreen
 import com.adamdawi.popcornpicks.core.presentation.ui.PopcornPicksTopAppBar
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.ImageLabelChip
-import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.PopupBox
+import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.PopupDialog
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.ProfileImage
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.ProfileImageEditContent
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen.components.SmartFlowRow
@@ -93,13 +92,6 @@ private fun ProfileScreenContent(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val showPopup = remember { mutableStateOf(false) }
-    BackHandler {
-        if(showPopup.value){
-            showPopup.value = false
-        }else{
-            onAction(ProfileAction.OnBackClicked)
-        }
-    }
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -132,8 +124,9 @@ private fun ProfileScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
-                PopupBox(
-                    showPopup = showPopup.value
+                PopupDialog(
+                    showPopup = showPopup.value,
+                    onDismiss = { showPopup.value = false }
                 ) {
                     ProfileImageEditContent(
                         modifier = Modifier.fillMaxSize(),
@@ -143,7 +136,8 @@ private fun ProfileScreenContent(
                         },
                         onCancelClick = {
                             showPopup.value = false
-                        }
+                        },
+                        state.profileImageStyle?.imageId ?: profileImages[0]
                     )
                 }
                 Spacer(modifier = Modifier.height(14.dp))

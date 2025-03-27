@@ -49,11 +49,12 @@ import io.mhssn.colorpicker.ColorPickerType
 fun ProfileImageEditContent(
     modifier: Modifier = Modifier,
     onSaveClick: (Color, Int) -> Unit,
-    onCancelClick: () -> Unit
+    onCancelClick: () -> Unit,
+    userProfileImageId: Int
 ) {
     //TODO make tests for this composable
     val pickedColor = remember { mutableStateOf(Color.White) }
-    val selectedProfileImageId = remember { mutableIntStateOf(profileImages[0]) }
+    val selectedProfileImageId = remember { mutableIntStateOf(userProfileImageId) }
 
     Column(
         modifier = modifier
@@ -61,7 +62,7 @@ fun ProfileImageEditContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Spacer(modifier = Modifier.padding(top = 24.dp))
+        Spacer(modifier = Modifier.padding(top = 16.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -171,7 +172,8 @@ private fun ProfileImageEditContentPreview() {
     PopcornPicksTheme {
         ProfileImageEditContent(
             onSaveClick = {_, _ ->},
-            onCancelClick = {}
+            onCancelClick = {},
+            userProfileImageId = profileImages[0]
         )
     }
 }
