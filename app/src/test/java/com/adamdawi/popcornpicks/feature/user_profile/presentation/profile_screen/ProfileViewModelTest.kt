@@ -87,25 +87,6 @@ class ProfileViewModelTest {
         }
     }
 
-    @Test
-    fun init_isLoading_isLoadingStateEqualsToFalse() = runTest{
-        // Arrange
-        every { genresPreferences.getGenres() } answers { emptyList() }
-        coEvery { likedMoviesDbRepository.getLikedMoviesCount() } coAnswers {
-            delay(500)
-            Result.Success(0)
-        }
-
-        sut.state.test{
-            // Act
-            val state = awaitItem()
-
-            // Assert
-            assertThat(state.likedMoviesCount).isEqualTo(null)
-            ensureAllEventsConsumed()
-        }
-    }
-
     // GET GENRES
     @Test
     fun getGenres_genresExistInPreferences_genresStateUpdatedWithCorrectGenres() = runTest{

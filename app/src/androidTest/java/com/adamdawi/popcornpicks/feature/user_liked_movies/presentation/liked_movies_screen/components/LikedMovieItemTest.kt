@@ -15,7 +15,6 @@ import org.junit.Rule
 import org.junit.Test
 
 class LikedMovieItemTest {
-
     private val likedMovieItem = LikedMovie(
         id = 1,
         title = "Spiderman",

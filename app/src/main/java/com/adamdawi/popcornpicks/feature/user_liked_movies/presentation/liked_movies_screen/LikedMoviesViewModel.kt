@@ -33,7 +33,6 @@ class LikedMoviesViewModel(
             else ->{}
         }
     }
-
     private fun getLikedMovies(){
         _state.update {
             it.copy(isLoading = true)
