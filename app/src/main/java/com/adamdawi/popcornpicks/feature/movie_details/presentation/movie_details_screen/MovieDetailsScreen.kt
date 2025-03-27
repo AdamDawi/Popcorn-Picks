@@ -1,7 +1,6 @@
 package com.adamdawi.popcornpicks.feature.movie_details.presentation.movie_details_screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -49,11 +47,11 @@ import coil.compose.AsyncImage
 import com.adamdawi.popcornpicks.R
 import com.adamdawi.popcornpicks.core.data.dummy.dummyDetailedMovie
 import com.adamdawi.popcornpicks.core.domain.util.Constants
-import com.adamdawi.popcornpicks.core.presentation.theme.Grey
 import com.adamdawi.popcornpicks.core.presentation.theme.LightGrey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.ui.ErrorScreen
 import com.adamdawi.popcornpicks.core.presentation.ui.LoadingScreen
+import com.adamdawi.popcornpicks.core.presentation.ui.PosterImage
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.formatRuntime
 import com.adamdawi.popcornpicks.core.presentation.ui.shimmerBrush
 import com.adamdawi.popcornpicks.feature.movie_details.domain.DetailedMovie
@@ -195,6 +193,9 @@ private fun PosterWithInfoSection(
             horizontalArrangement = Arrangement.Center
         ) {
             PosterImage(
+                modifier = Modifier
+                    .width(POSTER_WIDTH)
+                    .height(POSTER_HEIGHT),
                 posterUrl = movie.poster.toString()
             )
             Spacer(
@@ -207,28 +208,6 @@ private fun PosterWithInfoSection(
             )
         }
     }
-}
-
-@Composable
-private fun PosterImage(
-    modifier: Modifier = Modifier,
-    posterUrl: String
-) {
-    val showShimmer = remember { mutableStateOf(true) }
-    AsyncImage(
-        modifier = modifier
-            .width(POSTER_WIDTH)
-            .height(POSTER_HEIGHT)
-            .clip(RoundedCornerShape(6.dp))
-            .border(1.dp, Grey, RoundedCornerShape(6.dp))
-            .background(shimmerBrush(showShimmer = showShimmer.value)),
-        model = Constants.Network.BASE_IMAGE_URL + posterUrl,
-        contentDescription = "Movie poster",
-        error = painterResource(R.drawable.no_poster),
-        onError = {showShimmer.value = false},
-        onSuccess = {showShimmer.value = false},
-        contentScale = ContentScale.Crop
-    )
 }
 
 @Composable

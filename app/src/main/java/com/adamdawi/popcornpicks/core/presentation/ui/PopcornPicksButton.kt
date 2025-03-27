@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.core.presentation
+package com.adamdawi.popcornpicks.core.presentation.ui
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button

@@ -4,6 +4,7 @@ import com.adamdawi.popcornpicks.core.domain.model.Genre
 import com.adamdawi.popcornpicks.core.domain.model.Movie
 import com.adamdawi.popcornpicks.feature.movie_details.domain.DetailedMovie
 import com.adamdawi.popcornpicks.R
+import com.adamdawi.popcornpicks.core.domain.model.LikedMovie
 
 val dummyGenresList = listOf(
     Genre(id = 28, name = "Action"),
@@ -101,3 +102,19 @@ val selectedMovies: List<Movie> = listOf(
     dummyMovie.copy(id = 6),
     dummyMovie.copy(id = 9)
 )
+
+val dummyLikedMovie = LikedMovie(
+    id = 1,
+    title = "Spider-Man: No Way Home",
+    poster = "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+    genres = listOf(
+        Genre(id = 28, name = "Action"),
+        Genre(id = 12, name = "Adventure"),
+        Genre(id = 878, name = "Science Fiction")
+    ),
+    releaseDate = "2021-12-15",
+    voteAverage = 7.6,
+    nextPage = 1
+)
+
+val dummyLikedMoviesList = List(20) { dummyLikedMovie.copy(id = it) }

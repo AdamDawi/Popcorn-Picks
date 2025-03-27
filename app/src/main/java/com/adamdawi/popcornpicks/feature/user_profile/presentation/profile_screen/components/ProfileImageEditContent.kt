@@ -37,7 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.adamdawi.popcornpicks.core.data.dummy.profileImages
-import com.adamdawi.popcornpicks.core.presentation.PopcornPicksButton
+import com.adamdawi.popcornpicks.core.presentation.ui.PopcornPicksButton
 import com.adamdawi.popcornpicks.core.presentation.theme.Blue
 import com.adamdawi.popcornpicks.core.presentation.theme.Grey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme

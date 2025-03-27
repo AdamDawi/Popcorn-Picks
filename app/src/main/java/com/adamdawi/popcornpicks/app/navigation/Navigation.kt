@@ -131,7 +131,11 @@ fun Navigation(
             )
         }
         composable(Screen.LikedMoviesScreen.route){
-            LikedMoviesScreen()
+            LikedMoviesScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                }
+            )
         }
     }
 }
