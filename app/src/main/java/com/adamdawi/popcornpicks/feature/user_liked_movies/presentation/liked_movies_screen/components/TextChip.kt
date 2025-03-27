@@ -9,11 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.TEXT_CHIP
 import com.adamdawi.popcornpicks.core.presentation.theme.Grey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 
@@ -24,6 +26,7 @@ fun TextChip(
 ) {
     Box(
         modifier = modifier
+            .testTag(TEXT_CHIP)
             .border(1.dp, Grey, RoundedCornerShape(14.dp)),
         contentAlignment = Alignment.Center
     ){

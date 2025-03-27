@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -30,9 +31,12 @@ import androidx.compose.ui.unit.sp
 import com.adamdawi.popcornpicks.R
 import com.adamdawi.popcornpicks.core.data.dummy.dummyLikedMovie
 import com.adamdawi.popcornpicks.core.domain.model.LikedMovie
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.LIKED_MOVIE_ITEM
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.theme.Yellow
 import com.adamdawi.popcornpicks.core.presentation.ui.PosterImage
+import com.adamdawi.popcornpicks.feature.user_liked_movies.presentation.liked_movies_screen.components.LikedMovieItemConstants.POSTER_HEIGHT
+import com.adamdawi.popcornpicks.feature.user_liked_movies.presentation.liked_movies_screen.components.LikedMovieItemConstants.POSTER_WIDTH
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -40,15 +44,15 @@ fun LikedMovieItem(
     modifier: Modifier = Modifier,
     movie: LikedMovie
 ) {
-    //TODO make tests for this composable
     Row(
         modifier = modifier
-            .height(180.dp)
+            .testTag(LIKED_MOVIE_ITEM)
+            .height(POSTER_HEIGHT)
     ) {
         PosterImage(
             modifier = Modifier
-                .height(180.dp)
-                .width(120.dp),
+                .height(POSTER_HEIGHT)
+                .width(POSTER_WIDTH),
             posterUrl = movie.poster.toString()
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -110,6 +114,11 @@ fun LikedMovieItem(
             }
         }
     }
+}
+
+private object LikedMovieItemConstants {
+    val POSTER_HEIGHT = 180.dp
+    val POSTER_WIDTH = 120.dp
 }
 
 @Preview

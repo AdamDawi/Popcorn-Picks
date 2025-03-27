@@ -41,5 +41,7 @@ object Constants {
         const val EDIT_ICON = "edit_icon"
         const val POPUP_BOX = "popup_box"
         const val POPUP_BOX_CONTENT = "popup_box_content"
+        const val TEXT_CHIP = "text_chip"
+        const val LIKED_MOVIE_ITEM = "liked_movie_item"
     }
 }

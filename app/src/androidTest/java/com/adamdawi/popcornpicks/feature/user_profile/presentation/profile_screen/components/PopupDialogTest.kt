@@ -12,7 +12,7 @@ import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.POPUP_BOX_CONT
 import org.junit.Rule
 import org.junit.Test
 
-class PopupBoxTest {
+class PopupDialogTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
