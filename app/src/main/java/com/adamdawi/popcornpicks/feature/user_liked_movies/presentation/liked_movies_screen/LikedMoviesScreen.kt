@@ -28,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.adamdawi.popcornpicks.core.data.dummy.dummyLikedMoviesList
-import com.adamdawi.popcornpicks.core.presentation.theme.Grey
+import com.adamdawi.popcornpicks.core.presentation.theme.DividerGrey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.ui.PopcornPicksTopAppBar
 import com.adamdawi.popcornpicks.feature.user_liked_movies.presentation.liked_movies_screen.components.LikedMovieItem
@@ -88,7 +88,7 @@ private fun LikedMoviesContent(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Black)
-                .padding(horizontal = 32.dp)
+                .padding(horizontal = 32.dp, vertical = 8.dp)
                 .padding(scaffoldPadding),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -99,7 +99,7 @@ private fun LikedMoviesContent(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     if(index != state.movies.size-1)
-                        HorizontalDivider(thickness = 2.dp, color = Grey)
+                        HorizontalDivider(thickness = 2.dp, color = DividerGrey.copy(alpha = .6f))
                 }
             }
         }

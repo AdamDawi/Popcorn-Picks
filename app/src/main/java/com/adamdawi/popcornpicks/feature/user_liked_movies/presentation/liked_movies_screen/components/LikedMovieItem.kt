@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
@@ -67,7 +67,7 @@ fun LikedMovieItem(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 FlowRow(
-                    maxLines = 4,
+                    maxLines = 3,
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
@@ -83,6 +83,7 @@ fun LikedMovieItem(
             }
             Row(
                 modifier = Modifier
+                    .padding(bottom = 4.dp)
                     .height(16.dp)
                     .align(Alignment.BottomStart),
                 verticalAlignment = Alignment.CenterVertically,
@@ -101,8 +102,7 @@ fun LikedMovieItem(
                 Spacer(modifier = Modifier.width(6.dp))
                 Icon(
                     modifier = Modifier
-                        .size(16.dp)
-                        .aspectRatio(1f),
+                        .size(16.dp),
                     painter = painterResource(R.drawable.star_solid),
                     tint = Yellow,
                     contentDescription = "Star"
