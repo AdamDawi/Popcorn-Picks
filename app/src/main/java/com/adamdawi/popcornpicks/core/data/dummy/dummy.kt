@@ -113,7 +113,7 @@ val dummyLikedMovie = LikedMovie(
         Genre(id = 878, name = "Science Fiction")
     ),
     releaseDate = "2021-12-15",
-    voteAverage = 7.6,
+    voteAverage = 7.834,
     nextPage = 1
 )
 

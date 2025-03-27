@@ -11,7 +11,6 @@ import com.adamdawi.popcornpicks.core.domain.model.Genre
 import com.adamdawi.popcornpicks.core.domain.model.LikedMovie
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.LIKED_MOVIE_ITEM
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.TEXT_CHIP
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -30,10 +29,6 @@ class LikedMovieItemTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    @Before
-    fun setup(){
-
-    }
     @Test
     fun likedMovieItem_visibility_displayed(){
         composeTestRule.setContent {
@@ -91,14 +86,25 @@ class LikedMovieItemTest {
     }
 
     @Test
-    fun likedMovieItem_voteAverage_correctAverageDisplayed() {
+    fun likedMovieItem_voteAverageWithOneDecimal_averageWithOneDecimalDisplayed() {
         composeTestRule.setContent {
             LikedMovieItem(
                 movie = likedMovieItem
             )
         }
 
-        composeTestRule.onNodeWithText("7.8").assertExists().assertIsDisplayed()
+        composeTestRule.onNodeWithText("7.8", useUnmergedTree = true).assertExists().assertIsDisplayed()
+    }
+
+    @Test
+    fun likedMovieItem_voteAverageWithThreeDecimals_roundedAverageWithOneDecimalDisplayed() {
+        composeTestRule.setContent {
+            LikedMovieItem(
+                movie = likedMovieItem.copy(voteAverage = 7.874)
+            )
+        }
+
+        composeTestRule.onNodeWithText("7.9", useUnmergedTree = true).assertExists().assertIsDisplayed()
     }
 
     @Test

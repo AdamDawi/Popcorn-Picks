@@ -37,6 +37,10 @@ import com.adamdawi.popcornpicks.core.presentation.theme.Yellow
 import com.adamdawi.popcornpicks.core.presentation.ui.PosterImage
 import com.adamdawi.popcornpicks.feature.user_liked_movies.presentation.liked_movies_screen.components.LikedMovieItemConstants.POSTER_HEIGHT
 import com.adamdawi.popcornpicks.feature.user_liked_movies.presentation.liked_movies_screen.components.LikedMovieItemConstants.POSTER_WIDTH
+import java.math.RoundingMode
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -94,7 +98,9 @@ fun LikedMovieItem(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = movie.voteAverage.toString(),
+                    text = DecimalFormat("#.#", DecimalFormatSymbols(Locale.US)).apply {
+                        roundingMode = RoundingMode.HALF_UP
+                    }.format(movie.voteAverage),
                     color = Color.White,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
