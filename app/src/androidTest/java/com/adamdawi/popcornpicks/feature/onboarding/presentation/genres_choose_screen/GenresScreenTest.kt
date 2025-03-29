@@ -124,7 +124,7 @@ class GenresScreenTest{
                 )
             }
         }
-
+        composeTestRule.waitForIdle()
         val nodes = composeTestRule.onAllNodesWithTag(GENRE_CHIP)
         nodes.assertCountEquals(dummyGenresList.size)
         for(i in 0..<dummyGenresList.size){
@@ -143,7 +143,7 @@ class GenresScreenTest{
                 )
             }
         }
-
+        composeTestRule.waitForIdle()
         dummyGenresList.forEach { genre ->
             composeTestRule.onNodeWithText(genre.name).assertIsDisplayed()
         }
@@ -159,7 +159,7 @@ class GenresScreenTest{
                 )
             }
         }
-
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Continue").assertIsDisplayed().assertIsNotEnabled()
     }
 
@@ -188,8 +188,8 @@ class GenresScreenTest{
                 )
             }
         }
-
         composeTestRule.onNodeWithText("Action").performClick()
+        composeTestRule.waitForIdle()
 
         composeTestRule.onNodeWithText("Continue").assertIsDisplayed().assertIsNotEnabled()
     }
@@ -223,6 +223,7 @@ class GenresScreenTest{
 
         composeTestRule.onNodeWithText("Action").performClick()
         composeTestRule.onNodeWithText("Mystery").performClick()
+        composeTestRule.waitForIdle()
 
         composeTestRule.onNodeWithText("Continue").assertIsDisplayed().assertIsEnabled()
     }
@@ -260,6 +261,7 @@ class GenresScreenTest{
         composeTestRule.onNodeWithText("History").performClick()
         composeTestRule.onNodeWithText("Music").performClick()
         composeTestRule.onNodeWithText("Romance").performClick()
+        composeTestRule.waitForIdle()
 
         composeTestRule.onNodeWithText("Continue").assertIsDisplayed().assertIsEnabled()
     }
