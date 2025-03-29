@@ -18,7 +18,6 @@ import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.GENRE_CHIP
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.LOADING_SCREEN
 import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.Result
-import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.feature.onboarding.domain.remote.GenresRepository
 import com.google.common.truth.Truth.assertThat
@@ -33,7 +32,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import org.koin.java.KoinJavaComponent.inject
 
-class GenresScreenTest{
+class GenresScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -54,124 +53,110 @@ class GenresScreenTest{
     private val viewModel by inject<GenresViewModel>(clazz = GenresViewModel::class.java)
 
     @Before
-    fun setup(){
+    fun setup() {
         coEvery { repository.getGenres() } answers {
             Result.Success(dummyGenresList)
         }
     }
 
     @Test
-    fun genresScreen_emptyGenresList_genreChipsNotDisplayed(){
+    fun genresScreen_emptyGenresList_genreChipsNotDisplayed() {
         coEvery { repository.getGenres() } answers {
             Result.Success(emptyList())
         }
 
         composeTestRule.setContent {
-            PopcornPicksTheme {
-                GenresScreen(
-                    viewModel = viewModel,
-                    onContinueClick = {}
-                )
-            }
+            GenresScreen(
+                viewModel = viewModel,
+                onContinueClick = {}
+            )
         }
 
         composeTestRule.onAllNodesWithTag(GENRE_CHIP).assertCountEquals(0)
     }
 
     @Test
-    fun genresScreen_emptyGenresList_errorScreenDisplayed(){
+    fun genresScreen_emptyGenresList_errorScreenDisplayed() {
         coEvery { repository.getGenres() } answers {
             Result.Success(emptyList())
         }
 
         composeTestRule.setContent {
-            PopcornPicksTheme {
-                GenresScreen(
-                    viewModel = viewModel,
-                    onContinueClick = {}
-                )
-            }
+            GenresScreen(
+                viewModel = viewModel,
+                onContinueClick = {}
+            )
         }
 
-        composeTestRule.onNodeWithTag(ERROR_SCREEN).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(ERROR_SCREEN).assertExists().assertIsDisplayed()
     }
 
     @Test
-    fun genresScreen_emptyGenresList_correctErrorInErrorScreenDisplayed(){
+    fun genresScreen_emptyGenresList_correctErrorInErrorScreenDisplayed() {
         coEvery { repository.getGenres() } answers {
             Result.Success(emptyList())
         }
 
         composeTestRule.setContent {
-            PopcornPicksTheme {
-                GenresScreen(
-                    viewModel = viewModel,
-                    onContinueClick = {}
-                )
-            }
+            GenresScreen(
+                viewModel = viewModel,
+                onContinueClick = {}
+            )
         }
 
-        composeTestRule.onNodeWithText("Something went wrong").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Something went wrong").assertExists().assertIsDisplayed()
     }
 
     @Test
-    fun genresScreen_notEmptyGenresList_correctNumberOfGenreChipsDisplayed(){
+    fun genresScreen_notEmptyGenresList_correctNumberOfGenreChipsDisplayed() {
         composeTestRule.setContent {
-            PopcornPicksTheme {
-                GenresScreen(
-                    viewModel = viewModel,
-                    onContinueClick = {}
-                )
-            }
+            GenresScreen(
+                viewModel = viewModel,
+                onContinueClick = {}
+            )
         }
         composeTestRule.waitForIdle()
         val nodes = composeTestRule.onAllNodesWithTag(GENRE_CHIP)
         nodes.assertCountEquals(dummyGenresList.size)
-        for(i in 0..<dummyGenresList.size){
+        for (i in 0..<dummyGenresList.size) {
             val node = nodes[i]
-            node.assertIsDisplayed()
+            node.assertExists().assertIsDisplayed()
         }
     }
 
     @Test
-    fun genresScreen_notEmptyGenresList_correctTextInGenreChipsDisplayed(){
+    fun genresScreen_notEmptyGenresList_correctTextInGenreChipsDisplayed() {
         composeTestRule.setContent {
-            PopcornPicksTheme {
-                GenresScreen(
-                    viewModel = viewModel,
-                    onContinueClick = {}
-                )
-            }
+            GenresScreen(
+                viewModel = viewModel,
+                onContinueClick = {}
+            )
         }
         composeTestRule.waitForIdle()
         dummyGenresList.forEach { genre ->
-            composeTestRule.onNodeWithText(genre.name).assertIsDisplayed()
+            composeTestRule.onNodeWithText(genre.name).assertExists().assertIsDisplayed()
         }
     }
 
     @Test
     fun genresScreen_zeroGenresSelected_continueButtonDisabled() {
         composeTestRule.setContent {
-            PopcornPicksTheme {
-                GenresScreen(
-                    viewModel = viewModel,
-                    onContinueClick = {}
-                )
-            }
+            GenresScreen(
+                viewModel = viewModel,
+                onContinueClick = {}
+            )
         }
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Continue").assertIsDisplayed().assertIsNotEnabled()
+        composeTestRule.onNodeWithText("Continue").assertExists().assertIsDisplayed().assertIsNotEnabled()
     }
 
     @Test
     fun genresScreen_zeroGenresSelected_zeroGenresInSelectedGenresState() {
         composeTestRule.setContent {
-            PopcornPicksTheme {
-                GenresScreen(
-                    viewModel = viewModel,
-                    onContinueClick = {}
-                )
-            }
+            GenresScreen(
+                viewModel = viewModel,
+                onContinueClick = {}
+            )
         }
         composeTestRule.waitForIdle()
 
@@ -181,28 +166,24 @@ class GenresScreenTest{
     @Test
     fun genresScreen_oneGenreSelected_continueButtonDisabled() {
         composeTestRule.setContent {
-            PopcornPicksTheme {
-                GenresScreen(
-                    viewModel = viewModel,
-                    onContinueClick = {}
-                )
-            }
+            GenresScreen(
+                viewModel = viewModel,
+                onContinueClick = {}
+            )
         }
         composeTestRule.onNodeWithText("Action").performClick()
         composeTestRule.waitForIdle()
 
-        composeTestRule.onNodeWithText("Continue").assertIsDisplayed().assertIsNotEnabled()
+        composeTestRule.onNodeWithText("Continue").assertExists().assertIsDisplayed().assertIsNotEnabled()
     }
 
     @Test
     fun genresScreen_oneGenreSelected_oneGenreInSelectedGenresState() {
         composeTestRule.setContent {
-            PopcornPicksTheme {
-                GenresScreen(
-                    viewModel = viewModel,
-                    onContinueClick = {}
-                )
-            }
+            GenresScreen(
+                viewModel = viewModel,
+                onContinueClick = {}
+            )
         }
         composeTestRule.onNodeWithText("Action").performClick()
         composeTestRule.waitForIdle()
@@ -213,30 +194,26 @@ class GenresScreenTest{
     @Test
     fun genresScreen_twoGenresSelected_continueButtonEnabled() {
         composeTestRule.setContent {
-            PopcornPicksTheme {
-                GenresScreen(
-                    viewModel = viewModel,
-                    onContinueClick = {}
-                )
-            }
+            GenresScreen(
+                viewModel = viewModel,
+                onContinueClick = {}
+            )
         }
 
         composeTestRule.onNodeWithText("Action").performClick()
         composeTestRule.onNodeWithText("Mystery").performClick()
         composeTestRule.waitForIdle()
 
-        composeTestRule.onNodeWithText("Continue").assertIsDisplayed().assertIsEnabled()
+        composeTestRule.onNodeWithText("Continue").assertExists().assertIsDisplayed().assertIsEnabled()
     }
 
     @Test
     fun genresScreen_twoGenresSelected_towGenresInSelectedGenresState() {
         composeTestRule.setContent {
-            PopcornPicksTheme {
-                GenresScreen(
-                    viewModel = viewModel,
-                    onContinueClick = {}
-                )
-            }
+            GenresScreen(
+                viewModel = viewModel,
+                onContinueClick = {}
+            )
         }
         composeTestRule.onNodeWithText("Action").performClick()
         composeTestRule.onNodeWithText("Mystery").performClick()
@@ -248,12 +225,10 @@ class GenresScreenTest{
     @Test
     fun genresScreen_fiveGenresSelected_continueButtonEnabled() {
         composeTestRule.setContent {
-            PopcornPicksTheme {
-                GenresScreen(
-                    viewModel = viewModel,
-                    onContinueClick = {}
-                )
-            }
+            GenresScreen(
+                viewModel = viewModel,
+                onContinueClick = {}
+            )
         }
 
         composeTestRule.onNodeWithText("Action").performClick()
@@ -263,18 +238,16 @@ class GenresScreenTest{
         composeTestRule.onNodeWithText("Romance").performClick()
         composeTestRule.waitForIdle()
 
-        composeTestRule.onNodeWithText("Continue").assertIsDisplayed().assertIsEnabled()
+        composeTestRule.onNodeWithText("Continue").assertExists().assertIsDisplayed().assertIsEnabled()
     }
 
     @Test
     fun genresScreen_fiveGenresSelected_fiveGenresInSelectedGenresState() {
         composeTestRule.setContent {
-            PopcornPicksTheme {
-                GenresScreen(
-                    viewModel = viewModel,
-                    onContinueClick = {}
-                )
-            }
+            GenresScreen(
+                viewModel = viewModel,
+                onContinueClick = {}
+            )
         }
 
         composeTestRule.onNodeWithText("Action").performClick()
@@ -291,12 +264,10 @@ class GenresScreenTest{
     @Test
     fun genresScreen_fiveGenresSelected_selectedGenresStateUpdatedWithCorrectGenres() {
         composeTestRule.setContent {
-            PopcornPicksTheme {
-                GenresScreen(
-                    viewModel = viewModel,
-                    onContinueClick = {}
-                )
-            }
+            GenresScreen(
+                viewModel = viewModel,
+                onContinueClick = {}
+            )
         }
 
         val listOfGenres = listOf(
@@ -316,53 +287,47 @@ class GenresScreenTest{
     }
 
     @Test
-    fun genresScreen_isLoading_loadingScreenDisplayed(){
+    fun genresScreen_isLoading_loadingScreenDisplayed() {
         coEvery { repository.getGenres() } coAnswers {
             delay(500)
             Result.Error(DataError.Network.UNKNOWN)
         }
 
         composeTestRule.setContent {
-            PopcornPicksTheme {
-                GenresScreen(
-                    viewModel = viewModel,
-                    onContinueClick = {}
-                )
-            }
+            GenresScreen(
+                viewModel = viewModel,
+                onContinueClick = {}
+            )
         }
 
-        composeTestRule.onNodeWithTag(LOADING_SCREEN).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(LOADING_SCREEN).assertExists().assertIsDisplayed()
     }
 
     @Test
-    fun genresScreen_error_errorScreenDisplayed(){
+    fun genresScreen_error_errorScreenDisplayed() {
         coEvery { repository.getGenres() } answers { Result.Error(DataError.Network.UNKNOWN) }
 
         composeTestRule.setContent {
-            PopcornPicksTheme {
-                GenresScreen(
-                    viewModel = viewModel,
-                    onContinueClick = {}
-                )
-            }
+            GenresScreen(
+                viewModel = viewModel,
+                onContinueClick = {}
+            )
         }
 
-        composeTestRule.onNodeWithTag(ERROR_SCREEN).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(ERROR_SCREEN).assertExists().assertIsDisplayed()
     }
 
     @Test
-    fun genresScreen_error_correctErrorInErrorScreenDisplayed(){
+    fun genresScreen_error_correctErrorInErrorScreenDisplayed() {
         coEvery { repository.getGenres() } answers { Result.Error(DataError.Network.UNKNOWN) }
 
         composeTestRule.setContent {
-            PopcornPicksTheme {
-                GenresScreen(
-                    viewModel = viewModel,
-                    onContinueClick = {}
-                )
-            }
+            GenresScreen(
+                viewModel = viewModel,
+                onContinueClick = {}
+            )
         }
 
-        composeTestRule.onNodeWithText(DataError.Network.UNKNOWN.asUiText()).assertIsDisplayed()
+        composeTestRule.onNodeWithText(DataError.Network.UNKNOWN.asUiText()).assertExists().assertIsDisplayed()
     }
 }
