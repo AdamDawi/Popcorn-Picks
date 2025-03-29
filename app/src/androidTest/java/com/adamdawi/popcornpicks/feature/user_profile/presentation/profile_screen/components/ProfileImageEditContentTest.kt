@@ -24,7 +24,7 @@ class ProfileImageEditContentTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun profileImageEditContent_zeroProfileImagesPassed_oneProfileImageDisplayed() {
+    fun profileImageEditContent_noProfileImagesPassed_oneProfileImageDisplayed() {
         composeTestRule.setContent {
             ProfileImageEditContent(
                 onSaveClick = {color, id ->},
@@ -38,7 +38,6 @@ class ProfileImageEditContentTest {
 
         nodes[0].assertIsDisplayed()
     }
-
     // Four profile images should be displayed:
     // three selectable images and one for showing the user's chosen profile image.
     @Test
@@ -61,7 +60,7 @@ class ProfileImageEditContentTest {
     }
 
     @Test
-    fun profileImageEditContent_userProfileImageId_shouldDisplayTwoImagesOfUserProfileImageId() {
+    fun profileImageEditContent_userProfileImageIdSetToThirdId_twoImagesOfThirdUserProfileImageIdDisplayed() {
         composeTestRule.setContent {
             ProfileImageEditContent(
                 onSaveClick = {color, id ->},
@@ -81,7 +80,22 @@ class ProfileImageEditContentTest {
     }
 
     @Test
-    fun profileImageEditContent_selectionOfProfileImageOneTime_shouldDisplayTwoImagesOfUserProfileImageId() {
+    fun profileImageEditContent_userProfileImageIdSetToThirdId_onlyThirdUserProfileImageIdIsMarkedAsSelectedOnInit() {
+        composeTestRule.setContent {
+            ProfileImageEditContent(
+                onSaveClick = {color, id ->},
+                onCancelClick = {},
+                userProfileImageId = profileImages[2],
+                profileImages = profileImages
+            )
+        }
+
+        composeTestRule.onAllNodesWithTag(PROFILE_IMAGE).filter(hasContentDescription(PROFILE_IMAGE_SELECTED, substring = true)).assertCountEquals(1)
+        composeTestRule.onNodeWithContentDescription(PROFILE_IMAGE + profileImages[2] + PROFILE_IMAGE_SELECTED).assertExists().assertIsDisplayed()
+    }
+
+    @Test
+    fun profileImageEditContent_selectionOfProfileImageOnce_twoImagesOfSelectedUserProfileImageIdDisplayed() {
         composeTestRule.setContent {
             ProfileImageEditContent(
                 onSaveClick = {color, id ->},
@@ -103,22 +117,7 @@ class ProfileImageEditContentTest {
     }
 
     @Test
-    fun profileImageEditContent_userProfileImageId_shouldMarkOnlyThatImageAsSelectedOnInit() {
-        composeTestRule.setContent {
-            ProfileImageEditContent(
-                onSaveClick = {color, id ->},
-                onCancelClick = {},
-                userProfileImageId = profileImages[2],
-                profileImages = profileImages
-            )
-        }
-
-        composeTestRule.onAllNodesWithTag(PROFILE_IMAGE).filter(hasContentDescription(PROFILE_IMAGE_SELECTED, substring = true)).assertCountEquals(1)
-        composeTestRule.onNodeWithContentDescription(PROFILE_IMAGE + profileImages[2] + PROFILE_IMAGE_SELECTED).assertExists().assertIsDisplayed()
-    }
-
-    @Test
-    fun profileImageEditContent_selectionOfProfileImageOneTime_shouldMarkOnlyThatImageAsSelected() {
+    fun profileImageEditContent_selectionOfProfileImageOnce_onlySelectedUserProfileImageIdIsMarkedAsSelected() {
         composeTestRule.setContent {
             ProfileImageEditContent(
                 onSaveClick = {color, id ->},
@@ -135,7 +134,30 @@ class ProfileImageEditContentTest {
     }
 
     @Test
-    fun profileImageEditContent_selectionOfProfileImageTwoTimes_shouldMarkOnlyLastImageAsSelected() {
+    fun profileImageEditContent_selectionOfProfileImageTwice_twoImagesOfSelectedUserProfileImageIdDisplayed() {
+        composeTestRule.setContent {
+            ProfileImageEditContent(
+                onSaveClick = {color, id ->},
+                onCancelClick = {},
+                userProfileImageId = profileImages[0],
+                profileImages = profileImages
+            )
+        }
+
+        composeTestRule.onNodeWithContentDescription(PROFILE_IMAGE + profileImages[1], substring = true).performClick()
+        composeTestRule.onNodeWithContentDescription(PROFILE_IMAGE + profileImages[3], substring = true).performClick()
+
+        val nodes = composeTestRule.onAllNodesWithContentDescription(PROFILE_IMAGE + profileImages[3], substring = true)
+        nodes.assertCountEquals(2)
+
+        for (index in 0..1){
+            val node = nodes[index]
+            node.assertIsDisplayed()
+        }
+    }
+
+    @Test
+    fun profileImageEditContent_selectionOfProfileImageTwice_onlyLastImageIsMarkedAsSelected() {
         composeTestRule.setContent {
             ProfileImageEditContent(
                 onSaveClick = {color, id ->},
@@ -189,8 +211,8 @@ class ProfileImageEditContentTest {
     }
 
     @Test
-    fun profileImageEditContent_save_passCorrectParametersInCallback() {
-        var colorRes = Color.Black
+    fun profileImageEditContent_save_correctParametersPassedInCallback() {
+        var colorRes: Color? = null
         var imageId = 0
         composeTestRule.setContent {
             ProfileImageEditContent(
@@ -211,8 +233,8 @@ class ProfileImageEditContentTest {
     }
 
     @Test
-    fun profileImageEditContent_selectAnotherProfileImageThenSave_passCorrectParametersInCallback() {
-        var colorRes = Color.Black
+    fun profileImageEditContent_selectAnotherProfileImageThenSave_correctParametersPassedInCallback() {
+        var colorRes: Color? = null
         var imageId = 0
         composeTestRule.setContent {
             ProfileImageEditContent(
