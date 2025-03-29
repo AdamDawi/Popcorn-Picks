@@ -118,5 +118,6 @@ dependencies {
     //ui tests
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.ui.test.junit4)
+    androidTestImplementation(libs.truth)
     debugImplementation(libs.ui.test.manifest)
 }

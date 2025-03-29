@@ -13,6 +13,21 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
+      <SelectionState runConfigName="profileImageEditContent_save_performsClickAction()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="profileImageEditContent_save_passCorrectParametersInCallback()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="profileImageEditContent_selectAnotherProfileImageThenSave_passCorrectParametersInCallback()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="profileImageEditContent_userProfileImageId_shouldDisplayTwoImagesOfUserProfileImageId()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="profileImageEditContent_selectionOfProfileImageOneTime_shouldDisplayTwoImagesOfUserProfileImageId()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>

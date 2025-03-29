@@ -31,12 +31,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.adamdawi.popcornpicks.core.data.dummy.profileImages
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.PROFILE_IMAGE
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.PROFILE_IMAGE_NOT_SELECTED
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.PROFILE_IMAGE_SELECTED
 import com.adamdawi.popcornpicks.core.presentation.ui.PopcornPicksButton
 import com.adamdawi.popcornpicks.core.presentation.theme.Blue
 import com.adamdawi.popcornpicks.core.presentation.theme.Grey
@@ -50,9 +55,9 @@ fun ProfileImageEditContent(
     modifier: Modifier = Modifier,
     onSaveClick: (Color, Int) -> Unit,
     onCancelClick: () -> Unit,
-    userProfileImageId: Int
+    userProfileImageId: Int,
+    profileImages: List<Int>
 ) {
-    //TODO make tests for this composable
     val pickedColor = remember { mutableStateOf(Color.White) }
     val selectedProfileImageId = remember { mutableIntStateOf(userProfileImageId) }
 
@@ -123,7 +128,10 @@ fun ProfileImageEditContent(
                 ProfileImage(
                     modifier = Modifier
                         .weight(1f)
-                        .aspectRatio(1f),
+                        .aspectRatio(1f)
+                        .semantics{
+                            contentDescription = PROFILE_IMAGE + targetProfileImageId.toString()
+                        },
                     onClick = {},
                     imageId = targetProfileImageId,
                     backgroundColor = pickedColor.value,
@@ -153,7 +161,14 @@ fun ProfileImageEditContent(
                     modifier = Modifier
                         .weight(1f)
                         .aspectRatio(1f)
-                        .border(2.dp, color = if(profileImageId == selectedProfileImageId.intValue) Blue.copy(alpha = .5f) else Grey.copy(alpha = .5f), shape = RoundedCornerShape(2.dp)),
+                        .border(
+                            2.dp, color = if(profileImageId == selectedProfileImageId.intValue) Blue.copy(alpha = .5f)
+                            else Grey.copy(alpha = .5f), shape = RoundedCornerShape(2.dp)
+                        )
+                        .semantics{
+                            contentDescription = if(profileImageId == selectedProfileImageId.intValue) PROFILE_IMAGE + profileImageId.toString() + PROFILE_IMAGE_SELECTED
+                            else PROFILE_IMAGE + profileImageId.toString() + PROFILE_IMAGE_NOT_SELECTED
+                        },
                     backgroundColor = if(profileImageId == selectedProfileImageId.intValue) Blue.copy(alpha = 0.4f) else Grey.copy(alpha = .4f),
                     onClick = {
                         selectedProfileImageId.intValue = profileImageId
@@ -173,7 +188,8 @@ private fun ProfileImageEditContentPreview() {
         ProfileImageEditContent(
             onSaveClick = {_, _ ->},
             onCancelClick = {},
-            userProfileImageId = profileImages[0]
+            userProfileImageId = profileImages[0],
+            profileImages = profileImages
         )
     }
 }

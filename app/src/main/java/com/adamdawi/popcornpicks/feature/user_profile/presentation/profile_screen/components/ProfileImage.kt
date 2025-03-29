@@ -47,7 +47,6 @@ fun ProfileImage(
             }
             .padding(12.dp)
             .testTag(PROFILE_IMAGE)
-
     ) {
         Image(
             modifier = Modifier

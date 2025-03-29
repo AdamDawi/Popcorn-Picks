@@ -141,7 +141,8 @@ private fun ProfileScreenContent(
                         onCancelClick = {
                             showPopup.value = false
                         },
-                        state.profileImageStyle?.imageId ?: profileImages[0]
+                        userProfileImageId = state.profileImageStyle?.imageId ?: profileImages[0],
+                        profileImages = profileImages
                     )
                 }
                 Spacer(modifier = Modifier.height(14.dp))

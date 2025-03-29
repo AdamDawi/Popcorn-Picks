@@ -43,5 +43,7 @@ object Constants {
         const val POPUP_BOX_CONTENT = "popup_box_content"
         const val TEXT_CHIP = "text_chip"
         const val LIKED_MOVIE_ITEM = "liked_movie_item"
+        const val PROFILE_IMAGE_SELECTED = "Selected profile image"
+        const val PROFILE_IMAGE_NOT_SELECTED = "Not selected profile image"
     }
 }

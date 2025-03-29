@@ -15,13 +15,14 @@ import com.adamdawi.popcornpicks.core.domain.local.OnBoardingManager
 import com.adamdawi.popcornpicks.core.domain.remote.RemoteMovieRecommendationsRepository
 import com.adamdawi.popcornpicks.core.domain.util.Constants
 import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val coreDataModule = module {
-    single<HttpClient> { HttpClientFactory().build() }
+    single<HttpClient> { HttpClientFactory().build(CIO.create()) }
 
     single<SharedPreferences> {
         androidContext().getSharedPreferences(

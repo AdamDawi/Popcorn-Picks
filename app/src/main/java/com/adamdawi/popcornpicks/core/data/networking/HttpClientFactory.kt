@@ -2,7 +2,7 @@ package com.adamdawi.popcornpicks.core.data.networking
 
 import com.adamdawi.popcornpicks.BuildConfig
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
+import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
@@ -15,8 +15,8 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 class HttpClientFactory() {
-    fun build(): HttpClient {
-        return HttpClient(CIO) {
+    fun build(engine: HttpClientEngine): HttpClient {
+        return HttpClient(engine) {
             install(ContentNegotiation) {
                 json(
                     json = Json {
