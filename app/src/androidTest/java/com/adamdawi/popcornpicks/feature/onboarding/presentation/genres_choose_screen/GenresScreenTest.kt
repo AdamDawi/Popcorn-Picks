@@ -39,21 +39,26 @@ class GenresScreenTest {
     private val repository: GenresRepository = mockk(relaxed = true)
     private val genresPreferences: GenresPreferences = mockk(relaxed = true)
 
-    private val instrumentedTestModule = module {
-        factory { repository }
-        factory { genresPreferences }
-        viewModel { GenresViewModel(get(), get()) }
-    }
+//    private val instrumentedTestModule = module {
+//        factory { repository }
+//        factory { genresPreferences }
+//        viewModel { GenresViewModel(get(), get()) }
+//    }
+//
+//    @get:Rule
+//    val koinTestRule = KoinTestRule(
+//        modules = listOf(instrumentedTestModule)
+//    )
+//
+//    private val viewModel by inject<GenresViewModel>(clazz = GenresViewModel::class.java)
 
-    @get:Rule
-    val koinTestRule = KoinTestRule(
-        modules = listOf(instrumentedTestModule)
-    )
-
-    private val viewModel by inject<GenresViewModel>(clazz = GenresViewModel::class.java)
-
+    lateinit var viewModel: GenresViewModel
     @Before
     fun setup() {
+        viewModel = GenresViewModel(
+            repository,
+            genresPreferences
+        )
         coEvery { repository.getGenres() } answers {
             Result.Success(dummyGenresList)
         }
