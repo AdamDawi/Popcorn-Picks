@@ -23,7 +23,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.adamdawi.popcornpicks.core.InstrumentationTestRunner"
     }
 
     buildTypes {
@@ -55,6 +55,7 @@ android {
         compose = true
         buildConfig = true
     }
+    packaging { resources.excludes.add("META-INF/*") }
 }
 
 dependencies {
@@ -119,5 +120,6 @@ dependencies {
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.ui.test.junit4)
     androidTestImplementation(libs.truth)
+    androidTestImplementation(libs.mockk.android)
     debugImplementation(libs.ui.test.manifest)
 }

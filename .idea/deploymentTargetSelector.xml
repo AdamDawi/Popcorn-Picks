@@ -13,19 +13,19 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="profileImageEditContent_selectAnotherProfileImageThenSave_passCorrectParametersInCallback()">
+      <SelectionState runConfigName="genresScreen_twoGenresSelected_towGenresInSelectedGenresState()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="profileImageEditContent_userProfileImageId_shouldDisplayTwoImagesOfUserProfileImageId()">
+      <SelectionState runConfigName="genresScreen_fiveGenresSelected_fiveGenresInSelectedGenresState()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="profileImageEditContent_selectionOfProfileImageOneTime_shouldDisplayTwoImagesOfUserProfileImageId()">
+      <SelectionState runConfigName="genresScreen_fiveGenresSelected_genresStateUpdatedWithCorrectGenres()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ProfileImageEditContentTest">
+      <SelectionState runConfigName="genresScreen_isLoading_loadingScreenDisplayed()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="profileImageEditContent_selectionOfProfileImageTwice_twoImagesOfSelectedUserProfileImageIdDisplayed()">
+      <SelectionState runConfigName="genresScreen_isLoading_loadingScreenThenErrorScreenDisplayed()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
