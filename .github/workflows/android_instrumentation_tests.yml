@@ -34,4 +34,4 @@ jobs:
         with:
           arg-spec: 'android-device.yml:android-pixel-4'
         env:
-          SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
+          SERVICE_ACCOUNT: ${{ secrets.FIREBASE_TEST_LAB_SERVICE_ACCOUNT }}
