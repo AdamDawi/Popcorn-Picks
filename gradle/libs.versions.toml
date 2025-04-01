@@ -1,6 +1,7 @@
 [versions]
 agp = "8.3.2"
 colorpickerVersion = "1.0.0"
+firebaseBom = "33.12.0"
 gson = "2.11.0"
 hamcrest = "2.2"
 kotlin = "2.0.0"
@@ -30,6 +31,7 @@ uiTestManifest = "1.7.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 hamcrest = { module = "org.hamcrest:hamcrest", version.ref = "hamcrest" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

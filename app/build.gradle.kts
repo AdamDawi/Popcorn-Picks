@@ -24,7 +24,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.adamdawi.popcornpicks.core.InstrumentationTestRunner"
     }
 
     buildTypes {
@@ -109,7 +109,7 @@ dependencies {
     //color picker
     implementation(libs.mhssn.colorpicker)
     //firebase
-    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
+    implementation(platform(libs.firebase.bom))
 
     //unit tests
     testImplementation(libs.androidx.core)
