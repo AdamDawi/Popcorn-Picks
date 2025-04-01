@@ -63,6 +63,13 @@
 
 - **Compose UI testing** - Used to UI testing and end-to-end testing.
 
+### ✅CI and Testing:
+- **Continuous integration (CI)** ensures unit tests are automatically executed on each push and pull request.
+- **Unit Tests:**
+Unit tests are executed on GitHub-hosted Ubuntu containers, ensuring that each code change is automatically tested in a clean, consistent environment during the CI process.
+
+- **Instrumental Tests on Firebase Test Lab:**
+Before running the instrumentation tests on Firebase Test Lab, the project must first be built. This includes checking out the repository, setting up the necessary files (like `google-services.json`), and configuring the environment, including JDK 17. Once the project is built, the Android Test APK is generated and deployed. After that, the tests are executed on Firebase Test Lab using real production devices, ensuring that the app performs smoothly across a wide range of devices. Test results and logs are readily accessible via the Firebase Console for detailed analysis and debugging.
 
 ## Here are some overview pictures:
 🚧 Work in Progress...
