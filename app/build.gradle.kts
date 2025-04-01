@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("com.google.devtools.ksp")
     id("kotlinx-serialization")
+    id("com.google.gms.google-services")
     alias(libs.plugins.kotlin.compose)
 }
 
@@ -107,6 +108,8 @@ dependencies {
     testImplementation(libs.slf4j.simple)
     //color picker
     implementation(libs.mhssn.colorpicker)
+    //firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
 
     //unit tests
     testImplementation(libs.androidx.core)

@@ -6,30 +6,17 @@ on:
 
 jobs:
   test:
-    name: Run Instrumentation Tests
-    runs-on: macos-13 # macos-latest refers to M1-Macs now. macos-13 refers to the latest macos with Intel CPUs
-
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: Build App with Gradle
+        run: ./gradlew build
 
-      - name: Set up JDK 17 with Gradle cache
-        uses: actions/setup-java@v4
+      - name: Build Android Test APK
+        run: ./gradlew assembleAndroidTest
+
+      - name: Run tests on Firebase Test Lab
+        uses: asadmansr/Firebase-Test-Lab-Action@v1.0
         with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'gradle'
-
-      - name: Grant execute permission for Gradle
-        run: chmod +x gradlew
-#
-#      - name: Install dependencies
-#        run: ./gradlew dependencies
-
-      - name: Run Instrumentation Tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 27
-#          target: google_apis
-#          arch: x86_64
-          script: ./gradlew connectedCheck
+          arg-spec: 'android-device.yml:android-pixel-4'
+        env:
+          SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}

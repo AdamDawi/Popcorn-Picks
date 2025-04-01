@@ -22,10 +22,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.adamdawi.popcornpicks" />
+                  <option name="mobileSdkAppId" value="1:18367090625:android:887fa82d6e97de94e66940" />
+                  <option name="projectId" value="popcorn-picks-b627a" />
+                  <option name="projectNumber" value="18367090625" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

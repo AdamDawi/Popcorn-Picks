@@ -4,7 +4,6 @@ import com.adamdawi.popcornpicks.core.data.local.entity.LikedMovieEntity
 import com.adamdawi.popcornpicks.core.domain.model.Movie
 import com.adamdawi.popcornpicks.feature.recommendations.data.local.entity.RecommendedMovieEntity
 
-
 fun Movie.toLikedMovieEntity(): LikedMovieEntity {
     return LikedMovieEntity(
         id = id,
