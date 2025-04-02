@@ -118,14 +118,13 @@ git clone https://github.com/AdamDawi/Popcorn-Picks
 ```
 2. Open the project in Android Studio.
 3. Be sure the versions in gradle are same as on github
-4. Get the [TMBD API Key](https://developer.themoviedb.org/reference/intro/getting-started)
-5. **TMDB API Key:**
+4. **TMDB API Key:**
    To fetch movie data from the TMDB API, you'll need an API key. Create an account on [TMDB](https://developer.themoviedb.org/reference/intro/getting-started)
    Then, add the API key to your local gradle.properties file as follows:
 ```properties
 API_KEY="your_api_key_here"
 ```
-6. **google-services.json:**
+5. **google-services.json:**
    1. **Create a Firebase Project:**
    
       Go to the [Firebase Console](https://console.firebase.google.com/), and either create a new project or use an existing one.
