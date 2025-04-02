@@ -72,13 +72,15 @@ Unit tests are executed on GitHub-hosted Ubuntu containers, ensuring that each c
 Before running the instrumentation tests on Firebase Test Lab, the project must first be built. This includes checking out the repository, setting up the necessary files (like `google-services.json`), and configuring the environment, including JDK 17. Once the project is built, the Android Test APK is generated and deployed. After that, the tests are executed on Firebase Test Lab using real production devices, ensuring that the app performs smoothly across a wide range of devices. Test results and logs are readily accessible via the Firebase Console for detailed analysis and debugging.
 
 ## Here are some overview pictures:
-🚧 Work in Progress...
 
 ![Image](https://github.com/user-attachments/assets/1676f730-e62d-4e93-9aee-60265e04f7ed)
 ![Image](https://github.com/user-attachments/assets/2486c92b-f68a-4efa-b51b-59301c730805)
 ![Image](https://github.com/user-attachments/assets/c9afd63e-6b73-4b3d-9429-61e5a0d8ca4f)
 ![Image](https://github.com/user-attachments/assets/e736c823-5d32-41a1-93de-cc54fa15a4e2)
 ![Image](https://github.com/user-attachments/assets/9a44335a-48d9-49e4-a62e-27a178e737ca)
+![Image](https://github.com/user-attachments/assets/5eb8df03-a464-4d7c-b239-20194cf79463)
+![Image](https://github.com/user-attachments/assets/04dbdb49-2a5b-4eff-aebc-dbd43d4cf784)
+![Image](https://github.com/user-attachments/assets/2cc9b381-1538-45f0-8a08-f1c3e8d2ef65)
 
 ## Animations:
 🚧 Work in Progress...
@@ -87,6 +89,7 @@ Before running the instrumentation tests on Firebase Test Lab, the project must 
 ![Image](https://github.com/user-attachments/assets/00bdc138-5788-4269-8a4d-646e365f02b6)
 ![Image](https://github.com/user-attachments/assets/371136cb-db7e-4363-b293-69936e5ebda2)
 ![Image](https://github.com/user-attachments/assets/544948c1-1072-4d5f-831d-06751336f8d4)
+![Image](https://github.com/user-attachments/assets/51ce65ab-76bc-485f-9aba-bf3f46abdda8)
 
 ## 📈 Recommendation System Diagram
 Below is a visual representation of how the recommendation system works. The diagram is divided into three main sections: Onboarding, Recommendations, and User Interactions. To make it easier to follow, the full diagram is shown first, followed by a closer look at each section.
