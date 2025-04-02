@@ -120,6 +120,9 @@ git clone https://github.com/AdamDawi/Popcorn-Picks
 ```bash
 API_KEY="your_api_key_here"
 ```
+6. Download your `google-services.json` file from Firebase and place it in the `app/` directory.
+- This file is only required to run the project locally.
+- Google Services are used only for Firebase Test Lab, which runs automatically during push and pull requests using my Firebase project.
 
 ## Requirements
 Minimum version: Android 7.0 (API level 24) or later📱
