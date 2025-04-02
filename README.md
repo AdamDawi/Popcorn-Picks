@@ -119,13 +119,26 @@ git clone https://github.com/AdamDawi/Popcorn-Picks
 2. Open the project in Android Studio.
 3. Be sure the versions in gradle are same as on github
 4. Get the [TMBD API Key](https://developer.themoviedb.org/reference/intro/getting-started)
-5. Add the API key to your local `gradle.properties` file:
-```bash
+5. **TMDB API Key:**
+   To fetch movie data from the TMDB API, you'll need an API key. Create an account on [TMDB](https://developer.themoviedb.org/reference/intro/getting-started)
+   Then, add the API key to your local gradle.properties file as follows:
+```properties
 API_KEY="your_api_key_here"
 ```
-6. Download your `google-services.json` file from Firebase and place it in the `app/` directory.
-- This file is only required to run the project locally.
-- Google Services are used only for Firebase Test Lab, which runs automatically during push and pull requests using my Firebase project.
+6. **google-services.json:**
+   1. **Create a Firebase Project:**
+   
+      Go to the [Firebase Console](https://console.firebase.google.com/), and either create a new project or use an existing one.
+   2. **Android Project to Firebase:**
+   
+      In the Firebase Console, click on your project and then navigate to **Project Settings > General**.
+      Under **Your apps**, click on the Android icon to add an Android app to your Firebase project.
+   3. **Download the `google-services.json` File:**
+   
+      After registering your app with Firebase, you’ll be able to download the `google-services.json` file.
+      Download this file and place it in the `app/` directory of the project. This file is only required to run the project locally.
+>Note: Firebase services are used for running instrumentation tests in Firebase Test Lab, which is triggered automatically during push and pull requests using my Firebase project.
+
 
 ## 🤝 Contributing
 Any kind of positive contribution is welcome!

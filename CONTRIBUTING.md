@@ -22,7 +22,15 @@ Before running the project locally, make sure you have set up the following:
 API_KEY="your_api_key_here"
 ```
 - **google-services.json:**
-  Download your `google-services.json` file from Firebase and place it in the `app/` directory. This file is only required to run the project locally. Google Services are used only for Firebase Test Lab, which runs automatically during push and pull requests using my Firebase project.
+1. **Create a Firebase Project:**
+   Go to the [Firebase Console](https://console.firebase.google.com/), and either create a new project or use an existing one.
+2. **Add Firebase to Your Android Project:**
+   In the Firebase Console, click on your project and then navigate to **Project Settings > General**.
+   Under **Your apps**, click on the Android icon to add an Android app to your Firebase project.
+3. **Download the `google-services.json` File:**
+   After registering your app with Firebase, you’ll be able to download the `google-services.json` file.
+   Download this file and place it in the `app/` directory of the project. This file is only required to run the project locally.
+>Note: Firebase services are used for running instrumentation tests in Firebase Test Lab, which is triggered automatically during push and pull requests using my Firebase project.
 
 ### 4. Create a New Branch
 Before you start working on a new feature or bug fix, create a new branch for your changes. This helps keep the repository organized.
