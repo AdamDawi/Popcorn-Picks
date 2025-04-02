@@ -127,6 +127,10 @@ API_KEY="your_api_key_here"
 - This file is only required to run the project locally.
 - Google Services are used only for Firebase Test Lab, which runs automatically during push and pull requests using my Firebase project.
 
+## 🤝 Contributing
+Any kind of positive contribution is welcome!
+> Please take a moment to read my [`CONTRIBUTING`](CONTRIBUTING.md) guidelines for details on how to contribute, including how to submit pull requests. Also, be sure to review my [`CODE OF CONDUCT`](CODE_OF_CONDUCT.md) to ensure a respectful and collaborative environment.
+
 ## Requirements
 Minimum version: Android 7.0 (API level 24) or later📱
 
