@@ -27,8 +27,9 @@
 - **Shimmer Effect:** A loading animation enhances the user experience while fetching images.
 
 ### 👤 User Profile & Liked Movies
-🚧 Work in Progress...
-- **This feature is not yet implemented.** Development is in progress, and the User Profile screen will include a list of saved movies and more features in future updates.
+- The profile screen displays the **movie genres** selected during onboarding and the total number of liked movies.
+- Users can customize their **profile picture** through a popup, allowing them to change the background color and select a profile image from available options.
+- In the Movies section, users can tap to view the full list of their **liked movies**.
 
 ## ⚙️Technologies
 ### 📱App:
@@ -83,8 +84,6 @@ Before running the instrumentation tests on Firebase Test Lab, the project must 
 ![Image](https://github.com/user-attachments/assets/2cc9b381-1538-45f0-8a08-f1c3e8d2ef65)
 
 ## Animations:
-🚧 Work in Progress...
-
 ![Image](https://github.com/user-attachments/assets/6fce77d2-aa49-468e-9e38-f8fc0cdba9b4)
 ![Image](https://github.com/user-attachments/assets/00bdc138-5788-4269-8a4d-646e365f02b6)
 ![Image](https://github.com/user-attachments/assets/371136cb-db7e-4363-b293-69936e5ebda2)
