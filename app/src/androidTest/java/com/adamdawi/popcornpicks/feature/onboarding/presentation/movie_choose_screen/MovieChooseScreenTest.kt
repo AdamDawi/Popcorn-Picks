@@ -1,10 +1,12 @@
-@file:OptIn(ExperimentalCoroutinesApi::class)
+@file:OptIn(ExperimentalCoroutinesApi::class, ExperimentalTestApi::class)
 
 package com.adamdawi.popcornpicks.feature.onboarding.presentation.movie_choose_screen
 
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -365,6 +367,11 @@ class MovieChooseScreenTest {
                 viewModel = viewModel
             )
         }
+        composeTestRule.waitUntilExactlyOneExists(
+            hasContentDescription("Spiderman"),
+            timeoutMillis = 5000
+        )
+
         composeTestRule.onNodeWithContentDescription("Spiderman").performClick()
         composeTestRule.onNodeWithContentDescription("Batman").performClick()
         composeTestRule.onNodeWithContentDescription("Thor").performClick()
