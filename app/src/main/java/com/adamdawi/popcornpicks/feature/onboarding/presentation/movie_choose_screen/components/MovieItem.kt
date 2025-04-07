@@ -16,6 +16,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +37,8 @@ import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.theme.fontFamily
 import com.adamdawi.popcornpicks.core.presentation.ui.shimmerBrush
 import com.adamdawi.popcornpicks.core.domain.model.Movie
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.MOVIE_ITEM_NOT_SELECTED
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.MOVIE_ITEM_SELECTED
 
 @Composable
 fun MovieItem(
@@ -45,7 +49,11 @@ fun MovieItem(
 ) {
     val showShimmer = remember { mutableStateOf(true) }
     Column(
-        modifier = Modifier.testTag(MOVIE_ITEM)
+        modifier = Modifier
+            .testTag(MOVIE_ITEM)
+            .semantics{
+                contentDescription = if(isSelected) MOVIE_ITEM_SELECTED + movie.title else MOVIE_ITEM_NOT_SELECTED + movie.title
+            }
     ) {
         if (!isSelected || showShimmer.value) {
             AsyncImage(

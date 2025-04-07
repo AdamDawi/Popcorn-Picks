@@ -30,7 +30,11 @@ object Constants {
         const val ERROR_SCREEN = "error_screen"
         const val LOADING_SCREEN = "loading_screen"
         const val FINISH_FAB = "finish_fab"
+        const val FINISH_FAB_ENABLED = "Enabled finish FAB"
+        const val FINISH_FAB_DISABLED = "Disabled finish FAB"
         const val MOVIE_ITEM = "movie_item"
+        const val MOVIE_ITEM_SELECTED = "Selected movie item"
+        const val MOVIE_ITEM_NOT_SELECTED = "Not selected movie item"
         const val REGULAR_IMAGE = "regular_image"
         const val IMAGE_WITH_ANIMATED_BORDER = "image_with_animated_border"
         const val CARD_WITH_ANIMATED_BORDER = "card_with_animated_border"
@@ -46,5 +50,6 @@ object Constants {
         const val LIKED_MOVIE_ITEM = "liked_movie_item"
         const val PROFILE_IMAGE_SELECTED = "Selected profile image"
         const val PROFILE_IMAGE_NOT_SELECTED = "Not selected profile image"
+        const val LAZY_MOVIES_GRID = "lazy_movies_grid"
     }
 }

@@ -115,7 +115,6 @@ class GenresScreenTest {
                 onContinueClick = {}
             )
         }
-        composeTestRule.waitForIdle()
         val nodes = composeTestRule.onAllNodesWithTag(GENRE_CHIP)
         nodes.assertCountEquals(dummyGenresList.size)
         for (i in 0..<dummyGenresList.size) {
@@ -132,7 +131,6 @@ class GenresScreenTest {
                 onContinueClick = {}
             )
         }
-        composeTestRule.waitForIdle()
         dummyGenresList.forEach { genre ->
             composeTestRule.onNodeWithText(genre.name).assertExists().assertIsDisplayed()
         }
@@ -146,7 +144,6 @@ class GenresScreenTest {
                 onContinueClick = {}
             )
         }
-        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Continue").assertExists().assertIsDisplayed().assertIsNotEnabled()
     }
 
@@ -158,8 +155,6 @@ class GenresScreenTest {
                 onContinueClick = {}
             )
         }
-        composeTestRule.waitForIdle()
-
         assertTrue(viewModel.state.value.selectedGenres.isEmpty())
     }
 
@@ -172,7 +167,6 @@ class GenresScreenTest {
             )
         }
         composeTestRule.onNodeWithText("Action").performClick()
-        composeTestRule.waitForIdle()
 
         composeTestRule.onNodeWithText("Continue").assertExists().assertIsDisplayed().assertIsNotEnabled()
     }
@@ -186,7 +180,6 @@ class GenresScreenTest {
             )
         }
         composeTestRule.onNodeWithText("Action").performClick()
-        composeTestRule.waitForIdle()
 
         assertTrue(viewModel.state.value.selectedGenres.size == 1)
     }
@@ -202,7 +195,6 @@ class GenresScreenTest {
 
         composeTestRule.onNodeWithText("Action").performClick()
         composeTestRule.onNodeWithText("Mystery").performClick()
-        composeTestRule.waitForIdle()
 
         composeTestRule.onNodeWithText("Continue").assertExists().assertIsDisplayed().assertIsEnabled()
     }
@@ -217,7 +209,6 @@ class GenresScreenTest {
         }
         composeTestRule.onNodeWithText("Action").performClick()
         composeTestRule.onNodeWithText("Mystery").performClick()
-        composeTestRule.waitForIdle()
 
         assertTrue(viewModel.state.value.selectedGenres.size == 2)
     }
@@ -236,7 +227,6 @@ class GenresScreenTest {
         composeTestRule.onNodeWithText("History").performClick()
         composeTestRule.onNodeWithText("Music").performClick()
         composeTestRule.onNodeWithText("Romance").performClick()
-        composeTestRule.waitForIdle()
 
         composeTestRule.onNodeWithText("Continue").assertExists().assertIsDisplayed().assertIsEnabled()
     }
@@ -255,8 +245,6 @@ class GenresScreenTest {
         composeTestRule.onNodeWithText("History").performClick()
         composeTestRule.onNodeWithText("Music").performClick()
         composeTestRule.onNodeWithText("Romance").performClick()
-
-        composeTestRule.waitForIdle()
 
         assertTrue(viewModel.state.value.selectedGenres.size == 5)
     }
@@ -279,9 +267,7 @@ class GenresScreenTest {
         )
         listOfGenres.forEach { genre ->
             composeTestRule.onNodeWithText(genre.name).performClick()
-
         }
-        composeTestRule.waitForIdle()
 
         assertThat(viewModel.state.value.selectedGenres).isEqualTo(listOfGenres)
     }

@@ -23,20 +23,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.adamdawi.popcornpicks.core.data.dummy.dummyMovie
+import com.adamdawi.popcornpicks.core.data.dummy.dummyMovieList
 import com.adamdawi.popcornpicks.core.data.dummy.selectedMovies
+import com.adamdawi.popcornpicks.core.domain.model.Movie
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.LAZY_MOVIES_GRID
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.core.presentation.theme.fontFamily
 import com.adamdawi.popcornpicks.core.presentation.ui.ErrorScreen
 import com.adamdawi.popcornpicks.core.presentation.ui.LoadingScreen
 import com.adamdawi.popcornpicks.core.presentation.ui.ObserveAsEvents
-import com.adamdawi.popcornpicks.core.domain.model.Movie
 import com.adamdawi.popcornpicks.feature.onboarding.presentation.movie_choose_screen.components.FinishFAB
 import com.adamdawi.popcornpicks.feature.onboarding.presentation.movie_choose_screen.components.MovieItem
 import org.koin.androidx.compose.koinViewModel
@@ -139,6 +141,7 @@ private fun MovieGrid(
     lazyListState: LazyGridState
 ) {
     LazyVerticalGrid(
+        modifier = Modifier.testTag(LAZY_MOVIES_GRID),
         state = lazyListState,
         columns = Fixed(2),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -183,7 +186,7 @@ private fun MovieChooseScreenPreview() {
     PopcornPicksTheme {
         MovieChooseContent(
             state = MovieChooseState(
-                movies = buildList { repeat(10) { add(dummyMovie) } },
+                movies = dummyMovieList,
                 selectedMovies = selectedMovies
             ),
             onAction = {}

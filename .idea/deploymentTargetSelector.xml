@@ -13,28 +13,20 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="genresScreen_fiveGenresSelected_fiveGenresInSelectedGenresState()">
+      <SelectionState runConfigName="movieChooseScreen_threeMoviesSelected_finishButtonIsEnabled()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="genresScreen_fiveGenresSelected_genresStateUpdatedWithCorrectGenres()">
+      <SelectionState runConfigName="movieChooseScreen_oneMovieSelected_correctMovieIsSelected()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="genresScreen_isLoading_loadingScreenDisplayed()">
+      <SelectionState runConfigName="movieChooseScreen_twoMoviesSelected_correctTwoMoviesAreSelected()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="genresScreen_isLoading_loadingScreenThenErrorScreenDisplayed()">
+      <SelectionState runConfigName="MovieChooseScreenTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="GenresScreenTest">
+      <SelectionState runConfigName="movieChooseScreen_scrollDown_finishButtonTextIsNotDisplayed()">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-03-29T16:34:59.000355400Z">
-          <Target type="DEFAULT_BOOT">
-            <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=R5CW70VTNSF" />
-            </handle>
-          </Target>
-        </DropdownSelection>
-        <DialogSelection />
       </SelectionState>
     </selectionStates>
   </component>
