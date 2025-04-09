@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.adamdawi.popcornpicks.core.domain.util.Constants.NavArguments.MOVIE_ID
 import com.adamdawi.popcornpicks.core.domain.util.Result
 import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
-import com.adamdawi.popcornpicks.feature.movie_details.data.remote.MovieDetailsRepositoryImpl
+import com.adamdawi.popcornpicks.feature.movie_details.domain.remote.MovieDetailsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,9 +17,10 @@ import kotlinx.coroutines.launch
 
 class MovieDetailsViewModel(
     private val savedStateHandle: SavedStateHandle,
-    private val movieDetailsRepositoryImpl: MovieDetailsRepositoryImpl,
+    private val movieDetailsRepositoryImpl: MovieDetailsRepository,
     private val ioDispatcher: CoroutineDispatcher
 ): ViewModel() {
+    //TODO unit test this viewModel
     private val _state = MutableStateFlow(MovieDetailsState())
     val state = _state.onStart {
         getMovieDetails(getMovieId())
