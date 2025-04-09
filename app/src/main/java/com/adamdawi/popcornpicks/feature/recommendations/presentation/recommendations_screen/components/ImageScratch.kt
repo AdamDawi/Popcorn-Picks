@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.adamdawi.popcornpicks.R
 import com.adamdawi.popcornpicks.core.data.dummy.dummyMovie
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.IMAGE_SCRATCH
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -57,6 +59,7 @@ fun ImageScratch(
         modifier
             .fillMaxSize()
             .clip(RoundedCornerShape(12.dp))
+            .testTag(IMAGE_SCRATCH)
     ){
         AsyncImage(
             model = baseImageUrl,

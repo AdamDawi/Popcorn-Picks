@@ -13,19 +13,19 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="movieChooseScreen_oneMovieSelected_correctMovieIsSelected()">
+      <SelectionState runConfigName="RecommendationsScreenTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="movieChooseScreen_twoMoviesSelected_correctTwoMoviesAreSelected()">
+      <SelectionState runConfigName="recommendationsScreen_imageNotScratched_formattedMovieDetailsAreNotDisplayed()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="MovieChooseScreenTest">
+      <SelectionState runConfigName="recommendationsScreen_imageNotScratched_infoButtonIsDisabled()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="movieChooseScreen_scrollDown_finishButtonTextIsNotDisplayed()">
+      <SelectionState runConfigName="recommendationsScreen_imageNotScratched_circleIconButtonsAreDisabled()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="movieChooseScreen_threeMoviesSelected_threeMoviesInSelectedMoviesState()">
+      <SelectionState runConfigName="recommendationsScreen_imageScratched_circleIconButtonsAreEnabled()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

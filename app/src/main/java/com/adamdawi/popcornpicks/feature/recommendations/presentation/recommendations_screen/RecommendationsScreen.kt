@@ -32,6 +32,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,6 +42,8 @@ import com.adamdawi.popcornpicks.R
 import com.adamdawi.popcornpicks.core.data.dummy.dummyMovie
 import com.adamdawi.popcornpicks.core.domain.model.Movie
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Network.BASE_IMAGE_URL
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.MOVIE_DETAILS_NOT_VISIBLE
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.MOVIE_DETAILS_VISIBLE
 import com.adamdawi.popcornpicks.core.presentation.theme.Blue
 import com.adamdawi.popcornpicks.core.presentation.theme.Grey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
@@ -179,7 +183,7 @@ fun ButtonsRow(
                 onAction(RecommendationsAction.OnMoreInfoClicked(movieId.toString()))
             },
             enabled = areButtonsEnabled,
-            contentDescription = "More info"
+            contentDescription = "Info"
         )
         CircleIconButton(
             icon = if(isMovieLiked) painterResource(R.drawable.heart_solid_ic) else painterResource(R.drawable.heart_outlined_ic),
@@ -213,6 +217,9 @@ fun MovieDetails(
             .alpha(
                 alpha
             )
+            .semantics{
+                contentDescription = if(alpha == 1.0f) MOVIE_DETAILS_VISIBLE else MOVIE_DETAILS_NOT_VISIBLE
+            }
             .fillMaxWidth(),
         horizontalAlignment = Alignment.Start
     ) {
@@ -239,6 +246,19 @@ private fun RecommendationsScreenPreview() {
             state = RecommendationsState(
                 recommendedMovie = dummyMovie,
                 isMovieScratched = false
+            ),
+            onAction = {}
+        )
+    }
+}
+@Preview
+@Composable
+private fun RecommendationsScreenScratchedPreview() {
+    PopcornPicksTheme {
+        RecommendationsContent(
+            state = RecommendationsState(
+                recommendedMovie = dummyMovie,
+                isMovieScratched = true
             ),
             onAction = {}
         )

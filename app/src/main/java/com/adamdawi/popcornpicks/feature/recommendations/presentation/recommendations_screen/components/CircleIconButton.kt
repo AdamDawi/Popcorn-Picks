@@ -14,10 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.adamdawi.popcornpicks.R
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.CIRCLE_ICON_BUTTON
 import com.adamdawi.popcornpicks.core.presentation.theme.DarkGrey
 import com.adamdawi.popcornpicks.core.presentation.theme.Grey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
@@ -35,6 +37,7 @@ fun CircleIconButton(
         modifier = modifier
             .size(52.dp)
             .clip(CircleShape)
+            .testTag(CIRCLE_ICON_BUTTON)
             .clickable(
                 enabled = enabled,
                 onClick = onClick

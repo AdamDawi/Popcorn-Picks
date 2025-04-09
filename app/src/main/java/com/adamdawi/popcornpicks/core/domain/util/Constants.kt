@@ -51,5 +51,9 @@ object Constants {
         const val PROFILE_IMAGE_SELECTED = "Selected profile image"
         const val PROFILE_IMAGE_NOT_SELECTED = "Not selected profile image"
         const val LAZY_MOVIES_GRID = "lazy_movies_grid"
+        const val IMAGE_SCRATCH = "image_scratch"
+        const val MOVIE_DETAILS_VISIBLE = "movie details visible"
+        const val MOVIE_DETAILS_NOT_VISIBLE = "movie details not visible"
+        const val CIRCLE_ICON_BUTTON = "circle_icon_button"
     }
 }
