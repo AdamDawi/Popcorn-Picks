@@ -37,7 +37,6 @@ import org.koin.dsl.module
 import org.koin.java.KoinJavaComponent.inject
 
 class RecommendationsScreenTest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 

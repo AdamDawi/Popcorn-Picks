@@ -17,10 +17,9 @@ import kotlinx.coroutines.launch
 
 class MovieDetailsViewModel(
     private val savedStateHandle: SavedStateHandle,
-    private val movieDetailsRepositoryImpl: MovieDetailsRepository,
+    private val movieDetailsRepository: MovieDetailsRepository,
     private val ioDispatcher: CoroutineDispatcher
 ): ViewModel() {
-    //TODO unit test this viewModel
     private val _state = MutableStateFlow(MovieDetailsState())
     val state = _state.onStart {
         getMovieDetails(getMovieId())
@@ -42,7 +41,7 @@ class MovieDetailsViewModel(
         }
         if(movieId != null){
             viewModelScope.launch(ioDispatcher){
-                when(val result = movieDetailsRepositoryImpl.getDetailedMovie(movieId)){
+                when(val result = movieDetailsRepository.getDetailedMovie(movieId)){
                     is Result.Error ->{
                         _state.update {
                             it.copy(
