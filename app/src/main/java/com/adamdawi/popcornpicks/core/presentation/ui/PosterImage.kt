@@ -11,12 +11,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.adamdawi.popcornpicks.R
 import com.adamdawi.popcornpicks.core.domain.util.Constants
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.POSTER_IMAGE
 import com.adamdawi.popcornpicks.core.presentation.theme.Grey
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 
@@ -28,6 +30,7 @@ fun PosterImage(
     val showShimmer = remember { mutableStateOf(true) }
     AsyncImage(
         modifier = modifier
+            .testTag(POSTER_IMAGE)
             .clip(RoundedCornerShape(6.dp))
             .border(1.dp, Grey, RoundedCornerShape(6.dp))
             .background(shimmerBrush(showShimmer = showShimmer.value)),
