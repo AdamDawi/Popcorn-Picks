@@ -43,8 +43,6 @@ class MovieChooseViewModel(
 
     private val getMoviesJob = Job()
 
-    private val uniqueMovies = mutableSetOf<Movie>()
-
     fun onAction(action: MovieChooseAction) {
         when (action) {
             is MovieChooseAction.ToggleMovieSelection -> onMovieClick(action.movie)
@@ -84,10 +82,10 @@ class MovieChooseViewModel(
                         }
 
                         is Result.Success -> {
-                            uniqueMovies.addAll(result.data)
                             _state.update {
+                                val updatedList = it.movies + result.data
                                 it.copy(
-                                    movies = uniqueMovies.toList(),
+                                    movies = updatedList.distinctBy { movie -> movie.id },
                                     isLoading = false
                                 )
                             }
