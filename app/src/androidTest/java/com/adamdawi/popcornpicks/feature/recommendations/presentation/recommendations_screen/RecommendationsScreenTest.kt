@@ -15,20 +15,26 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.lifecycle.SavedStateHandle
 import com.adamdawi.popcornpicks.core.KoinTestRule
+import com.adamdawi.popcornpicks.core.data.dummy.dummyLikedMoviesList
 import com.adamdawi.popcornpicks.core.data.dummy.dummyMovieList
 import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
 import com.adamdawi.popcornpicks.core.domain.local.LikedMoviesDbRepository
 import com.adamdawi.popcornpicks.core.domain.remote.RemoteMovieRecommendationsRepository
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.CIRCLE_ICON_BUTTON
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.ERROR_SCREEN
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.IMAGE_SCRATCH
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.LOADING_SCREEN
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.MOVIE_DETAILS_NOT_VISIBLE
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.MOVIE_DETAILS_VISIBLE
+import com.adamdawi.popcornpicks.core.domain.util.DataError
 import com.adamdawi.popcornpicks.core.domain.util.Result
+import com.adamdawi.popcornpicks.core.presentation.ui.mapping.asUiText
 import com.adamdawi.popcornpicks.feature.recommendations.domain.repository.LocalMovieRecommendationsRepository
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -237,6 +243,78 @@ class RecommendationsScreenTest {
             val button = buttons[i]
             button.assertIsDisplayed().assertIsEnabled()
         }
+    }
+
+    @Test
+    fun recommendationsScreen_isLoading_loadingScreenDisplayed() {
+        coEvery { localMovieRecommendationsRepository.getRecommendedMovies() } coAnswers {
+            delay(500)
+            Result.Error(DataError.Local.UNKNOWN)
+        }
+
+        composeTestRule.setContent {
+            RecommendationsScreen(
+                viewModel = viewModel,
+                onNavigateToProfile = {},
+                onNavigateToMovieDetails = {}
+            )
+        }
+
+        composeTestRule.onNodeWithTag(LOADING_SCREEN).assertExists().assertIsDisplayed()
+    }
+
+    @Test
+    fun genresScreen_error_errorScreenDisplayed() {
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(
+                dummyLikedMoviesList
+            )
+        }
+        coEvery { localMovieRecommendationsRepository.getRecommendedMovies() } answers {
+            Result.Success(
+                emptyList()
+            )
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Error(DataError.Network.UNKNOWN)
+        }
+
+        composeTestRule.setContent {
+            RecommendationsScreen(
+                viewModel = viewModel,
+                onNavigateToProfile = {},
+                onNavigateToMovieDetails = {}
+            )
+        }
+
+        composeTestRule.onNodeWithTag(ERROR_SCREEN).assertExists().assertIsDisplayed()
+    }
+
+    @Test
+    fun genresScreen_error_correctErrorInErrorScreenDisplayed() {
+        coEvery { likedMoviesDbRepository.getLikedMovies() } answers {
+            Result.Success(
+                dummyLikedMoviesList
+            )
+        }
+        coEvery { localMovieRecommendationsRepository.getRecommendedMovies() } answers {
+            Result.Success(
+                emptyList()
+            )
+        }
+        coEvery { remoteMovieRecommendationsRepository.getMoviesBasedOnMovie(any(), any()) } answers {
+            Result.Error(DataError.Network.UNKNOWN)
+        }
+
+        composeTestRule.setContent {
+            RecommendationsScreen(
+                viewModel = viewModel,
+                onNavigateToProfile = {},
+                onNavigateToMovieDetails = {}
+            )
+        }
+
+        composeTestRule.onNodeWithText(DataError.Network.UNKNOWN.asUiText()).assertExists().assertIsDisplayed()
     }
 }
 

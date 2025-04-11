@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.adamdawi.popcornpicks.feature.user_profile.presentation.profile_screen
 
 import app.cash.turbine.test
@@ -29,11 +31,9 @@ class ProfileViewModelTest {
     private lateinit var likedMoviesDbRepository: LikedMoviesDbRepository
     private lateinit var sut: ProfileViewModel
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @get: Rule
     val replaceMainDispatcherRule = ReplaceMainDispatcherRule()
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Before
     fun setUp() {
         genresPreferences = mockk()

@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.adamdawi.popcornpicks.core.data.dummy.profileImages
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.PROFILE_IMAGE
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.PROFILE_IMAGE_EDIT_CONTENT
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.PROFILE_IMAGE_NOT_SELECTED
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.PROFILE_IMAGE_SELECTED
 import com.adamdawi.popcornpicks.core.presentation.ui.PopcornPicksButton
@@ -63,7 +65,8 @@ fun ProfileImageEditContent(
 
     Column(
         modifier = modifier
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .testTag(PROFILE_IMAGE_EDIT_CONTENT),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

@@ -71,7 +71,7 @@ class LikedMoviesDbRepositoryImpl(
         }
     }
 
-    override suspend fun getLikedMoviesCount(): Result<Int, DataError.Local> {
+    override suspend fun getLikedMoviesCount(): Result<Int?, DataError.Local> {
         return try {
             val likedMoviesCount = likedMoviesDao.getLikedMoviesCount()
             Result.Success(likedMoviesCount)

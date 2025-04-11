@@ -55,5 +55,6 @@ object Constants {
         const val MOVIE_DETAILS_VISIBLE = "movie details visible"
         const val MOVIE_DETAILS_NOT_VISIBLE = "movie details not visible"
         const val CIRCLE_ICON_BUTTON = "circle_icon_button"
+        const val PROFILE_IMAGE_EDIT_CONTENT = "profile_image_edit_content"
     }
 }

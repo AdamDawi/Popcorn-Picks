@@ -185,7 +185,6 @@ private fun ProfileScreenContent(
     }
 }
 
-
 @Composable
 private fun GenresSection(
     genres: List<Genre>
