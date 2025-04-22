@@ -9,6 +9,7 @@ coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
+ktorClientMock = "2.3.7"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
 composeBom = "2024.06.00"
@@ -48,6 +49,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 
+ktor-client-mock-v237 = { module = "io.ktor:ktor-client-mock", version.ref = "ktorClientMock" }
 mhssn-colorpicker = { module = "io.mhssn:colorpicker", version.ref = "colorpickerVersion" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4jSimple" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }

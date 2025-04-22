@@ -124,5 +124,6 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
     androidTestImplementation(libs.truth)
     androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.ktor.client.mock.v237)
     debugImplementation(libs.ui.test.manifest)
 }
