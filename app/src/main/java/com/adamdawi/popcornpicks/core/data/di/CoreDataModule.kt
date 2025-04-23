@@ -22,7 +22,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val coreDataModule = module {
-    single<HttpClient> { HttpClientFactory().build(CIO.create()) }
+    single<HttpClient> { HttpClientFactory.build(CIO.create()) }
 
     single<SharedPreferences> {
         androidContext().getSharedPreferences(

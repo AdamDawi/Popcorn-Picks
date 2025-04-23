@@ -15,7 +15,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
-import com.adamdawi.popcornpicks.core.KoinTestRule
+import com.adamdawi.popcornpicks.utils.KoinTestRule
 import com.adamdawi.popcornpicks.core.data.dummy.dummyGenresList
 import com.adamdawi.popcornpicks.core.data.dummy.dummyMovieList
 import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences

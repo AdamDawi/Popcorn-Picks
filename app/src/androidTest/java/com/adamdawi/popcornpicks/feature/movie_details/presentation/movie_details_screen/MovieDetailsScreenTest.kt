@@ -5,7 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.lifecycle.SavedStateHandle
-import com.adamdawi.popcornpicks.core.KoinTestRule
+import com.adamdawi.popcornpicks.utils.KoinTestRule
 import com.adamdawi.popcornpicks.core.data.dummy.dummyDetailedMovie
 import com.adamdawi.popcornpicks.core.domain.util.Constants.NavArguments.MOVIE_ID
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.ERROR_SCREEN

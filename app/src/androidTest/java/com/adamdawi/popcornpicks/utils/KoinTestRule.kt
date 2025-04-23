@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.core
+package com.adamdawi.popcornpicks.utils
 
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.rules.TestWatcher

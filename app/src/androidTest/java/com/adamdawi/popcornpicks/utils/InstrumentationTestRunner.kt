@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.core
+package com.adamdawi.popcornpicks.utils
 
 import android.app.Application
 import android.content.Context

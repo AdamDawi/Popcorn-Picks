@@ -24,7 +24,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "com.adamdawi.popcornpicks.core.InstrumentationTestRunner"
+        testInstrumentationRunner = "com.adamdawi.popcornpicks.utils.InstrumentationTestRunner"
     }
 
     buildTypes {

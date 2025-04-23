@@ -10,7 +10,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.adamdawi.popcornpicks.R
-import com.adamdawi.popcornpicks.core.KoinTestRule
+import com.adamdawi.popcornpicks.utils.KoinTestRule
 import com.adamdawi.popcornpicks.core.domain.local.GenresPreferences
 import com.adamdawi.popcornpicks.core.domain.local.LikedMoviesDbRepository
 import com.adamdawi.popcornpicks.core.domain.model.Genre

@@ -1,4 +1,4 @@
-package com.adamdawi.popcornpicks.e2e
+package com.adamdawi.popcornpicks.e2e.response
 
 import com.adamdawi.popcornpicks.feature.onboarding.data.remote.response.GenreDto
 import com.adamdawi.popcornpicks.feature.onboarding.data.remote.response.GenresResponse
