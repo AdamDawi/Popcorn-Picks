@@ -2,6 +2,7 @@
 
 package com.adamdawi.popcornpicks.e2e
 
+import android.content.SharedPreferences
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
@@ -9,6 +10,7 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -18,6 +20,7 @@ import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.FINISH_FAB
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.GENRE_CHIP
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.IMAGE_SCRATCH
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.MOVIE_ITEM
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.PROFILE_IMAGE
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.feature.movie_details.data.di.movieDetailsDataModule
 import com.adamdawi.popcornpicks.feature.movie_details.presentation.di.movieDetailsViewModelModule
@@ -30,8 +33,10 @@ import com.adamdawi.popcornpicks.feature.user_profile.data.di.profileDataModule
 import com.adamdawi.popcornpicks.feature.user_profile.presentation.di.profileViewModelModule
 import com.adamdawi.popcornpicks.utils.KoinTestRule
 import com.adamdawi.popcornpicks.utils.scratchImage
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.koin.java.KoinJavaComponent.inject
 
 class EndToEndTest {
 
@@ -53,6 +58,12 @@ class EndToEndTest {
             likedMoviesViewModelModule
         )
     )
+    private val sharedPreferences by inject<SharedPreferences>(clazz = SharedPreferences::class.java)
+
+    @Before
+    fun setup(){
+        sharedPreferences.edit().clear().commit()
+    }
 
     @Test
     fun recommendationsScreen_scratchingMovieWorks() {
@@ -61,6 +72,7 @@ class EndToEndTest {
                 Navigation()
             }
         }
+        composeTestRule.waitUntilAtLeastOneExists(hasTestTag(GENRE_CHIP))
         composeTestRule.onAllNodesWithTag(GENRE_CHIP)[0].performClick()
         composeTestRule.onAllNodesWithTag(GENRE_CHIP)[1].performClick()
 
@@ -83,5 +95,36 @@ class EndToEndTest {
             val button = buttons[i]
             button.assertIsDisplayed().assertIsEnabled()
         }
+    }
+
+    @Test
+    fun profileScreen_hasCorrectInformation() {
+        composeTestRule.setContent {
+            PopcornPicksTheme {
+                Navigation()
+            }
+        }
+        composeTestRule.waitUntilAtLeastOneExists(hasTestTag(GENRE_CHIP))
+        composeTestRule.onNodeWithText("Action").performClick()
+        composeTestRule.onNodeWithText("Adventure").performClick()
+
+        composeTestRule.onNodeWithText("Continue").performClick()
+        composeTestRule.waitUntilAtLeastOneExists(hasTestTag(MOVIE_ITEM))
+
+        composeTestRule.onAllNodesWithTag(MOVIE_ITEM)[0].performClick()
+        composeTestRule.onAllNodesWithTag(MOVIE_ITEM)[1].performClick()
+        composeTestRule.onAllNodesWithTag(MOVIE_ITEM)[2].performClick()
+
+        composeTestRule.onNodeWithTag(FINISH_FAB).performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasTestTag(IMAGE_SCRATCH))
+
+        composeTestRule.onNodeWithContentDescription("Profile Icon").performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasTestTag(PROFILE_IMAGE))
+
+        composeTestRule.onNodeWithText("Profile").assertExists().assertIsDisplayed()
+        composeTestRule.onNodeWithText("YOU").assertExists().assertIsDisplayed()
+        composeTestRule.onNodeWithText("Action").assertExists().assertIsDisplayed()
+        composeTestRule.onNodeWithText("Adventure").assertExists().assertIsDisplayed()
+        composeTestRule.onNodeWithText("3").assertExists().assertIsDisplayed()
     }
 }

@@ -22,6 +22,12 @@
       <SelectionState runConfigName="recommendationsScreen_scratchingMovieWorks()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="recommendationsScreen_scratchingMovieWorkssss()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="EndToEndTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>
