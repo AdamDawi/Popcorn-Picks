@@ -82,7 +82,7 @@ class RecommendationsViewModel(
         if(likedMoviesMap.isEmpty() && likedGenresWithPageMap.isEmpty()){
             _state.update {
                 it.copy(
-                    error = "Something went wrong",
+                    error = "Something went wrong with your liked movies and genres",
                     isLoading = false
                 )
             }

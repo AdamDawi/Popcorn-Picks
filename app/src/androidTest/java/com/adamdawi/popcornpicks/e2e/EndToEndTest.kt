@@ -8,18 +8,23 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import com.adamdawi.popcornpicks.app.navigation.Navigation
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.CIRCLE_ICON_BUTTON
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.FINISH_FAB
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.GENRE_CHIP
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.IMAGE_SCRATCH
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.LIKED_MOVIES_LIST
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.LIKED_MOVIE_ITEM
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.MOVIE_ITEM
+import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.POSTER_IMAGE
 import com.adamdawi.popcornpicks.core.domain.util.Constants.Tests.PROFILE_IMAGE
 import com.adamdawi.popcornpicks.core.presentation.theme.PopcornPicksTheme
 import com.adamdawi.popcornpicks.feature.movie_details.data.di.movieDetailsDataModule
@@ -126,5 +131,130 @@ class EndToEndTest {
         composeTestRule.onNodeWithText("Action").assertExists().assertIsDisplayed()
         composeTestRule.onNodeWithText("Adventure").assertExists().assertIsDisplayed()
         composeTestRule.onNodeWithText("3").assertExists().assertIsDisplayed()
+    }
+
+    @Test
+    fun detailsScreen_hasCorrectMovieInformationWithRecommendationsScreen() {
+        composeTestRule.setContent {
+            PopcornPicksTheme {
+                Navigation()
+            }
+        }
+        composeTestRule.waitUntilAtLeastOneExists(hasTestTag(GENRE_CHIP))
+        composeTestRule.onNodeWithText("Action").performClick()
+        composeTestRule.onNodeWithText("Adventure").performClick()
+
+        composeTestRule.onNodeWithText("Continue").performClick()
+        composeTestRule.waitUntilAtLeastOneExists(hasTestTag(MOVIE_ITEM))
+
+        composeTestRule.onAllNodesWithTag(MOVIE_ITEM)[0].performClick()
+        composeTestRule.onAllNodesWithTag(MOVIE_ITEM)[1].performClick()
+        composeTestRule.onAllNodesWithTag(MOVIE_ITEM)[2].performClick()
+
+        composeTestRule.onNodeWithTag(FINISH_FAB).performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasTestTag(IMAGE_SCRATCH))
+
+        composeTestRule.scratchImage()
+
+        composeTestRule.onNodeWithText("Fake Movie 1").assertExists().assertIsDisplayed()
+        composeTestRule.onNodeWithText("2023 · Animation/Adventure · 8.5/10").assertExists().assertIsDisplayed()
+
+        composeTestRule.onNodeWithContentDescription("Info").performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasTestTag(POSTER_IMAGE))
+
+        composeTestRule.onNodeWithText("Fake Movie 1").assertExists().assertIsDisplayed()
+        composeTestRule.onNodeWithText("Overview of Fake Movie 1").assertExists().assertIsDisplayed()
+        composeTestRule.onNodeWithText("8.50/10").assertExists().assertIsDisplayed()
+        composeTestRule.onNodeWithText("2023-01").assertExists().assertIsDisplayed()
+        composeTestRule.onNodeWithText("Animation").assertExists().assertIsDisplayed()
+        composeTestRule.onNodeWithText("2h 0m").assertExists().assertIsDisplayed()
+    }
+
+    @Test
+    fun profileScreen_likedMoviesCounterUpdatedAfterAddMovieToLiked() {
+        composeTestRule.setContent {
+            PopcornPicksTheme {
+                Navigation()
+            }
+        }
+        composeTestRule.waitUntilAtLeastOneExists(hasTestTag(GENRE_CHIP))
+        composeTestRule.onNodeWithText("Action").performClick()
+        composeTestRule.onNodeWithText("Adventure").performClick()
+
+        composeTestRule.onNodeWithText("Continue").performClick()
+        composeTestRule.waitUntilAtLeastOneExists(hasTestTag(MOVIE_ITEM))
+
+        composeTestRule.onAllNodesWithTag(MOVIE_ITEM)[0].performClick()
+        composeTestRule.onAllNodesWithTag(MOVIE_ITEM)[1].performClick()
+        composeTestRule.onAllNodesWithTag(MOVIE_ITEM)[2].performClick()
+
+        composeTestRule.onNodeWithTag(FINISH_FAB).performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasTestTag(IMAGE_SCRATCH))
+
+        composeTestRule.onNodeWithContentDescription("Profile Icon").performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasTestTag(PROFILE_IMAGE))
+
+        composeTestRule.onNodeWithText("3").assertExists().assertIsDisplayed()
+
+        composeTestRule.onNodeWithContentDescription("Arrow back").performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasTestTag(IMAGE_SCRATCH))
+
+        composeTestRule.scratchImage()
+        composeTestRule.onNodeWithContentDescription("Heart").performClick()
+
+        composeTestRule.onNodeWithContentDescription("Profile Icon").performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasTestTag(PROFILE_IMAGE))
+
+        composeTestRule.onNodeWithText("4").assertExists().assertIsDisplayed()
+    }
+
+    @Test
+    fun likedMoviesScreen_likedMoviesListUpdatedAfterAddMovieToLiked() {
+        composeTestRule.setContent {
+            PopcornPicksTheme {
+                Navigation()
+            }
+        }
+        composeTestRule.waitUntilAtLeastOneExists(hasTestTag(GENRE_CHIP))
+        composeTestRule.onNodeWithText("Action").performClick()
+        composeTestRule.onNodeWithText("Adventure").performClick()
+
+        composeTestRule.onNodeWithText("Continue").performClick()
+        composeTestRule.waitUntilAtLeastOneExists(hasTestTag(MOVIE_ITEM))
+
+        composeTestRule.onAllNodesWithTag(MOVIE_ITEM)[0].performClick()
+        composeTestRule.onAllNodesWithTag(MOVIE_ITEM)[1].performClick()
+        composeTestRule.onAllNodesWithTag(MOVIE_ITEM)[2].performClick()
+
+        composeTestRule.onNodeWithTag(FINISH_FAB).performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasTestTag(IMAGE_SCRATCH))
+
+        composeTestRule.onNodeWithContentDescription("Profile Icon").performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasTestTag(PROFILE_IMAGE))
+
+        composeTestRule.onNodeWithText("Movies").performClick()
+        composeTestRule.waitUntilAtLeastOneExists(hasTestTag(LIKED_MOVIE_ITEM))
+
+        composeTestRule.onNodeWithTag(LIKED_MOVIES_LIST)
+            .performScrollToNode(hasText("Genre Movie 3 (2021)"))
+        composeTestRule.onNodeWithText("Genre Movie 3 (2021)").assertExists().assertIsDisplayed()
+
+        composeTestRule.onNodeWithContentDescription("Arrow back").performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasTestTag(PROFILE_IMAGE))
+        composeTestRule.onNodeWithContentDescription("Arrow back").performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasTestTag(IMAGE_SCRATCH))
+
+        composeTestRule.scratchImage()
+        composeTestRule.onNodeWithContentDescription("Heart").performClick()
+
+        composeTestRule.onNodeWithContentDescription("Profile Icon").performClick()
+        composeTestRule.waitUntilExactlyOneExists(hasTestTag(PROFILE_IMAGE))
+
+        composeTestRule.onNodeWithText("Movies").performClick()
+        composeTestRule.waitUntilAtLeastOneExists(hasTestTag(LIKED_MOVIE_ITEM))
+
+        composeTestRule.onNodeWithTag(LIKED_MOVIES_LIST)
+            .performScrollToNode(hasText("Fake Movie 1 (2023)"))
+        composeTestRule.onNodeWithText("Fake Movie 1 (2023)").assertExists().assertIsDisplayed()
     }
 }

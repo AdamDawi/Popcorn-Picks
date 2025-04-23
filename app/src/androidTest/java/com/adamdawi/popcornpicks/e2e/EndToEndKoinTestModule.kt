@@ -15,6 +15,8 @@ import com.adamdawi.popcornpicks.core.domain.local.LikedMoviesDbRepository
 import com.adamdawi.popcornpicks.core.domain.local.OnBoardingManager
 import com.adamdawi.popcornpicks.core.domain.remote.RemoteMovieRecommendationsRepository
 import com.adamdawi.popcornpicks.core.domain.util.Constants
+import com.adamdawi.popcornpicks.e2e.response.generateMockDetailedMovieId1Response
+import com.adamdawi.popcornpicks.e2e.response.generateMockDetailedMovieResponse
 import com.adamdawi.popcornpicks.e2e.response.generateMockGenresResponse
 import com.adamdawi.popcornpicks.e2e.response.generateMockMoviesBasedOnGenreResponse
 import com.adamdawi.popcornpicks.e2e.response.generateMockMoviesBasedOnMovieResponse
@@ -66,6 +68,8 @@ val testCoreDataModule = module {
                     endpoint.contains("/genre/movie/list") -> generateMockGenresResponse()
                     endpoint.contains("/discover/movie") -> generateMockMoviesBasedOnGenreResponse()
                     endpoint.contains("recommendations") -> generateMockMoviesBasedOnMovieResponse()
+                    endpoint.contains("/movie/1") -> generateMockDetailedMovieId1Response()
+                    endpoint.contains("/movie") -> generateMockDetailedMovieResponse()
                     else -> ""
                 }
 

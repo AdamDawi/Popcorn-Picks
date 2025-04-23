@@ -57,5 +57,6 @@ object Constants {
         const val CIRCLE_ICON_BUTTON = "circle_icon_button"
         const val PROFILE_IMAGE_EDIT_CONTENT = "profile_image_edit_content"
         const val POSTER_IMAGE = "poster_image"
+        const val LIKED_MOVIES_LIST = "liked_movies_list"
     }
 }

@@ -14,7 +14,7 @@ fun generateMockMoviesBasedOnMovieResponse(): String {
             RecommendedMovieByMovieDto(
                 adult = false,
                 backdrop_path = "/path/to/backdrop1",
-                genre_ids = listOf(1, 2),
+                genre_ids = listOf(16, 12),
                 id = 1,
                 media_type = "movie",
                 original_language = "en",
