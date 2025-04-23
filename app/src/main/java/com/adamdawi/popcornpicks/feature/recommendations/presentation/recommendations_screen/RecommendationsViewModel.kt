@@ -112,6 +112,8 @@ class RecommendationsViewModel(
     private suspend fun waitForLikedMoviesIfLoading() {
         if (likedMoviesMap.isEmpty() && loadingLikedMoviesJob.isActive) {
             loadingLikedMoviesJob.join()
+        }else if(likedMoviesMap.isEmpty() && likedGenresWithPageMap.isEmpty()){
+            delay(100)
         }
     }
 
