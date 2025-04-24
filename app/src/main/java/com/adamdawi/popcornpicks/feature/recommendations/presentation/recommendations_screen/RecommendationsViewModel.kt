@@ -37,9 +37,9 @@ class RecommendationsViewModel(
         isMovieScratched = savedStateHandle.get<Boolean>(IS_MOVIE_SCRATCHED) == true
     ))
     val state = _state.onStart {
-        loadCachedRecommendations()
         loadLikedMovies()
         loadLikedGenres()
+        loadCachedRecommendations()
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -56,6 +56,9 @@ class RecommendationsViewModel(
     // Flag to prevent multiple rapid clicks on the reroll button,
     // ensuring that the reroll process is not triggered simultaneously multiple times.
     private var isProcessingOnReroll = false
+
+    private var hasLoadedLikedMovies = false
+    private var hasLoadedLikedGenres = false
 
     private fun loadCachedRecommendations() {
         _state.update { it.copy(isLoading = true) }
@@ -110,10 +113,8 @@ class RecommendationsViewModel(
     }
 
     private suspend fun waitForLikedMoviesIfLoading() {
-        if (likedMoviesMap.isEmpty() && loadingLikedMoviesJob.isActive) {
-            loadingLikedMoviesJob.join()
-        }else if(likedMoviesMap.isEmpty() && likedGenresWithPageMap.isEmpty()){
-            delay(100)
+        while (!hasLoadedLikedMovies || !hasLoadedLikedGenres) {
+            delay(50)
         }
     }
 
@@ -217,7 +218,10 @@ class RecommendationsViewModel(
     }
 
     private fun loadLikedMovies() {
-        if (likedMoviesMap.isNotEmpty()) return
+        if (likedMoviesMap.isNotEmpty()) {
+            hasLoadedLikedMovies = true
+            return
+        }
 
         cancelLoadingJob()
         loadingLikedMoviesJob = viewModelScope.launch(ioDispatcher) {
@@ -228,10 +232,12 @@ class RecommendationsViewModel(
                             error = result.error.asUiText()
                         )
                     }
+                    hasLoadedLikedMovies = true
                 }
 
                 is Result.Success -> {
                     likedMoviesMap = result.data.associateBy { it.id }.toMutableMap()
+                    hasLoadedLikedMovies = true
                 }
             }
         }
@@ -245,6 +251,7 @@ class RecommendationsViewModel(
 
     private fun loadLikedGenres(){
         likedGenresWithPageMap.putAll(genresPreferences.getGenresWithPage())
+        hasLoadedLikedGenres = true
     }
 
     fun onAction(action: RecommendationsAction) {
