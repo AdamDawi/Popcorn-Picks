@@ -1,7 +1,6 @@
 package com.adamdawi.popcornpicks.e2e
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.room.Room
 import com.adamdawi.popcornpicks.core.data.local.GenresPreferencesImpl
 import com.adamdawi.popcornpicks.core.data.local.LikedMoviesDbRepositoryImpl
@@ -31,7 +30,6 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val testCoreDataModule = module {
-
     single<SharedPreferences> {
         androidContext().getSharedPreferences(
             Constants.Local.SHARED_PREFERENCES_NAME,
@@ -48,7 +46,6 @@ val testCoreDataModule = module {
     singleOf(::RemoteMovieRecommendationsRepositoryImpl) { bind<RemoteMovieRecommendationsRepository>() }
 
     single {
-        // In-memory Room DB
         Room.inMemoryDatabaseBuilder(
             androidContext(),
             PopcornPicksDatabase::class.java
@@ -59,23 +56,21 @@ val testCoreDataModule = module {
 
     single<HttpClient> { HttpClientFactory.build(
         MockEngine.create {
-            addHandler {
-                    request ->
+            addHandler { request ->
                 val endpoint = request.url.encodedPath
-                Log.e("endpoint", endpoint)
 
-                val mockResponseContent = when {
-                    endpoint.contains("/genre/movie/list") -> generateMockGenresResponse()
-                    endpoint.contains("/discover/movie") -> generateMockMoviesBasedOnGenreResponse()
-                    endpoint.contains("recommendations") -> generateMockMoviesBasedOnMovieResponse()
-                    endpoint.contains("/movie/1") -> generateMockDetailedMovieId1Response()
-                    endpoint.contains("/movie") -> generateMockDetailedMovieResponse()
-                    else -> ""
+                val mockResponse = when {
+                    endpoint.contains("/genre/movie/list") -> generateMockGenresResponse() to HttpStatusCode.OK
+                    endpoint.contains("/discover/movie") -> generateMockMoviesBasedOnGenreResponse() to HttpStatusCode.OK
+                    endpoint.contains("recommendations") -> generateMockMoviesBasedOnMovieResponse() to HttpStatusCode.OK
+                    endpoint.contains("/movie/1") -> generateMockDetailedMovieId1Response() to HttpStatusCode.OK // movie details for movieId = 1
+                    endpoint.contains("/movie") -> generateMockDetailedMovieResponse() to HttpStatusCode.OK // movie details for any movieId
+                    else -> "Not mocked" to HttpStatusCode.NotFound
                 }
 
                 respond(
-                    content = mockResponseContent,
-                    status = HttpStatusCode.OK,
+                    content = mockResponse.first,
+                    status = mockResponse.second,
                     headers = headersOf("Content-Type" to listOf("application/json"))
                 )
             }
